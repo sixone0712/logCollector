@@ -1,0 +1,3 @@
+- [play](https://iconmonstr.com/media-control-48-svg/)
+- [stop](https://iconmonstr.com/media-control-50-svg/)
+- [circle](https://iconmonstr.com/circle-1-svg/)
