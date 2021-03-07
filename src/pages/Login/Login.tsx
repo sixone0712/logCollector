@@ -1,6 +1,7 @@
 import { css } from '@emotion/react'
 import React from 'react'
 import StatusTable from '../../components/organisms/StatusTable'
+import AppLayout from '../../components/Templates/AppLayout'
 
 export type LoginProps = {
   children?: React.ReactNode
@@ -8,9 +9,9 @@ export type LoginProps = {
 
 export default function Login({ children }: LoginProps) {
   return (
-    <div css={style}>
+    <AppLayout.Contents>
       <StatusTable />
-    </div>
+    </AppLayout.Contents>
   )
 }
 

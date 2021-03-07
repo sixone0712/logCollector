@@ -1,12 +1,19 @@
-import React from "react";
-import { css } from "@emotion/react";
+import React from 'react';
+import { css } from '@emotion/react';
+import { Layout as AntdLayout } from 'antd';
+
+const {
+  Header: AntdHeader,
+  Content: AntdContent,
+  Footer: AntdFooter,
+} = AntdLayout;
 
 export type AppLayoutProps = {
   children?: React.ReactNode;
 };
 
 export default function AppLayout({ children }: AppLayoutProps) {
-  return <div css={style}>{children}</div>;
+  return <AntdLayout css={style}>{children}</AntdLayout>;
 }
 
 const style = css``;
@@ -16,7 +23,7 @@ export type HeaderProps = {
 };
 
 export function Header({ children }: AppLayoutProps) {
-  return <header css={headerstyle}>Header</header>;
+  return <AntdHeader css={headerstyle}>{children}</AntdHeader>;
 }
 
 const headerstyle = css``;
@@ -26,7 +33,7 @@ export type MainProps = {
 };
 
 export function Main({ children }: MainProps) {
-  return <main css={headerstyle}>{children}</main>;
+  return <AntdContent css={headerstyle}>{children}</AntdContent>;
 }
 
 const mainstyle = css``;
@@ -36,7 +43,7 @@ export type FooterProps = {
 };
 
 export function Footer({ children }: FooterProps) {
-  return <footer css={headerstyle}>Footer</footer>;
+  return <AntdFooter css={headerstyle}>Footer</AntdFooter>;
 }
 
 const footerstyle = css``;
@@ -46,7 +53,7 @@ export type ContentsProps = {
 };
 
 export function Contents({ children }: ContentsProps) {
-  return <main css={contentsStyle}>Contents</main>;
+  return <AntdContent css={contentsStyle}>{children}</AntdContent>;
 }
 
 const contentsStyle = css``;

@@ -1,11 +1,12 @@
-import React from "react";
-import { css } from "@emotion/react";
-import AppLayout from "../../components/Templates/AppLayout";
-import { Route, Switch } from "react-router-dom";
-import Status from "../Status";
-import Configure from "../Configure";
-import Rules from "../Rules";
-import Account from "../Account";
+import React from 'react';
+import { css } from '@emotion/react';
+import AppLayout from '../../components/Templates/AppLayout';
+import { Route, Switch } from 'react-router-dom';
+import Status from '../Status';
+import Configure from '../Configure';
+import Rules from '../Rules';
+import Account from '../Account';
+import DashBoardHeader from '../../components/organisms/DashBoardHeader';
 
 export type DashBoardProps = {
   children?: React.ReactNode;
@@ -14,19 +15,21 @@ export type DashBoardProps = {
 export default function DashBoard({ children }: DashBoardProps) {
   return (
     <>
-      <AppLayout.Hedaer />
+      <AppLayout.Hedaer>
+        <DashBoardHeader />
+      </AppLayout.Hedaer>
       <AppLayout.Main>
         <Switch>
-          <Route path={"/status"}>
+          <Route path={'/status'}>
             <Status />
           </Route>
-          <Route path={"/configure"}>
+          <Route path={'/configure'}>
             <Configure />
           </Route>
-          <Route path={"/rules"}>
+          <Route path={'/rules'}>
             <Rules />
           </Route>
-          <Route path={"/account"}>
+          <Route path={'/account'}>
             <Account />
           </Route>
         </Switch>

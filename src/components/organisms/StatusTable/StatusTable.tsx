@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react'
 import { green, grey, red } from '@ant-design/colors'
 import { css } from '@emotion/react'
-import { Row, Space, Table } from 'antd'
-import Icon from '../../../libs/utils/Icon'
+import { Col, Row, Space, Table } from 'antd'
+import Icon from '../../atoms/Icon'
 
 type BuildStatus = 'success' | 'failure' | 'notbuild'
 
@@ -50,6 +50,49 @@ export type StatusTableProps = {
   children?: React.ReactNode
 }
 
+enum ColumDataEnum {
+  SITE_NAME,
+  COLLECTION_STATUS,
+  ERROR_STATUS,
+  CRAS_STATUS,
+  VERSION_STATUS,
+  STOP_STOP,
+  EDIT,
+  DELETE,
+}
+const columData = [
+  {
+    key: 'siteName',
+    title: 'Site Name',
+    dataIndex: 'siteName',
+  },
+  {
+    key: 'collectStatus',
+    title: 'Collect/Convert/Insert',
+    dataIndex: 'collectStatus',
+  },
+  {
+    key: 'errorStatus',
+    title: 'Send Error Summary',
+    dataIndex: 'errorStatus',
+  },
+  {
+    key: 'crasStatus',
+    title: 'Create Cras Data',
+    dataIndex: 'crasStatus',
+  },
+  {
+    key: 'versionStatus',
+    title: 'Check Cras Version',
+    dataIndex: 'versionStatus',
+  },
+  {
+    key: 'isRunning',
+    title: 'Start/Stop',
+    dataIndex: 'isRunning',
+  },
+]
+
 export default function StatusTable({ children }: StatusTableProps) {
   const startAndStopRender = useCallback((value: boolean) => {
     if (value) {
@@ -67,7 +110,6 @@ export default function StatusTable({ children }: StatusTableProps) {
         title="Site Name"
         dataIndex="siteName"
       />
-      \
       <Table.Column<RemoteStatus>
         key="collectStatus"
         title="Collect/Convert/Insert"
@@ -92,6 +134,7 @@ export default function StatusTable({ children }: StatusTableProps) {
         dataIndex="versionStatus"
         render={getBuildStatusIconText}
       />
+      c
       <Table.Column<RemoteStatus>
         key="isRunning"
         title="Start/Stop"
@@ -110,15 +153,18 @@ const getBuildStatusIconText = (value: string) => {
   switch (value) {
     case 'success':
       return (
-        <Row justify="center" align="middle">
-          <Icon
-            name="circle"
-            css={css`
-              color: ${red[6]};
-              width: 1rem;
-              height: 1rem;
-            `}
-          />
+        <Row>
+          <Space>
+            <Icon
+              name="circle"
+              css={css`
+                width: 1rem;
+                height: 1rem;
+                color: ${green[6]};
+              `}
+            />
+            <Col>{value}</Col>
+          </Space>
         </Row>
       )
     case 'failure':
@@ -127,12 +173,12 @@ const getBuildStatusIconText = (value: string) => {
           <Icon
             name="circle"
             css={css`
-              color: ${green[6]};
+              color: ${red[6]};
               width: 1rem;
               height: 1rem;
             `}
           />
-          <span>value</span>
+          <span>{value}</span>
         </Space>
       )
     case 'notbuild':
@@ -146,8 +192,7 @@ const getBuildStatusIconText = (value: string) => {
               height: 1rem;
             `}
           />
-
-          <span>value</span>
+          <span>{value}</span>
         </Space>
       )
     default:
