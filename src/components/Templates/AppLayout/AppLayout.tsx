@@ -2,11 +2,7 @@ import React from 'react';
 import { css } from '@emotion/react';
 import { Layout as AntdLayout } from 'antd';
 
-const {
-  Header: AntdHeader,
-  Content: AntdContent,
-  Footer: AntdFooter,
-} = AntdLayout;
+const { Header: AntdHeader, Content: AntdContent, Footer: AntdFooter } = AntdLayout;
 
 export type AppLayoutProps = {
   children?: React.ReactNode;
@@ -43,10 +39,14 @@ export type FooterProps = {
 };
 
 export function Footer({ children }: FooterProps) {
-  return <AntdFooter css={headerstyle}>Footer</AntdFooter>;
+  return <AntdFooter css={footerstyle}>{children}</AntdFooter>;
 }
 
-const footerstyle = css``;
+const footerstyle = css`
+  text-align: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+`;
 
 export type ContentsProps = {
   children?: React.ReactNode;

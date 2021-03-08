@@ -6,7 +6,8 @@ import Status from '../Status';
 import Configure from '../Configure';
 import Rules from '../Rules';
 import Account from '../Account';
-import DashBoardHeader from '../../components/organisms/DashBoardHeader';
+import DashBoardNavBar from '../../components/organisms/DashBoardNavBar';
+import DashBoardFooter from '../../components/organisms/DashBoardFooter';
 
 export type DashBoardProps = {
   children?: React.ReactNode;
@@ -16,7 +17,7 @@ export default function DashBoard({ children }: DashBoardProps) {
   return (
     <>
       <AppLayout.Hedaer>
-        <DashBoardHeader />
+        <DashBoardNavBar />
       </AppLayout.Hedaer>
       <AppLayout.Main>
         <Switch>
@@ -34,7 +35,9 @@ export default function DashBoard({ children }: DashBoardProps) {
           </Route>
         </Switch>
       </AppLayout.Main>
-      <AppLayout.Footer />
+      <AppLayout.Footer>
+        <DashBoardFooter />
+      </AppLayout.Footer>
     </>
   );
 }
