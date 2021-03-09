@@ -1598,6 +1598,16 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fontsource/roboto@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-4.2.2.tgz#39b87680b25915539e445cc6e0fac99e1a81f58b"
+  integrity sha512-VzYWCdqjrepaT7dezuaTZXKaW1L+f5FSp7DGxMqTrf81OTzh9xpKIpr8lgjPg2ZNwiT8rnU++mJ4hojsCnOoqw==
+
+"@fontsource/saira@^4.2.2":
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/@fontsource/saira/-/saira-4.2.2.tgz#13b60e5cb9c8eed75a63b9bba7c883417f098357"
+  integrity sha512-DvuPvyjBBYPLlupY2W5ivkmg0s2R1LoUmJHYfQsmAgkwaSLzSQt4En0TO4uync6kSPC65Rt3SxHm2PMbjtgGzg==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -8375,6 +8385,11 @@ normalize-url@^3.0.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-3.3.0.tgz#b2e1c4dc4f7c6d57743df733a4f5978d18650559"
   integrity sha512-U+JJi7duF1o+u2pynbp2zXDW2/PADgC30f0GsHZtRh+HOcXHnw137TrNlyxxRvWW5fjKd3bcLHPxofWuCjaeZg==
+
+normalize.css@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/normalize.css/-/normalize.css-8.0.1.tgz#9b98a208738b9cc2634caacbc42d131c97487bf3"
+  integrity sha512-qizSNPO93t1YUuUhP22btGOo3chcvDFqFaj2TRybP0DMxkHOCTYwp3n34fel4a31ORXy4m1Xq0Gyqpb5m33qIg==
 
 npm-run-path@^2.0.0:
   version "2.0.2"

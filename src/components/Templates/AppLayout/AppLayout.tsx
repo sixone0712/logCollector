@@ -29,10 +29,12 @@ export type MainProps = {
 };
 
 export function Main({ children }: MainProps) {
-  return <AntdContent css={headerstyle}>{children}</AntdContent>;
+  return <AntdContent css={mainstyle}>{children}</AntdContent>;
 }
 
-const mainstyle = css``;
+const mainstyle = css`
+  padding: 0 3.125rem;
+`;
 
 export type FooterProps = {
   children?: React.ReactNode;

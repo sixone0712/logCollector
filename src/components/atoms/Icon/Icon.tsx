@@ -1,6 +1,6 @@
-import React from "react";
-import * as svg from "./svg";
-import { css, SerializedStyles } from "@emotion/react";
+import React from 'react';
+import * as svg from './svg';
+import { css, SerializedStyles } from '@emotion/react';
 
 export type IconType = keyof typeof svg;
 export type IconProps = {

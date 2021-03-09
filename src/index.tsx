@@ -4,6 +4,13 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
+// import '@fontsource/roboto'; // Defaults to weight 400.
+// import '@fontsource/roboto/100.css'; // Weight 100.
+// import '@fontsource/roboto/700.css'; // Weight 700.
+import '@fontsource/saira'; // Defaults to weight 400.
+import '@fontsource/saira/100.css'; // Weight 100.
+import '@fontsource/saira/700.css'; // Weight 700.
+// import 'normalize.css';
 
 ReactDOM.render(
   <React.StrictMode>

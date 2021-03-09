@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
-import { FileProtectOutlined, PartitionOutlined, SettingOutlined, DownOutlined } from '@ant-design/icons';
-import { Menu, Row, Col, Dropdown, Space } from 'antd';
-import NavBarIcon from '../../atoms/NavBarIcon';
-import { useHistory } from 'react-router-dom';
+import { FileProtectOutlined, PartitionOutlined, SettingOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import Icon from '../../atoms/Icon';
+import { Col, Dropdown, Menu, Row, Space } from 'antd';
+import { useHistory } from 'react-router-dom';
+import CustomIcon from '../../atoms/CustomIcon';
+import { blue } from '@ant-design/colors';
 
 const { SubMenu } = Menu;
 
@@ -36,9 +36,9 @@ const NavSection = styled(Row)`
 
 const Title = styled(Col)`
   align-items: center;
-  min-width: 9rem;
-  font-size: 1.25rem;
-  font-weight: bold;
+  min-width: 14rem;
+  font-size: 1.714rem;
+  font-weight: 700;
   color: white;
 `;
 
@@ -75,7 +75,7 @@ function DashBoardNavBar({ children }: DashBoardNavBarProps): JSX.Element {
   return (
     <Container>
       <NavSection>
-        <Title>Log Collector</Title>
+        <Title>Log Mointor</Title>
         <Menu
           theme="dark"
           mode="horizontal"
@@ -97,17 +97,17 @@ function DashBoardNavBar({ children }: DashBoardNavBarProps): JSX.Element {
             <Menu.Item key={NavType.RULES_LOG_DEF}>Log Definitions</Menu.Item>
             <Menu.Item key={NavType.RULES_LOG_CONV}>Log Converter</Menu.Item>
           </SubMenu>
-          <Menu.Item key={NavType.ACCOUT} icon={<NavBarIcon name="idcard" />}>
+          <Menu.Item key={NavType.ACCOUT} icon={<CustomIcon name="idcard" />}>
             Account
           </Menu.Item>
         </Menu>
       </NavSection>
       <LoginUserSection>
-        <Dropdown overlay={LoginUserMenu}>
+        <Dropdown overlay={LoginUserMenu} trigger={['click']}>
           <a css={dropdownStyle}>
-            <Space css={spaceStyle} align={'center'}>
-              <Icon name="user" css={userIconStyle} />
-              <span>Administrator</span>
+            <Space css={spaceStyle}>
+              <CustomIcon name="user" css={userIconStyle} />
+              <div>Administrator</div>
             </Space>
           </a>
         </Dropdown>
@@ -127,25 +127,25 @@ function LoginUserMenu() {
 
 const dropdownStyle = css`
   color: white;
-  /* display: flex;
-  align-items: center; */
+  &:hover {
+    color: ${blue[2]};
+  }
 `;
 
 const userIconStyle = css`
-  vertical-align: sub;
+  font-size: 2rem;
 `;
 
 const loginUserMenuStyle = css`
-  margin-top: -1.25rem;
+  margin-top: -1rem;
   text-align: center;
 `;
 
 const spaceStyle = css`
+  display: flex; // Space에 flex를 설정하지 않으면 Navar의 높이가 튀어나온다...
   .ant-space-item {
-    /* display: flex;
-    align-items: center; */
+    display: flex; //Space의 align 속성이 적용되지 않기 대문에 내부 item에 flex 적용
   }
-  height: 64px;
 `;
 
 export default DashBoardNavBar;
