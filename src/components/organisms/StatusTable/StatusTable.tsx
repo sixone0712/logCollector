@@ -2,6 +2,7 @@ import { DeleteOutlined, EditOutlined, PauseCircleOutlined, PlayCircleOutlined }
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Table } from 'antd';
+import { CompareFn } from 'antd/lib/table/interface';
 import React, { Key, useCallback } from 'react';
 import { AlignType, DataIndex } from '../../../../node_modules/rc-table/lib/interface';
 import useRemoteStatus from '../../../hooks/useRemoteStatus';
@@ -40,6 +41,14 @@ type ColumnPropsType = {
     title?: React.ReactNode;
     dataIndex?: DataIndex;
     align?: AlignType;
+    sorter?:
+      | boolean
+      | CompareFn<RemoteStatus>
+      | {
+          compare?: CompareFn<RemoteStatus>;
+          /** Config multiple sorter order priority */
+          multiple?: number;
+        };
   };
 };
 
@@ -53,6 +62,7 @@ const columnProps: ColumnPropsType = {
     title: <ColumnTitle>No</ColumnTitle>,
     dataIndex: 'no',
     align: 'center',
+    sorter: (a, b) => a.no - b.no,
   },
   siteName: {
     key: 'siteName',
@@ -139,8 +149,10 @@ export default function StatusTable({ children }: StatusTableProps): JSX.Element
     return <DeleteOutlined css={iconStyle} />;
   }, []);
 
+  const titleRender = useCallback(() => <StatusHeader />, []);
+
   return (
-    <Table<RemoteStatus> dataSource={remoteList} bordered title={() => <StatusHeader />}>
+    <Table<RemoteStatus> dataSource={remoteList} bordered title={titleRender}>
       <Table.Column<RemoteStatus> {...columnProps.no} />
       <Table.Column<RemoteStatus> {...columnProps.siteName} />
       <Table.Column<RemoteStatus> {...columnProps.collectStatus} render={buildStatusRender} />
