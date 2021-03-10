@@ -23,7 +23,7 @@ const RegisteredCount = styled(Col)`
 
 const ButtonSection = styled(Col)``;
 
-export default function RemoteHeader({ children, listCount }: StatusHeaderProps): JSX.Element {
+export default function StatusTableHeader({ children, listCount }: StatusHeaderProps): JSX.Element {
   return (
     <Container>
       <RegisteredCount>Registered collection list : {listCount}</RegisteredCount>

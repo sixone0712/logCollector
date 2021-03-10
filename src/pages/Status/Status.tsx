@@ -13,8 +13,8 @@ export default function Status({ children }: StatusProps) {
   return (
     <Switch>
       <Route path={'/status/remote'} exact component={Remote} />
-      <Route path={'/status/remote/:type/:id'} component={History} />
-      <Route path={'/status/local'} component={Local} />
+      <Route path={'/status/local'} exact component={Local} />
+      <Route path={['/status/remote/:type/:id', '/status/local/:id']} component={History} />
     </Switch>
   );
 }

@@ -11,16 +11,16 @@ export type HistoryProps = {
 
 export default function History({ children }: HistoryProps) {
   const { type, id } = useParams<{ type: string; id: string }>();
-  const location = useLocation();
-  const { name } = qs.parse(location.search, {
+  const { search, pathname } = useLocation();
+  const { name } = qs.parse(search, {
     ignoreQueryPrefix: true, // /about?details=true 같은 쿼리 주소의 '?'를 생략해주는 옵션입니다.
   });
+  const item = pathname.includes('/status/remote') ? 'Remote' : 'Local';
 
-  console.log('location', location);
   return (
     <div css={style}>
       <DashBoardBreadcrumb
-        locations={['Status', 'Remote', `${name}`, getStatusTableColumnName(type)]}
+        locations={['Status', `${item}`, `${name}`, getStatusTableColumnName(type)]}
         icon={<PartitionOutlined />}
       />
       <BuildHistory type={type} />

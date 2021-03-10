@@ -15,12 +15,15 @@ export default function DashBoardBreadcrumb({ children, locations, icon }: DashB
       <Breadcrumb.Item>
         <HomeOutlined />
       </Breadcrumb.Item>
-      {locations.map((item: string, idx: number) => (
-        <Breadcrumb.Item key="item">
-          {idx === 0 && icon}
-          <span>{item}</span>
-        </Breadcrumb.Item>
-      ))}
+      {locations.map(
+        (item: string, idx: number) =>
+          item && (
+            <Breadcrumb.Item key="item">
+              {idx === 0 && icon}
+              <span>{item}</span>
+            </Breadcrumb.Item>
+          )
+      )}
     </Breadcrumb>
   );
 }

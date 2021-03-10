@@ -4,13 +4,13 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Table } from 'antd';
 import { CompareFn } from 'antd/lib/table/interface';
+import { AlignType, DataIndex } from 'rc-table/lib/interface';
 import React, { Key, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { AlignType, DataIndex } from 'rc-table/lib/interface';
 import useRemoteStatus from '../../../hooks/useRemoteStatus';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
 import StatusItem from '../../atoms/StatusItem';
-import RemoteHeader from './RemoteHeader';
+import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
 
 export type BuildStatus = 'success' | 'failure' | 'notbuild';
 
@@ -144,7 +144,7 @@ export type RemoteStatusTableProps = {
   children?: React.ReactNode;
 };
 
-export default function RemoteStatus({ children }: RemoteStatusTableProps): JSX.Element {
+export default function RemoteStatusTable({ children }: RemoteStatusTableProps): JSX.Element {
   const { remoteList, setRemoteList } = useRemoteStatus();
   const history = useHistory();
 
@@ -195,7 +195,7 @@ export default function RemoteStatus({ children }: RemoteStatusTableProps): JSX.
     return <DeleteOutlined css={iconStyle} />;
   }, []);
 
-  const titleRender = useCallback(() => <RemoteHeader listCount={remoteList.length} />, [remoteList.length]);
+  const titleRender = useCallback(() => <StatusTableHeader listCount={remoteList.length} />, [remoteList.length]);
 
   return (
     <Table<RemoteStatus>

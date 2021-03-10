@@ -2,26 +2,26 @@ import React from 'react';
 import { css } from '@emotion/react';
 import { Space } from 'antd';
 import CustomIcon from '../CustomIcon';
-import { green, grey, red, presetPalettes } from '@ant-design/colors';
-import { BuildStatus } from '../../organisms/RemoteStatusTable/RemoteStatus';
+import { green, grey, red, presetPalettes, blue } from '@ant-design/colors';
+import { BuildStatus } from '../../organisms/RemoteStatusTable/RemoteStatusTable';
 
 export type StatusItemProps = {
   status: BuildStatus;
   onClick?: () => void;
 };
 
-export default function StatusItem({ status, onClick }: StatusItemProps) {
+export default function StatusItem({ status, onClick }: StatusItemProps): JSX.Element {
   return (
     <div onClick={onClick}>
       <Space>
-        <CustomIcon name="circle" css={statusItemStyle(status)} />
-        <span>{status}</span>
+        <CustomIcon name="circle" css={statusIconStyle(status)} />
+        <span css={statusTextStyle}>{status}</span>
       </Space>
     </div>
   );
 }
 
-const statusItemStyle = (status: BuildStatus) => {
+const statusIconStyle = (status: BuildStatus) => {
   let color = grey[4];
   if (status === 'success') color = green[5];
   else if (status === 'failure') color = red[4];
@@ -29,3 +29,13 @@ const statusItemStyle = (status: BuildStatus) => {
     color: ${color};
   `;
 };
+
+const statusTextStyle = css`
+  text-decoration: underline;
+  &:hover {
+    color: ${blue[4]};
+  }
+  &:active {
+    color: ${blue[6]};
+  }
+`;

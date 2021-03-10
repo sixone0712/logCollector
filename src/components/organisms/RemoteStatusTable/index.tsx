@@ -1,1 +1,1 @@
-export { default } from './RemoteStatus'
+export { default } from './RemoteStatusTable'

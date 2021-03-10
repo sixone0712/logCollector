@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RemoteStatus } from '../components/organisms/RemoteStatusTable/RemoteStatus';
+import { RemoteStatus } from '../components/organisms/RemoteStatusTable/RemoteStatusTable';
 
 const data: RemoteStatus[] = [
   {
