@@ -14,14 +14,8 @@ export type RulesProps = {
 export default function Rules({ children }: RulesProps) {
   return (
     <Switch>
-      <Route path={'/rules/logdef'}>
-        <DashBoardBreadcrumb locations={['Rules', 'Log Definition']} icon={<FileProtectOutlined />} />
-        <LogDefinition />
-      </Route>
-      <Route path={'/rules/logconv'}>
-        <DashBoardBreadcrumb locations={['Rules', 'Log Converter']} icon={<CustomIcon name="idcard" />} />
-        <LogConverter />
-      </Route>
+      <Route path={'/rules/logdef'} component={LogDefinition} />
+      <Route path={'/rules/logconv'} component={LogConverter} />
     </Switch>
   );
 }

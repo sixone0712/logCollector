@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 
 export type StatusHeaderProps = {
   children?: React.ReactNode;
+  listCount: number;
 };
 
 const Container = styled(Row)`
@@ -22,10 +23,10 @@ const RegisteredCount = styled(Col)`
 
 const ButtonSection = styled(Col)``;
 
-export default function StatusHeader({ children }: StatusHeaderProps): JSX.Element {
+export default function RemoteHeader({ children, listCount }: StatusHeaderProps): JSX.Element {
   return (
     <Container>
-      <RegisteredCount>Registered collection list : 5</RegisteredCount>
+      <RegisteredCount>Registered collection list : {listCount}</RegisteredCount>
       <ButtonSection>
         <Space size={convertRemToPixels(1)}>
           <Button type="primary" icon={<PlusOutlined />} css={newJobBtnStyle}>

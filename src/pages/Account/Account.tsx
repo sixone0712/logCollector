@@ -11,7 +11,7 @@ export default function Account({ children }: AccountProps) {
   return (
     <div css={style}>
       <>
-        <DashBoardBreadcrumb locations={['Configure']} icon={<CustomIcon name="idcard" />} />
+        <DashBoardBreadcrumb locations={['Account']} icon={<CustomIcon name="idcard" />} />
         Account
       </>
     </div>

@@ -6,7 +6,7 @@ import Status from '../Status';
 import Configure from '../Configure';
 import Rules from '../Rules';
 import Account from '../Account';
-import DashBoardNavBar from '../../components/organisms/DashBoardNavBar';
+import DashBoardNavBar from '../../components/organisms/DashBoardHeader';
 import DashBoardFooter from '../../components/organisms/DashBoardFooter';
 
 export type DashBoardProps = {

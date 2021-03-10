@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import { Space } from 'antd';
 import CustomIcon from '../CustomIcon';
 import { green, grey, red, presetPalettes } from '@ant-design/colors';
-import { BuildStatus } from '../../organisms/StatusTable/StatusTable';
+import { BuildStatus } from '../../organisms/RemoteStatusTable/RemoteStatus';
 
 export type StatusItemProps = {
   status: BuildStatus;

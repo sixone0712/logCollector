@@ -1,10 +1,9 @@
-import { PartitionOutlined, SettingOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import DashBoardBreadcrumb from '../../components/organisms/DashBoardBreadcrumb';
 import Local from './Local';
 import Remote from './Remote';
+import History from './History';
 
 export type StatusProps = {
   children?: React.ReactNode;
@@ -13,14 +12,9 @@ export type StatusProps = {
 export default function Status({ children }: StatusProps) {
   return (
     <Switch>
-      <Route path={'/status/remote'}>
-        <DashBoardBreadcrumb locations={['Status', 'Remote']} icon={<PartitionOutlined />} />
-        <Remote />
-      </Route>
-      <Route path={'/status/local'}>
-        <DashBoardBreadcrumb locations={['Status', 'Local']} icon={<SettingOutlined />} />
-        <Local />
-      </Route>
+      <Route path={'/status/remote'} exact component={Remote} />
+      <Route path={'/status/remote/:type/:id'} component={History} />
+      <Route path={'/status/local'} component={Local} />
     </Switch>
   );
 }

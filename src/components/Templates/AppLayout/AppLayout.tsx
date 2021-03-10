@@ -22,7 +22,13 @@ export function Header({ children }: AppLayoutProps) {
   return <AntdHeader css={headerstyle}>{children}</AntdHeader>;
 }
 
-const headerstyle = css``;
+const headerstyle = css`
+  box-shadow: 0rem 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  height: 4rem;
+  width: 100%;
+  position: fixed;
+  z-index: 100;
+`;
 
 export type MainProps = {
   children?: React.ReactNode;
@@ -33,7 +39,7 @@ export function Main({ children }: MainProps) {
 }
 
 const mainstyle = css`
-  padding: 0 3.125rem;
+  padding: 4rem 3.125rem 0 3.125rem;
 `;
 
 export type FooterProps = {

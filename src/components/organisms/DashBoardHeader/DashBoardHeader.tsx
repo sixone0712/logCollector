@@ -46,7 +46,7 @@ const LoginUserSection = styled(Row)``;
 
 function DashBoardNavBar({ children }: DashBoardNavBarProps): JSX.Element {
   const history = useHistory();
-  const onSelect = useCallback(
+  const onClickNavItem = useCallback(
     ({ key }: { key: React.Key }) => {
       switch (key) {
         case NavType.STATUS_REMOTE:
@@ -80,24 +80,31 @@ function DashBoardNavBar({ children }: DashBoardNavBarProps): JSX.Element {
           theme="dark"
           mode="horizontal"
           defaultSelectedKeys={[NavType.STATUS_REMOTE]}
-          onSelect={onSelect}
           css={css`
             width: 50rem;
             min-width: 50rem;
           `}
         >
           <SubMenu key={NavType.STATUS} icon={<PartitionOutlined />} title="Status">
-            <Menu.Item key={NavType.STATUS_REMOTE}>Remote</Menu.Item>
-            <Menu.Item key={NavType.STATUS_LOCAL}>Local</Menu.Item>
+            <Menu.Item key={NavType.STATUS_REMOTE} onClick={onClickNavItem}>
+              Remote
+            </Menu.Item>
+            <Menu.Item key={NavType.STATUS_LOCAL} onClick={onClickNavItem}>
+              Local
+            </Menu.Item>
           </SubMenu>
-          <Menu.Item key={NavType.CONFIGURE} icon={<SettingOutlined />}>
+          <Menu.Item key={NavType.CONFIGURE} icon={<SettingOutlined />} onClick={onClickNavItem}>
             Configure
           </Menu.Item>
           <SubMenu key={NavType.RULES} icon={<FileProtectOutlined />} title="Rules">
-            <Menu.Item key={NavType.RULES_LOG_DEF}>Log Definitions</Menu.Item>
-            <Menu.Item key={NavType.RULES_LOG_CONV}>Log Converter</Menu.Item>
+            <Menu.Item key={NavType.RULES_LOG_DEF} onClick={onClickNavItem}>
+              Log Definitions
+            </Menu.Item>
+            <Menu.Item key={NavType.RULES_LOG_CONV} onClick={onClickNavItem}>
+              Log Converter
+            </Menu.Item>
           </SubMenu>
-          <Menu.Item key={NavType.ACCOUT} icon={<CustomIcon name="idcard" />}>
+          <Menu.Item key={NavType.ACCOUT} icon={<CustomIcon name="idcard" />} onClick={onClickNavItem}>
             Account
           </Menu.Item>
         </Menu>
