@@ -3,54 +3,13 @@ import { DeleteOutlined, EditOutlined, PauseCircleOutlined, PlayCircleOutlined }
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Table } from 'antd';
-import { CompareFn } from 'antd/lib/table/interface';
-import { AlignType, DataIndex } from 'rc-table/lib/interface';
-import React, { Key, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import useRemoteStatus from '../../../hooks/useRemoteStatus';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
-import StatusItem from '../../atoms/StatusItem';
+import StatusBadge from '../../atoms/StatusBadge';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
-
-export type BuildStatus = 'success' | 'failure' | 'notbuild';
-
-export interface RemoteStatus {
-  no: number;
-  siteName: string;
-  collectStatus: BuildStatus;
-  errorStatus: BuildStatus;
-  crasStatus: BuildStatus;
-  versionStatus: BuildStatus;
-  isRunning: boolean;
-}
-
-type RemoteColumnName =
-  | 'no'
-  | 'siteName'
-  | 'collectStatus'
-  | 'errorStatus'
-  | 'crasStatus'
-  | 'versionStatus'
-  | 'isRunning'
-  | 'edit'
-  | 'delete';
-
-type RemoteColumnPropsType = {
-  [name in RemoteColumnName]: {
-    key?: Key;
-    title?: React.ReactNode;
-    dataIndex?: DataIndex;
-    align?: AlignType;
-    sorter?:
-      | boolean
-      | CompareFn<RemoteStatus>
-      | {
-          compare?: CompareFn<RemoteStatus>;
-          /** Config multiple sorter order priority */
-          multiple?: number;
-        };
-  };
-};
+import { BuildStatus, RemoteColumnPropsType, RemoteStatus, RemoteStatusType } from '../../../types/Status';
 
 const ColumnTitle = styled.div`
   font-weight: 700;
@@ -138,8 +97,6 @@ const remoteColumnProps: RemoteColumnPropsType = {
   },
 };
 
-export type RemoteStatusType = 'collect' | 'error' | 'cras' | 'version';
-
 export type RemoteStatusTableProps = {
   children?: React.ReactNode;
 };
@@ -169,16 +126,16 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps):
   );
 
   const buildStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number, type?: RemoteStatusType) => (
-      <StatusItem
-        status={value}
-        onClick={() => {
-          history.push(`/status/remote/${type}/${record.no}?name=${record.siteName}`);
-        }}
-      />
-    ),
+    (value: BuildStatus, record: RemoteStatus, index: number, type?: RemoteStatusType) => {
+      const onClick = useCallback(
+        () => history.push(`/status/remote/${type}/${record.no}?name=${record.siteName}`),
+        []
+      );
+      return <StatusBadge type={value} onClick={onClick} />;
+    },
     []
   );
+
   const startAndStopRender = useCallback((value: boolean) => {
     if (value) {
       return <PlayCircleOutlined css={iconStyle} />;
@@ -222,7 +179,7 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps):
 }
 
 const iconStyle = css`
-  font-size: 1.25rem;
+  /* font-size: 1.25rem; */
   &:hover {
     color: ${blue[4]};
   }

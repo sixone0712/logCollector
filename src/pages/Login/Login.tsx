@@ -7,7 +7,7 @@ export type LoginProps = {
 };
 
 export default function Login({ children }: LoginProps) {
-  return <AppLayout.Contents>Login</AppLayout.Contents>;
+  return <AppLayout.Contents></AppLayout.Contents>;
 }
 
 const style = css``;

@@ -9,7 +9,7 @@ export type DashBoardBreadcrumbProps = {
   locations: string[];
 };
 
-export default function DashBoardBreadcrumb({ children, locations, icon }: DashBoardBreadcrumbProps) {
+export default function DashBoardBreadcrumb({ children, locations, icon }: DashBoardBreadcrumbProps): JSX.Element {
   return (
     <Breadcrumb css={breadcrumbStyle} separator=">">
       <Breadcrumb.Item>

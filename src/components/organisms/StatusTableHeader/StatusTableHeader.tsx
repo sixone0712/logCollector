@@ -28,21 +28,17 @@ export default function StatusTableHeader({ children, listCount }: StatusHeaderP
     <Container>
       <RegisteredCount>Registered collection list : {listCount}</RegisteredCount>
       <ButtonSection>
-        <Space size={convertRemToPixels(1)}>
-          <Button type="primary" icon={<PlusOutlined />} css={newJobBtnStyle}>
+        <Space size={convertRemToPixels(0.5)}>
+          <Button type="primary" icon={<PlusOutlined />} css={btnStyle}>
             New Job
           </Button>
-          <ReloadOutlined css={refreshBtnStyle} />
+          <Button type="primary" icon={<ReloadOutlined />} css={btnStyle} />
         </Space>
       </ButtonSection>
     </Container>
   );
 }
 
-const newJobBtnStyle = css`
+const btnStyle = css`
   border-radius: 0.625rem;
-`;
-
-const refreshBtnStyle = css`
-  font-size: 1rem;
 `;

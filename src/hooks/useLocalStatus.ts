@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LocalStatus } from '../components/organisms/LocalStatusTable/LocalStatusTable';
+import { LocalStatus } from '../types/Status';
 
 const data: LocalStatus[] = [
   {

@@ -3,21 +3,14 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Table } from 'antd';
-import { CompareFn } from 'antd/lib/table/interface';
-import { AlignType, DataIndex } from 'rc-table/lib/interface';
-import React, { Key, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import useLocalStatus from '../../../hooks/useLocalStatus';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
-import StatusItem from '../../atoms/StatusItem';
-import { BuildStatus } from '../RemoteStatusTable/RemoteStatusTable';
+import StatusBadge from '../../atoms/StatusBadge';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
+import { BuildStatus, LocalColumnPropsType, LocalStatus } from '../../../types/Status';
 
-export interface LocalStatus {
-  no: number;
-  siteName: string;
-  status: BuildStatus;
-}
 export type LocalStatusTableProps = {
   children?: React.ReactNode;
 };
@@ -25,25 +18,6 @@ export type LocalStatusTableProps = {
 const LocalColumnTitle = styled.div`
   font-weight: 700;
 `;
-
-type LocalColumnName = 'no' | 'siteName' | 'status' | 'delete';
-
-type LocalColumnPropsType = {
-  [name in LocalColumnName]: {
-    key?: Key;
-    title?: React.ReactNode;
-    dataIndex?: DataIndex;
-    align?: AlignType;
-    sorter?:
-      | boolean
-      | CompareFn<LocalStatus>
-      | {
-          compare?: CompareFn<LocalStatus>;
-          /** Config multiple sorter order priority */
-          multiple?: number;
-        };
-  };
-};
 
 const localColumnProps: LocalColumnPropsType = {
   no: {
@@ -85,17 +59,10 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps): J
   const { localList, setLocalList } = useLocalStatus();
   const history = useHistory();
 
-  const buildStatusRender = useCallback(
-    (value: BuildStatus, record: LocalStatus, index: number) => (
-      <StatusItem
-        status={value}
-        onClick={() => {
-          history.push(`/status/local/${record.no}?name=${record.siteName}`);
-        }}
-      />
-    ),
-    []
-  );
+  const buildStatusRender = useCallback((value: BuildStatus, record: LocalStatus, index: number) => {
+    const onClick = useCallback(() => history.push(`/status/local/${record.no}?name=${record.siteName}`), []);
+    return <StatusBadge type={value} onClick={onClick} />;
+  }, []);
 
   const deleteRender = useCallback(() => {
     return <DeleteOutlined css={iconStyle} />;
