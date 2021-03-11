@@ -64,7 +64,10 @@ export function Contents({ children }: ContentsProps) {
   return <AntdContent css={contentsStyle}>{children}</AntdContent>;
 }
 
-const contentsStyle = css``;
+const contentsStyle = css`
+  width: 100%;
+  height: 100vh;
+`;
 
 AppLayout.Hedaer = Header;
 AppLayout.Main = Main;
