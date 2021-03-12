@@ -6,7 +6,7 @@ export type DashBoardFooterProps = {
 };
 
 export default function DashBoardFooter({ children }: DashBoardFooterProps) {
-  return <div css={style}>Log Collecter ©2021 Created by CKBS</div>;
+  return <div css={style}>Log Monitor ©2021 Created by Canon</div>;
 }
 
 const style = css``;

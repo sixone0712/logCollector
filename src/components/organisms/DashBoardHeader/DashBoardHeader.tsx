@@ -75,16 +75,8 @@ function DashBoardNavBar({ children }: DashBoardNavBarProps): JSX.Element {
   return (
     <Container>
       <NavSection>
-        <Title>Log Mointor</Title>
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={[NavType.STATUS_REMOTE]}
-          css={css`
-            width: 50rem;
-            min-width: 50rem;
-          `}
-        >
+        <Title>Log Monitor</Title>
+        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[NavType.STATUS_REMOTE]} css={menuStyle}>
           <SubMenu key={NavType.STATUS} icon={<PartitionOutlined />} title="Status">
             <Menu.Item key={NavType.STATUS_REMOTE} onClick={onClickNavItem}>
               Remote
@@ -131,6 +123,11 @@ function LoginUserMenu() {
     </Menu>
   );
 }
+
+const menuStyle = css`
+  width: 50rem;
+  min-width: 50rem;
+`;
 
 const dropdownStyle = css`
   color: white;
