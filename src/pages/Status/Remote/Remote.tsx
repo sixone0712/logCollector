@@ -8,7 +8,7 @@ export type RemoteProps = {
   children?: React.ReactNode;
 };
 
-export default function Remote({ children }: RemoteProps) {
+function Remote({ children }: RemoteProps) {
   return (
     <div css={style}>
       <DashBoardBreadcrumb locations={['Status', 'Remote']} icon={<PartitionOutlined />} />
@@ -17,4 +17,15 @@ export default function Remote({ children }: RemoteProps) {
   );
 }
 
+export type RemoteJobProps = {
+  children?: React.ReactNode;
+};
+
+function Job({ children }: RemoteJobProps) {
+  return <div>Remote NewJob</div>;
+}
+
 const style = css``;
+
+Remote.Job = Job;
+export default Remote;
