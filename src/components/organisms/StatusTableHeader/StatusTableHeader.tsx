@@ -7,8 +7,9 @@ import { convertRemToPixels } from '../../../lib/util/remToPixcels';
 import styled from '@emotion/styled';
 
 export type StatusHeaderProps = {
-  children?: React.ReactNode;
   listCount: number;
+  onClickNewJob: () => void;
+  onClickRefresh: () => void;
 };
 
 const Container = styled(Row)`
@@ -23,16 +24,16 @@ const RegisteredCount = styled(Col)`
 
 const ButtonSection = styled(Col)``;
 
-export default function StatusTableHeader({ children, listCount }: StatusHeaderProps): JSX.Element {
+export default function StatusTableHeader({ listCount, onClickNewJob, onClickRefresh }: StatusHeaderProps) {
   return (
     <Container>
       <RegisteredCount>Registered collection list : {listCount}</RegisteredCount>
       <ButtonSection>
         <Space size={convertRemToPixels(0.5)}>
-          <Button type="primary" icon={<PlusOutlined />} css={btnStyle}>
+          <Button type="primary" icon={<PlusOutlined />} css={btnStyle} onClick={onClickNewJob}>
             New Job
           </Button>
-          <Button type="primary" icon={<ReloadOutlined />} css={btnStyle} />
+          <Button type="primary" icon={<ReloadOutlined />} css={btnStyle} onClick={onClickRefresh} />
         </Space>
       </ButtonSection>
     </Container>

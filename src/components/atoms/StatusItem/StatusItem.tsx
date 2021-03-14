@@ -10,7 +10,7 @@ export type StatusItemProps = {
   onClick?: () => void;
 };
 
-export default function StatusItem({ status, onClick }: StatusItemProps): JSX.Element {
+export default function StatusItem({ status, onClick }: StatusItemProps) {
   return (
     <div onClick={onClick}>
       <Space>

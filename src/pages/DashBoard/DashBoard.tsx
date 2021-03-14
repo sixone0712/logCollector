@@ -1,13 +1,14 @@
-import React from 'react';
 import { css } from '@emotion/react';
-import AppLayout from '../../components/Templates/AppLayout';
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import Status from '../Status';
+import DashBoardBreadcrumb from '../../components/organisms/DashBoardBreadcrumb';
+import DashBoardFooter from '../../components/organisms/DashBoardFooter';
+import DashBoardNavBar from '../../components/organisms/DashBoardHeader';
+import AppLayout from '../../components/Templates/AppLayout';
+import Account from '../Account';
 import Configure from '../Configure';
 import Rules from '../Rules';
-import Account from '../Account';
-import DashBoardNavBar from '../../components/organisms/DashBoardHeader';
-import DashBoardFooter from '../../components/organisms/DashBoardFooter';
+import Status from '../Status';
 
 export type DashBoardProps = {
   children?: React.ReactNode;
@@ -20,6 +21,7 @@ export default function DashBoard({ children }: DashBoardProps) {
         <DashBoardNavBar />
       </AppLayout.Hedaer>
       <AppLayout.Main>
+        {/* <DashBoardBreadcrumb /> */}
         <Switch>
           <Route path={'/status'}>
             <Status />

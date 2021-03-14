@@ -1,4 +1,3 @@
-import { SettingOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import React from 'react';
 import DashBoardBreadcrumb from '../../components/organisms/DashBoardBreadcrumb';
@@ -11,7 +10,7 @@ export default function Configure({ children }: ConfigureProps) {
   return (
     <div css={style}>
       <>
-        <DashBoardBreadcrumb locations={['Configure']} icon={<SettingOutlined />} />
+        <DashBoardBreadcrumb />
         Configure
       </>
     </div>

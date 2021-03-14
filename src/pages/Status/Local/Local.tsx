@@ -1,7 +1,6 @@
-import React from 'react';
 import { css } from '@emotion/react';
+import React from 'react';
 import DashBoardBreadcrumb from '../../../components/organisms/DashBoardBreadcrumb';
-import { PartitionOutlined } from '@ant-design/icons';
 import LocalStatusTable from '../../../components/organisms/LocalStatusTable';
 
 export type LocalProps = {
@@ -11,7 +10,7 @@ export type LocalProps = {
 function Local({ children }: LocalProps) {
   return (
     <div css={style}>
-      <DashBoardBreadcrumb locations={['Status', 'Local']} icon={<PartitionOutlined />} />
+      <DashBoardBreadcrumb />
       <LocalStatusTable />
     </div>
   );
@@ -22,7 +21,12 @@ export type LocalJobProps = {
 };
 
 function Job({ children }: LocalJobProps) {
-  return <div>Remote NewJob</div>;
+  return (
+    <div>
+      <DashBoardBreadcrumb />
+      <div>Local NewJob</div>
+    </div>
+  );
 }
 
 Local.Job = Job;

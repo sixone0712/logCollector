@@ -1,7 +1,6 @@
-import React from 'react';
 import { css } from '@emotion/react';
+import React from 'react';
 import DashBoardBreadcrumb from '../../../components/organisms/DashBoardBreadcrumb';
-import { PartitionOutlined } from '@ant-design/icons';
 import RemoteStatusTable from '../../../components/organisms/RemoteStatusTable';
 
 export type RemoteProps = {
@@ -11,7 +10,7 @@ export type RemoteProps = {
 function Remote({ children }: RemoteProps) {
   return (
     <div css={style}>
-      <DashBoardBreadcrumb locations={['Status', 'Remote']} icon={<PartitionOutlined />} />
+      <DashBoardBreadcrumb />
       <RemoteStatusTable />
     </div>
   );

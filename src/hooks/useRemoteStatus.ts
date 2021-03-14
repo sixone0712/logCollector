@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { RemoteStatus } from '../types/Status';
 
 const data: RemoteStatus[] = [
@@ -124,8 +124,13 @@ const data: RemoteStatus[] = [
 export default function useRemoteStatus() {
   const [remoteList, setRemoteList] = useState(data);
 
+  const refreshRemoteList = useCallback(() => {
+    // TODO:
+  }, []);
+
   return {
     remoteList,
     setRemoteList,
+    refreshRemoteList,
   };
 }

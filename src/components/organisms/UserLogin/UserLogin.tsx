@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { Button, Col, Form, Input, Row } from 'antd';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router';
+import CustomIcon from '../../atoms/CustomIcon';
 
 export type UserLoginProps = {
   children?: React.ReactNode;
@@ -26,13 +27,13 @@ const LoginSection = styled(Row)`
 
 const Title = styled(Col)`
   font-size: 3rem;
-  font-weight: 700;
-  margin-bottom: 3.75rem;
+  /* font-weight: 700; */
+  margin-bottom: 3.125rem;
 `;
 
 const LoginForm = styled(Col)``;
 
-export default function UserLogin({ children }: UserLoginProps): JSX.Element {
+export default function UserLogin({ children }: UserLoginProps) {
   const history = useHistory();
   const onFinish = useCallback(() => {
     history.push('/status/remote');
@@ -41,6 +42,7 @@ export default function UserLogin({ children }: UserLoginProps): JSX.Element {
   return (
     <Container justify="center" align="middle">
       <LoginSection justify="center" align="middle">
+        <CustomIcon name="login_user" css={iconStyle} />
         <Title>Welcome</Title>
         <LoginForm>
           <Form name="normal_login" onFinish={onFinish}>
@@ -61,6 +63,10 @@ export default function UserLogin({ children }: UserLoginProps): JSX.Element {
     </Container>
   );
 }
+
+const iconStyle = css`
+  font-size: 6rem;
+`;
 
 const inputStyle = css`
   width: 25rem;

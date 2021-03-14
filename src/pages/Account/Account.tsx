@@ -1,7 +1,6 @@
-import React from 'react';
 import { css } from '@emotion/react';
+import React from 'react';
 import DashBoardBreadcrumb from '../../components/organisms/DashBoardBreadcrumb';
-import CustomIcon from '../../components/atoms/CustomIcon';
 
 export type AccountProps = {
   children?: React.ReactNode;
@@ -11,7 +10,7 @@ export default function Account({ children }: AccountProps) {
   return (
     <div css={style}>
       <>
-        <DashBoardBreadcrumb locations={['Account']} icon={<CustomIcon name="idcard" />} />
+        <DashBoardBreadcrumb />
         Account
       </>
     </div>

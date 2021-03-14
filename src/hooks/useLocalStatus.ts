@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { LocalStatus } from '../types/Status';
 
 const data: LocalStatus[] = [
@@ -72,8 +72,13 @@ const data: LocalStatus[] = [
 export default function useLocalStatus() {
   const [localList, setLocalList] = useState(data);
 
+  const refreshRemoteList = useCallback(() => {
+    // TODO:
+  }, []);
+
   return {
     localList,
     setLocalList,
+    refreshRemoteList,
   };
 }

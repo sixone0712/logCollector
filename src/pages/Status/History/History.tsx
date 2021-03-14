@@ -1,10 +1,9 @@
-import React from 'react';
 import { css } from '@emotion/react';
-import DashBoardBreadcrumb from '../../../components/organisms/DashBoardBreadcrumb';
-import { PartitionOutlined } from '@ant-design/icons';
+import qs from 'qs';
+import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import BuildHistory from '../../../components/organisms/BuildHistory';
-import qs from 'qs';
+import DashBoardBreadcrumb from '../../../components/organisms/DashBoardBreadcrumb';
 export type HistoryProps = {
   children?: React.ReactNode;
 };
@@ -15,14 +14,10 @@ export default function History({ children }: HistoryProps) {
   const { name } = qs.parse(search, {
     ignoreQueryPrefix: true, // /about?details=true 같은 쿼리 주소의 '?'를 생략해주는 옵션입니다.
   });
-  const item = pathname.includes('/status/remote') ? 'Remote' : 'Local';
 
   return (
     <div css={style}>
-      <DashBoardBreadcrumb
-        locations={['Status', `${item}`, `${name}`, getStatusTableColumnName(type)]}
-        icon={<PartitionOutlined />}
-      />
+      <DashBoardBreadcrumb />
       <BuildHistory type={type} />
     </div>
   );

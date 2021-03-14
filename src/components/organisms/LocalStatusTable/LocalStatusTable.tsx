@@ -55,12 +55,12 @@ const localColumnProps: LocalColumnPropsType = {
   },
 };
 
-export default function LocalStatusTable({ children }: LocalStatusTableProps): JSX.Element {
-  const { localList, setLocalList } = useLocalStatus();
+export default function LocalStatusTable({ children }: LocalStatusTableProps) {
+  const { localList, setLocalList, refreshRemoteList } = useLocalStatus();
   const history = useHistory();
 
   const buildStatusRender = useCallback((value: BuildStatus, record: LocalStatus, index: number) => {
-    const onClick = useCallback(() => history.push(`/status/local/${record.no}?name=${record.siteName}`), []);
+    const onClick = useCallback(() => history.push(`/status/local/history/${record.no}?name=${record.siteName}`), []);
     return <StatusBadge type={value} onClick={onClick} />;
   }, []);
 
@@ -68,7 +68,20 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps): J
     return <DeleteOutlined css={iconStyle} />;
   }, []);
 
-  const titleRender = useCallback(() => <StatusTableHeader listCount={localList.length} />, [localList.length]);
+  const titleRender = useCallback(
+    () => (
+      <StatusTableHeader
+        listCount={localList.length}
+        onClickNewJob={moveToLocalNewJob}
+        onClickRefresh={refreshRemoteList}
+      />
+    ),
+    [localList.length]
+  );
+
+  const moveToLocalNewJob = useCallback(() => {
+    history.push('/status/local/new');
+  }, []);
 
   return (
     <Table<LocalStatus>

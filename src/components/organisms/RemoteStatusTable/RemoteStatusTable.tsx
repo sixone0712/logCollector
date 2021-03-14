@@ -101,8 +101,8 @@ export type RemoteStatusTableProps = {
   children?: React.ReactNode;
 };
 
-export default function RemoteStatusTable({ children }: RemoteStatusTableProps): JSX.Element {
-  const { remoteList, setRemoteList } = useRemoteStatus();
+export default function RemoteStatusTable({ children }: RemoteStatusTableProps) {
+  const { remoteList, setRemoteList, refreshRemoteList } = useRemoteStatus();
   const history = useHistory();
 
   const collectStatusRender = useCallback(
@@ -128,7 +128,7 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps):
   const buildStatusRender = useCallback(
     (value: BuildStatus, record: RemoteStatus, index: number, type?: RemoteStatusType) => {
       const onClick = useCallback(
-        () => history.push(`/status/remote/${type}/${record.no}?name=${record.siteName}`),
+        () => history.push(`/status/remote/history/${type}/${record.no}?name=${record.siteName}`),
         []
       );
       return <StatusBadge type={value} onClick={onClick} />;
@@ -152,7 +152,20 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps):
     return <DeleteOutlined css={iconStyle} />;
   }, []);
 
-  const titleRender = useCallback(() => <StatusTableHeader listCount={remoteList.length} />, [remoteList.length]);
+  const moveToRemoteNewJob = useCallback(() => {
+    history.push('/status/remote/new');
+  }, []);
+
+  const titleRender = useCallback(
+    () => (
+      <StatusTableHeader
+        listCount={remoteList.length}
+        onClickNewJob={moveToRemoteNewJob}
+        onClickRefresh={refreshRemoteList}
+      />
+    ),
+    [remoteList.length]
+  );
 
   return (
     <Table<RemoteStatus>

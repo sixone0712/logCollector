@@ -1,7 +1,6 @@
-import React from 'react';
 import { css } from '@emotion/react';
+import React from 'react';
 import DashBoardBreadcrumb from '../../../components/organisms/DashBoardBreadcrumb';
-import { FileProtectOutlined } from '@ant-design/icons';
 
 export type LogDefinitionProps = {
   children?: React.ReactNode;
@@ -10,7 +9,7 @@ export type LogDefinitionProps = {
 export default function LogDefinition({ children }: LogDefinitionProps) {
   return (
     <div css={style}>
-      <DashBoardBreadcrumb locations={['Rules', 'Log Definition']} icon={<FileProtectOutlined />} />
+      <DashBoardBreadcrumb />
       <div>LogDefinition</div>
     </div>
   );
