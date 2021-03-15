@@ -10,4 +10,4 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 } */
 
-/* @import url(https://fonts.googleapis.com/css?family=Saira:400,100,700); */
+@import './styles/css/saira_100_400_700.css';

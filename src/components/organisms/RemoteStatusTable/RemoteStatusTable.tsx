@@ -36,13 +36,7 @@ const remoteColumnProps: RemoteColumnPropsType = {
   },
   collectStatus: {
     key: 'collectStatus',
-    title: (
-      <ColumnTitle>
-        Status
-        <br />
-        (Collect/Convert/Insert)
-      </ColumnTitle>
-    ),
+    title: <ColumnTitle>Collect/Convert/Insert</ColumnTitle>,
     dataIndex: 'collectStatus',
     align: 'center',
     sorter: {
@@ -128,7 +122,7 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps) 
   const buildStatusRender = useCallback(
     (value: BuildStatus, record: RemoteStatus, index: number, type?: RemoteStatusType) => {
       const onClick = useCallback(
-        () => history.push(`/status/remote/history/${type}/${record.no}?name=${record.siteName}`),
+        () => history.push(`/status/remote/${type}/${record.no}?name=${record.siteName}`),
         []
       );
       return <StatusBadge type={value} onClick={onClick} />;

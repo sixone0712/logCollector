@@ -17,7 +17,7 @@ export default function Status({ children }: StatusProps) {
       <Route path={'/status/remote/new'} exact component={Remote.Job} />
       <Route path={'/status/remote/edit/:id'} exact component={Remote.Job} />
       <Route path={'/status/local/new'} exact component={Local.Job} />
-      <Route path={['/status/remote/history/:type/:id', '/status/local/history/:id']} component={History} />
+      <Route path={['/status/remote/:type/:id', '/status/local/collect/:id']} component={History} />
     </Switch>
   );
 }

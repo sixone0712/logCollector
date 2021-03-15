@@ -9,9 +9,9 @@ import { BrowserRouter } from 'react-router-dom';
 // import '@fontsource/roboto/700.css'; // Weight 700.
 
 //TODO: 폰트 로딩 때문에 폰트가 나중에 바뀜, cdn을 로컬로 가져와서 @fontface로 불러와야 할듯....
-import '@fontsource/saira'; // Defaults to weight 400.
-import '@fontsource/saira/100.css'; // Weight 100.
-import '@fontsource/saira/700.css'; // Weight 700.
+// import '@fontsource/saira'; // Defaults to weight 400.
+// import '@fontsource/saira/100.css'; // Weight 100.
+// import '@fontsource/saira/700.css'; // Weight 700.
 // import 'normalize.css';
 
 ReactDOM.render(

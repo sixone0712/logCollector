@@ -40,7 +40,7 @@ const localColumnProps: LocalColumnPropsType = {
   },
   status: {
     key: 'status',
-    title: <LocalColumnTitle>Status</LocalColumnTitle>,
+    title: <LocalColumnTitle>Collect/Convert/Insert</LocalColumnTitle>,
     dataIndex: 'status',
     align: 'center',
     sorter: {
@@ -60,7 +60,7 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps) {
   const history = useHistory();
 
   const buildStatusRender = useCallback((value: BuildStatus, record: LocalStatus, index: number) => {
-    const onClick = useCallback(() => history.push(`/status/local/history/${record.no}?name=${record.siteName}`), []);
+    const onClick = useCallback(() => history.push(`/status/local/collect/${record.no}?name=${record.siteName}`), []);
     return <StatusBadge type={value} onClick={onClick} />;
   }, []);
 

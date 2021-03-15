@@ -21,7 +21,6 @@ export default function DashBoard({ children }: DashBoardProps) {
         <DashBoardNavBar />
       </AppLayout.Hedaer>
       <AppLayout.Main>
-        {/* <DashBoardBreadcrumb /> */}
         <Switch>
           <Route path={'/status'}>
             <Status />

@@ -24,10 +24,12 @@ export function Header({ children }: AppLayoutProps) {
 
 const headerstyle = css`
   box-shadow: 0rem 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
-  height: 4rem;
+  /* height: 4rem; */
   width: 100%;
   position: fixed;
   z-index: 100;
+  height: 0.071vh;
+  min-height: 4rem;
 `;
 
 export type MainProps = {
@@ -40,6 +42,8 @@ export function Main({ children }: MainProps) {
 
 const mainstyle = css`
   padding: 4rem 3.125rem 0 3.125rem;
+  height: 0.869vh;
+  min-height: 48.875rem;
 `;
 
 export type FooterProps = {
@@ -54,6 +58,8 @@ const footerstyle = css`
   text-align: center;
   padding-top: 1rem;
   padding-bottom: 1rem;
+  height: 0.06vh;
+  min-height: 3.375rem;
 `;
 
 export type ContentsProps = {

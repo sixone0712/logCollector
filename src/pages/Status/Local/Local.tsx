@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import React from 'react';
 import DashBoardBreadcrumb from '../../../components/organisms/DashBoardBreadcrumb';
+import LocalNewJob from '../../../components/organisms/LocalNewJob';
 import LocalStatusTable from '../../../components/organisms/LocalStatusTable';
 
 export type LocalProps = {
@@ -22,9 +23,9 @@ export type LocalJobProps = {
 
 function Job({ children }: LocalJobProps) {
   return (
-    <div>
+    <div css={style}>
       <DashBoardBreadcrumb />
-      <div>Local NewJob</div>
+      <LocalNewJob />
     </div>
   );
 }

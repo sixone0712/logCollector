@@ -27,8 +27,8 @@ const LoginSection = styled(Row)`
 
 const Title = styled(Col)`
   font-size: 3rem;
-  /* font-weight: 700; */
-  margin-bottom: 3.125rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
 `;
 
 const LoginForm = styled(Col)``;

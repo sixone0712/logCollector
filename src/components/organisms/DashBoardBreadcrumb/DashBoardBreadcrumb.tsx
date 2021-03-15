@@ -66,7 +66,7 @@ const getLocationName = (path: string) => {
     case 'history':
       return 'Build History';
     case 'collect':
-      return 'Status(Collect/Convert/Insert)';
+      return 'Collect/Convert/Insert';
     case 'error':
       return 'Send Error Summary';
     case 'cras':
@@ -128,7 +128,7 @@ const getStatusLocation = (params: DashParams, location: DashLocation) => {
 
   if (name) {
     return path.map((item, idx) => {
-      if (idx === path.length - 1) return name as string;
+      if (idx === path.length - 1) return '';
       else return getLocationName(item);
     });
   } else {
