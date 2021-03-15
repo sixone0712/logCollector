@@ -21,11 +21,9 @@ interface DashLocation {
 }
 
 export default function DashBoardBreadcrumb({ children }: DashBoardBreadcrumbProps): JSX.Element {
-  const params = useParams<DashParams>();
   const location = useLocation<DashLocation>();
-  const { icon, locations } = getBreadcrumb(params, location);
+  const { icon, locations } = getBreadcrumb(location);
 
-  console.log('params', params);
   console.log('location', location);
 
   return (
@@ -47,8 +45,10 @@ export default function DashBoardBreadcrumb({ children }: DashBoardBreadcrumbPro
 }
 
 const breadcrumbStyle = css`
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  /* width: 84rem;  */
+  /* background-color: #eff2f5; */
 `;
 
 const getLocationName = (path: string) => {
@@ -88,28 +88,28 @@ const getLocationName = (path: string) => {
   }
 };
 
-const getBreadcrumb = (params: DashParams, location: DashLocation) => {
+const getBreadcrumb = (location: DashLocation) => {
   const { pathname } = location;
 
   if (pathname.startsWith('/status')) {
     return {
       icon: <PartitionOutlined />,
-      locations: getStatusLocation(params, location),
+      locations: getStatusLocation(location),
     };
   } else if (pathname.startsWith('/configure')) {
     return {
       icon: <SettingOutlined />,
-      locations: getConfigureLocation(params, location),
+      locations: getConfigureLocation(location),
     };
   } else if (pathname.startsWith('/rules')) {
     return {
       icon: <FileProtectOutlined />,
-      locations: getRulesLocation(params, location),
+      locations: getRulesLocation(location),
     };
   } else if (pathname.startsWith('/account')) {
     return {
       icon: <CustomIcon name="idcard" />,
-      locations: getAccountLocation(params, location),
+      locations: getAccountLocation(location),
     };
   }
 
@@ -119,7 +119,7 @@ const getBreadcrumb = (params: DashParams, location: DashLocation) => {
   };
 };
 
-const getStatusLocation = (params: DashParams, location: DashLocation) => {
+const getStatusLocation = (location: DashLocation) => {
   const { pathname, search } = location;
   const path = pathname.substring(1).split('/');
   const { name } = qs.parse(search, {
@@ -136,19 +136,19 @@ const getStatusLocation = (params: DashParams, location: DashLocation) => {
   }
 };
 
-const getConfigureLocation = (params: DashParams, location: DashLocation) => {
+const getConfigureLocation = (location: DashLocation) => {
   const { pathname } = location;
   const path = pathname.substring(1).split('/');
   return path.map((item) => getLocationName(item));
 };
 
-const getRulesLocation = (params: DashParams, location: DashLocation) => {
+const getRulesLocation = (location: DashLocation) => {
   const { pathname } = location;
   const path = pathname.substring(1).split('/');
   return path.map((item) => getLocationName(item));
 };
 
-const getAccountLocation = (params: DashParams, location: DashLocation) => {
+const getAccountLocation = (location: DashLocation) => {
   const { pathname } = location;
   const path = pathname.substring(1).split('/');
   return path.map((item) => getLocationName(item));

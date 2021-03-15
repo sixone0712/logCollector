@@ -14,11 +14,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
 const style = css``;
 
-export type HeaderProps = {
-  children?: React.ReactNode;
-};
-
-export function Header({ children }: AppLayoutProps) {
+function Header({ children }: AppLayoutProps) {
   return <AntdHeader css={headerstyle}>{children}</AntdHeader>;
 }
 
@@ -27,30 +23,52 @@ const headerstyle = css`
   /* height: 4rem; */
   width: 100%;
   position: fixed;
-  z-index: 100;
-  height: 0.071vh;
+  z-index: 300;
+  /* height: 7.1vh; */
   min-height: 4rem;
 `;
 
-export type MainProps = {
-  children?: React.ReactNode;
-};
-
-export function Main({ children }: MainProps) {
-  return <AntdContent css={mainstyle}>{children}</AntdContent>;
+function Main({ children }: AppLayoutProps) {
+  return <AntdContent css={mainStyle}>{children}</AntdContent>;
 }
 
-const mainstyle = css`
-  padding: 4rem 3.125rem 0 3.125rem;
-  height: 0.869vh;
+const mainStyle = css`
+  margin: 4rem 3.125rem 0 3.125rem;
+  /* height: 86.9vh;
   min-height: 48.875rem;
+  background-color: #070606; */
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 87rem;
 `;
 
-export type FooterProps = {
-  children?: React.ReactNode;
-};
+function BreadCrumb({ children }: AppLayoutProps) {
+  return <div css={breadCrumbStyle}>{children}</div>;
+}
 
-export function Footer({ children }: FooterProps) {
+const breadCrumbStyle = css`
+  /* height: 6vh; */
+  min-height: 3.375rem;
+  display: flex;
+  width: 87rem;
+`;
+
+function Contents({ children }: AppLayoutProps) {
+  return <div css={contentsStyle}>{children}</div>;
+}
+
+const contentsStyle = css`
+  /* height: 80.889vh; */
+  min-height: 53.25rem;
+  background-color: white;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 1px;
+  width: 87rem;
+`;
+
+export function Footer({ children }: AppLayoutProps) {
   return <AntdFooter css={footerstyle}>{children}</AntdFooter>;
 }
 
@@ -58,24 +76,22 @@ const footerstyle = css`
   text-align: center;
   padding-top: 1rem;
   padding-bottom: 1rem;
-  height: 0.06vh;
+  /* height: 6vh; */
   min-height: 3.375rem;
 `;
 
-export type ContentsProps = {
-  children?: React.ReactNode;
-};
-
-export function Contents({ children }: ContentsProps) {
-  return <AntdContent css={contentsStyle}>{children}</AntdContent>;
+function FullContents({ children }: AppLayoutProps) {
+  return <AntdContent css={fullcontentsStyle}>{children}</AntdContent>;
 }
 
-const contentsStyle = css`
+const fullcontentsStyle = css`
   width: 100%;
   height: 100vh;
 `;
 
 AppLayout.Hedaer = Header;
+Main.BreadCrumb = BreadCrumb;
+Main.Contents = Contents;
 AppLayout.Main = Main;
 AppLayout.Footer = Footer;
-AppLayout.Contents = Contents;
+AppLayout.FullContents = FullContents;

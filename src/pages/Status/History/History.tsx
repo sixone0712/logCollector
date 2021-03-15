@@ -3,7 +3,6 @@ import qs from 'qs';
 import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import BuildHistory from '../../../components/organisms/BuildHistory';
-import DashBoardBreadcrumb from '../../../components/organisms/DashBoardBreadcrumb';
 export type HistoryProps = {
   children?: React.ReactNode;
 };
@@ -17,7 +16,6 @@ export default function History({ children }: HistoryProps) {
 
   return (
     <div css={style}>
-      <DashBoardBreadcrumb />
       <BuildHistory type={type} />
     </div>
   );

@@ -12,11 +12,13 @@ export type LocalConfigureProps = {
 const SelectSiteName = styled(Row)`
   font-size: 1rem;
   flex-wrap: nowrap;
+  /* height: 14.0625rem; */
 `;
 const FileUpload = styled(Row)`
   font-size: 1rem;
-  margin-top: 7.5rem;
+  margin-top: 6.25rem;
   flex-wrap: nowrap;
+  /* height: 14.0625rem; */
 `;
 
 export default function LocalConfigure({ children }: LocalConfigureProps): JSX.Element {
@@ -51,6 +53,7 @@ export default function LocalConfigure({ children }: LocalConfigureProps): JSX.E
           defaultValue="lucy"
           css={css`
             min-width: 33.75rem;
+            text-align: center;
           `}
         >
           <Select.Option value="jack">Jack</Select.Option>

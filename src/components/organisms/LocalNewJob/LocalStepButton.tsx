@@ -11,9 +11,11 @@ export type LocalStepButtonProps = {
   setCurrent: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const Container = styled(Row)`
+const Container = styled.div`
+  display: flex;
   justify-content: space-between;
-  margin-top: 2rem;
+  width: 47.125rem;
+  margin-left: 29.625rem;
 `;
 
 export default function LocalStepButton({ current, setCurrent }: LocalStepButtonProps): JSX.Element {

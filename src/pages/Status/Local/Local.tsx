@@ -11,7 +11,6 @@ export type LocalProps = {
 function Local({ children }: LocalProps) {
   return (
     <div css={style}>
-      <DashBoardBreadcrumb />
       <LocalStatusTable />
     </div>
   );
@@ -24,7 +23,6 @@ export type LocalJobProps = {
 function Job({ children }: LocalJobProps) {
   return (
     <div css={style}>
-      <DashBoardBreadcrumb />
       <LocalNewJob />
     </div>
   );

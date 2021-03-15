@@ -9,9 +9,9 @@ export type LoginProps = {
 
 export default function Login({ children }: LoginProps) {
   return (
-    <AppLayout.Contents>
+    <AppLayout.FullContents>
       <UserLogin />
-    </AppLayout.Contents>
+    </AppLayout.FullContents>
   );
 }
 

@@ -21,20 +21,25 @@ export default function DashBoard({ children }: DashBoardProps) {
         <DashBoardNavBar />
       </AppLayout.Hedaer>
       <AppLayout.Main>
-        <Switch>
-          <Route path={'/status'}>
-            <Status />
-          </Route>
-          <Route path={'/configure'}>
-            <Configure />
-          </Route>
-          <Route path={'/rules'}>
-            <Rules />
-          </Route>
-          <Route path={'/account'}>
-            <Account />
-          </Route>
-        </Switch>
+        <AppLayout.Main.BreadCrumb>
+          <DashBoardBreadcrumb />
+        </AppLayout.Main.BreadCrumb>
+        <AppLayout.Main.Contents>
+          <Switch>
+            <Route path={'/status'}>
+              <Status />
+            </Route>
+            <Route path={'/configure'}>
+              <Configure />
+            </Route>
+            <Route path={'/rules'}>
+              <Rules />
+            </Route>
+            <Route path={'/account'}>
+              <Account />
+            </Route>
+          </Switch>
+        </AppLayout.Main.Contents>
       </AppLayout.Main>
       <AppLayout.Footer>
         <DashBoardFooter />

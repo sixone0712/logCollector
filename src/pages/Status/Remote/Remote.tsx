@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
 import React from 'react';
-import DashBoardBreadcrumb from '../../../components/organisms/DashBoardBreadcrumb';
 import RemoteStatusTable from '../../../components/organisms/RemoteStatusTable';
 
 export type RemoteProps = {
@@ -10,7 +9,6 @@ export type RemoteProps = {
 function Remote({ children }: RemoteProps) {
   return (
     <div css={style}>
-      <DashBoardBreadcrumb />
       <RemoteStatusTable />
     </div>
   );

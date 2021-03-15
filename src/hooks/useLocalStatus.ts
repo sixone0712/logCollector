@@ -67,6 +67,56 @@ const data: LocalStatus[] = [
     siteName: 'BSOT_13',
     status: 'success',
   },
+  {
+    no: 14,
+    siteName: 'BSOT_13',
+    status: 'success',
+  },
+  {
+    no: 15,
+    siteName: 'BSOT_13',
+    status: 'success',
+  },
+  {
+    no: 16,
+    siteName: 'BSOT_13',
+    status: 'success',
+  },
+  {
+    no: 17,
+    siteName: 'BSOT_13',
+    status: 'success',
+  },
+  {
+    no: 18,
+    siteName: 'BSOT_13',
+    status: 'success',
+  },
+  {
+    no: 19,
+    siteName: 'BSOT_13',
+    status: 'success',
+  },
+  {
+    no: 20,
+    siteName: 'BSOT_13',
+    status: 'success',
+  },
+  {
+    no: 21,
+    siteName: 'BSOT_13',
+    status: 'success',
+  },
+  {
+    no: 22,
+    siteName: 'BSOT_13',
+    status: 'success',
+  },
+  {
+    no: 23,
+    siteName: 'BSOT_13',
+    status: 'success',
+  },
 ];
 
 export default function useLocalStatus() {

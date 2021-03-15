@@ -8,6 +8,9 @@ const globalStyle = css`
     /* font-family: 'Roboto', sans-serif; */
     font-family: 'Saira', sans-serif;
   }
+  body {
+    background-color: #eff2f5;
+  }
 `;
 
 export default globalStyle;

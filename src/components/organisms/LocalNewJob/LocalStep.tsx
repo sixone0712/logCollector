@@ -29,7 +29,7 @@ export default function LocalStep({ current }: LocalStepProps): JSX.Element {
       css={css`
         min-width: 16.875rem;
         width: 16.875rem;
-        height: 19.5rem;
+        height: 28.125rem;
         flex-wrap: nowrap;
       `}
     >
