@@ -1,24 +1,34 @@
-import React, { useCallback } from 'react';
 import { css } from '@emotion/react';
-import { Button, Row } from 'antd';
 import styled from '@emotion/styled';
-import LocalStep from './LocalStep';
-import { LOCAL_STEP } from './LocalNewJob';
+import { Button, Col, Space } from 'antd';
+import React, { useCallback } from 'react';
 
-export type LocalStepButtonProps = {
+export type StopButtonProps = {
   children?: React.ReactNode;
   current: number;
   setCurrent: React.Dispatch<React.SetStateAction<number>>;
+  lastStep: number;
+  prevAction?: () => void;
+  nextAction?: () => void;
+  lastAction: () => void;
 };
 
-const Container = styled.div`
-  display: flex;
+const Container = styled(Col)`
+  /* display: flex;
   justify-content: space-between;
   width: 47.125rem;
-  margin-left: 29.625rem;
+  margin-left: 29.375rem;
+  margin-right: 1.75rem; */
 `;
 
-export default function LocalStepButton({ current, setCurrent }: LocalStepButtonProps): JSX.Element {
+export default function StopButton({
+  current,
+  setCurrent,
+  lastStep,
+  prevAction,
+  nextAction,
+  lastAction,
+}: StopButtonProps): JSX.Element {
   const onNext = useCallback(() => {
     setCurrent((prevState) => prevState + 1);
   }, [current, setCurrent]);
@@ -29,28 +39,28 @@ export default function LocalStepButton({ current, setCurrent }: LocalStepButton
 
   return (
     <Container>
-      {current === LOCAL_STEP.CONFIGURE && (
-        <>
-          <div></div>
-          <Button type="primary" css={btnStyle} onClick={onNext}>
-            Next
-          </Button>
-        </>
-      )}
-      {current > LOCAL_STEP.CONFIGURE && (
-        <>
+      <Space>
+        {current > 0 && (
           <Button type="primary" css={btnStyle} onClick={onPrev}>
             Prev
           </Button>
+        )}
+        {current < lastStep && (
           <Button type="primary" css={btnStyle} onClick={onNext}>
+            Next
+          </Button>
+        )}
+        {current >= lastStep && (
+          <Button type="primary" css={btnStyle} onClick={lastAction}>
             Add
           </Button>
-        </>
-      )}
+        )}
+      </Space>
     </Container>
   );
 }
 
 const btnStyle = css`
   border-radius: 0.625rem;
+  width: 4rem;
 `;

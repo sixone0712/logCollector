@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { LocalStatus } from '../types/Status';
 
-const data: LocalStatus[] = [
+export const localStatusData: LocalStatus[] = [
   {
     no: 1,
     siteName: 'GKC_BQ',
@@ -120,7 +120,7 @@ const data: LocalStatus[] = [
 ];
 
 export default function useLocalStatus() {
-  const [localList, setLocalList] = useState(data);
+  const [localList, setLocalList] = useState(localStatusData);
 
   const refreshRemoteList = useCallback(() => {
     // TODO:

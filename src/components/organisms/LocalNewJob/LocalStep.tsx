@@ -27,10 +27,11 @@ export default function LocalStep({ current }: LocalStepProps): JSX.Element {
       current={current}
       direction="vertical"
       css={css`
-        min-width: 16.875rem;
         width: 16.875rem;
         height: 28.125rem;
         flex-wrap: nowrap;
+        border-right: 1px solid #d9d9d9;
+        padding-top: 4.125rem;
       `}
     >
       <Steps.Step title="Configure" description={getDescription(LOCAL_STEP.CONFIGURE)} />

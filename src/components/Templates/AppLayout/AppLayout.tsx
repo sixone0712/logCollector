@@ -26,6 +26,7 @@ const headerstyle = css`
   z-index: 300;
   /* height: 7.1vh; */
   min-height: 4rem;
+  min-width: 90rem;
 `;
 
 function Main({ children }: AppLayoutProps) {
@@ -33,7 +34,7 @@ function Main({ children }: AppLayoutProps) {
 }
 
 const mainStyle = css`
-  margin: 4rem 3.125rem 0 3.125rem;
+  padding: 4rem 3.125rem 0 3.125rem;
   /* height: 86.9vh;
   min-height: 48.875rem;
   background-color: #070606; */
@@ -41,7 +42,7 @@ const mainStyle = css`
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 87rem;
+  min-width: 90rem;
 `;
 
 function BreadCrumb({ children }: AppLayoutProps) {
@@ -52,7 +53,7 @@ const breadCrumbStyle = css`
   /* height: 6vh; */
   min-height: 3.375rem;
   display: flex;
-  width: 87rem;
+  min-width: 87rem;
 `;
 
 function Contents({ children }: AppLayoutProps) {
@@ -65,7 +66,7 @@ const contentsStyle = css`
   background-color: white;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 1px;
-  width: 87rem;
+  min-width: 87rem;
 `;
 
 export function Footer({ children }: AppLayoutProps) {
