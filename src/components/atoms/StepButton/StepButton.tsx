@@ -8,9 +8,7 @@ export type StopButtonProps = {
   current: number;
   setCurrent: React.Dispatch<React.SetStateAction<number>>;
   lastStep: number;
-  prevAction?: () => void;
-  nextAction?: () => void;
-  lastAction: () => void;
+  nextAction: () => boolean;
 };
 
 const Container = styled(Col)`
@@ -21,17 +19,12 @@ const Container = styled(Col)`
   margin-right: 1.75rem; */
 `;
 
-export default function StopButton({
-  current,
-  setCurrent,
-  lastStep,
-  prevAction,
-  nextAction,
-  lastAction,
-}: StopButtonProps): JSX.Element {
+export default function StopButton({ current, setCurrent, lastStep, nextAction }: StopButtonProps): JSX.Element {
   const onNext = useCallback(() => {
-    setCurrent((prevState) => prevState + 1);
-  }, [current, setCurrent]);
+    if (nextAction()) {
+      setCurrent((prevState) => prevState + 1);
+    }
+  }, [current, setCurrent, nextAction]);
 
   const onPrev = useCallback(() => {
     setCurrent((prevState) => prevState - 1);
@@ -51,7 +44,7 @@ export default function StopButton({
           </Button>
         )}
         {current >= lastStep && (
-          <Button type="primary" css={btnStyle} onClick={lastAction}>
+          <Button type="primary" css={btnStyle} onClick={onNext}>
             Add
           </Button>
         )}

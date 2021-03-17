@@ -2,11 +2,12 @@ import { DesktopOutlined, NotificationOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Col, PageHeader, Row, Space } from 'antd';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import StepButton from '../../atoms/StepButton';
 import LocalConfirm from './LocalConfirm';
 import LocalConfigure from './LocalConfigure';
 import LocalStep from './LocalStep';
+import { createImportSpecifier } from 'typescript';
 
 export type LocalNewJobProps = {
   children?: React.ReactNode;
@@ -51,6 +52,24 @@ export const LOCAL_STEP = {
 
 export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element {
   const [current, setCurrent] = useState(0);
+  const [selectSite, setSelectSite] = useState('default');
+  const [uploadFiles, setUploadFiles] = useState<any>([]);
+
+  console.log('uploadFiles', uploadFiles);
+  console.log('selectSite', selectSite);
+
+  const nextAction = useCallback(() => {
+    if (current === LOCAL_STEP.CONFIGURE) {
+      if (selectSite === 'default') {
+        console.log('need to select site');
+        return false;
+      } else if (uploadFiles.length === 0) {
+        console.log('need to upload files');
+        return false;
+      }
+    }
+    return true;
+  }, [current, selectSite, uploadFiles]);
 
   return (
     <Container>
@@ -64,13 +83,18 @@ export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element
               current={current}
               setCurrent={setCurrent}
               lastStep={LOCAL_STEP.CONFIRM}
-              lastAction={() => {
-                console.log('lastAction');
-              }}
+              nextAction={nextAction}
             />
           </SettingsTitle>
           <Main>
-            {current === LOCAL_STEP.CONFIGURE && <LocalConfigure />}
+            {current === LOCAL_STEP.CONFIGURE && (
+              <LocalConfigure
+                selectSite={selectSite}
+                setSelectSite={setSelectSite}
+                uploadFiles={uploadFiles}
+                setUploadFiles={setUploadFiles}
+              />
+            )}
             {current > LOCAL_STEP.CONFIGURE && <LocalConfirm />}
           </Main>
         </Settings>

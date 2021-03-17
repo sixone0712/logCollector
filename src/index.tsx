@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 // import '@fontsource/roboto'; // Defaults to weight 400.
 // import '@fontsource/roboto/100.css'; // Weight 100.
 // import '@fontsource/roboto/700.css'; // Weight 700.
@@ -14,11 +16,16 @@ import { BrowserRouter } from 'react-router-dom';
 // import '@fontsource/saira/700.css'; // Weight 700.
 // import 'normalize.css';
 
+const queryClient = new QueryClient();
+
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -5,9 +5,16 @@ import { DesktopOutlined, FileAddOutlined, InboxOutlined } from '@ant-design/ico
 import { Upload, message } from 'antd';
 import styled from '@emotion/styled';
 import useAddLocalJob from '../../../hooks/useAddLocalJob';
+import { useQuery } from 'react-query';
+import axios from 'axios';
+import { SiteDB } from '../../../types/ConfigDB';
 
 export type LocalConfigureProps = {
   children?: React.ReactNode;
+  selectSite: string;
+  setSelectSite: React.Dispatch<string>;
+  uploadFiles: any;
+  setUploadFiles: React.Dispatch<any>;
 };
 
 const SelectSiteName = styled(Row)`
@@ -22,19 +29,32 @@ const FileUpload = styled(Row)`
   /* height: 14.0625rem; */
 `;
 
-export default function LocalConfigure({ children }: LocalConfigureProps): JSX.Element {
-  const [fileList, setFileList] = useState<any>([]);
+const requestSiteList = async () => {
+  try {
+    const { data } = await axios.get<SiteDB[]>('/api/sitelist');
+    return data;
+  } catch (e) {
+    return e;
+  }
+};
 
-  const { getSiteList } = useAddLocalJob();
+export default function LocalConfigure({
+  selectSite,
+  setSelectSite,
+  uploadFiles,
+  setUploadFiles,
+}: LocalConfigureProps): JSX.Element {
+  const { data } = useQuery<SiteDB[]>('sitelist', requestSiteList);
+
   const props = {
     name: 'file',
     multiple: true,
     beforeUpload: (file: any) => {
       console.log('file', file);
-      setFileList((prevState: any) => [...prevState, file]);
+      setUploadFiles((prevState: any) => [...prevState, file]);
       return false;
     },
-    fileList,
+    uploadFiles,
   };
   return (
     <>
@@ -43,10 +63,10 @@ export default function LocalConfigure({ children }: LocalConfigureProps): JSX.E
           <DesktopOutlined />
           <span>Select Site</span>
         </Space>
-        <Select css={selectStyle} placeholder="Select a site">
-          {getSiteList.map((item) => (
-            <Select.Option key={item.no} value={item.siteName}>
-              {item.siteName}
+        <Select css={selectStyle} value={selectSite} placeholder="Select a site" onChange={setSelectSite}>
+          {data?.map((item) => (
+            <Select.Option key={item.id} value={item.site_name}>
+              {item.site_name}
             </Select.Option>
           ))}
         </Select>
