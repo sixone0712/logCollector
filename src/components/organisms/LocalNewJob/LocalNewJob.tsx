@@ -8,7 +8,7 @@ import useAddLocalJob from '../../../hooks/useAddLocalJob';
 import StepButton from '../../atoms/StepButton';
 import LocalConfigure from './LocalConfigure';
 import LocalConfirm from './LocalConfirm';
-import LocalStep from './LocalStep';
+import SideSteps from '../../atoms/SideSteps/SideSteps';
 
 export type LocalNewJobProps = {
   children?: React.ReactNode;
@@ -51,13 +51,23 @@ export const LOCAL_STEP = {
   CONFIRM: 1,
 };
 
+export const localStepList = ['Configure', 'Confirm'];
+
 export const LOCAL_ERROR = {
   NOT_SELECTED_SITE: 0,
   NOT_UPLOADED_FILES: 1,
 };
 
 export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element {
-  const { current, setCurrent, selectSite, setSelectSite, uploadFiles, setUploadFiles } = useAddLocalJob();
+  const {
+    current,
+    setCurrent,
+    selectSite,
+    setSelectSite,
+    uploadFiles,
+    setUploadFiles,
+    reqAddLocalJob,
+  } = useAddLocalJob();
   const [modal, contextHolder] = Modal.useModal();
   const history = useHistory();
 
@@ -86,6 +96,7 @@ export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element
       title: 'Add Local Job',
       content: 'Are you sure to add local job?',
       onOk() {
+        reqAddLocalJob();
         onBack();
       },
       onCancel() {
@@ -95,19 +106,23 @@ export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element
   }, []);
 
   const nextAction = useCallback(() => {
-    if (current === LOCAL_STEP.CONFIGURE) {
-      if (selectSite === 'Select a site') {
-        modalWarning(LOCAL_ERROR.NOT_SELECTED_SITE);
+    switch (current) {
+      case LOCAL_STEP.CONFIGURE:
+        if (selectSite === undefined) {
+          modalWarning(LOCAL_ERROR.NOT_SELECTED_SITE);
+          return false;
+        }
+        if (uploadFiles.length === 0) {
+          modalWarning(LOCAL_ERROR.NOT_UPLOADED_FILES);
+          return false;
+        }
+        break;
+      case LOCAL_STEP.CONFIRM:
+        modalConfirm();
+        break;
+      default:
         return false;
-      } else if (uploadFiles.length === 0) {
-        modalWarning(LOCAL_ERROR.NOT_UPLOADED_FILES);
-        return false;
-      }
-    } else {
-      modalConfirm();
-      return true;
     }
-
     return true;
   }, [current, selectSite, uploadFiles]);
 
@@ -119,7 +134,7 @@ export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element
     <Container>
       <PageHeader onBack={onBack} title="Item Setting(Local)" />
       <Contents>
-        <LocalStep current={current} />
+        <SideSteps current={current} stepList={localStepList} />
         <Settings>
           <SettingsTitle justify="space-between" align="middle">
             <Title current={current} />
@@ -177,5 +192,3 @@ function getTitle(current: number) {
       };
   }
 }
-
-const style = css``;

@@ -6,6 +6,7 @@ import { NextFunction, Request, Response } from 'express';
 import morgan = require('morgan');
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
+import local from './routes/local';
 import settingdb from './routes/settingdb';
 import sitelist from './routes/sitelist';
 
@@ -14,6 +15,8 @@ createConnection()
   .then(() => {
     console.log('Database Connected :)');
     const app = express();
+
+    app.use(cors());
 
     // middlewares
     app.set('port', process.env.PORT || 3001);
@@ -33,6 +36,7 @@ createConnection()
     //   })
     // );
 
+    app.use('/api/local', local);
     app.use('/api/sitelist', sitelist);
     app.get('/test', async (req: Request, res: Response, next: NextFunction) => {
       console.log('test');

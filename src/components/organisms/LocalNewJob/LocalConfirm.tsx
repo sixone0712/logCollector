@@ -10,7 +10,7 @@ export type LocalConfirmProps = {
   uploadFiles: any;
 };
 
-const SelectSiteName = styled(Row)`
+const SiteName = styled(Row)`
   font-size: 1rem;
   flex-wrap: nowrap;
 `;
@@ -20,27 +20,39 @@ const FileUpload = styled(Row)`
   flex-wrap: nowrap;
 `;
 
-const SelectedItem = styled(Col)``;
+const SelectedSite = styled(Col)``;
+const UploadFiles = styled(Col)``;
+const UploadFileCount = styled(Row)``;
+const UploadFileList = styled(Row)`
+  margin-left: 0.5rem;
+`;
 
 export default function LocalConfirm({ selectSite, uploadFiles }: LocalConfirmProps): JSX.Element {
   return (
     <>
-      <SelectSiteName align="middle">
+      <SiteName align="middle">
         <Space css={spaceStyle}>
           <DesktopOutlined />
           <span>Select Site</span>
         </Space>
-        <SelectedItem>{selectSite}</SelectedItem>
-      </SelectSiteName>
-      <FileUpload align="middle">
+        <SelectedSite>{selectSite}</SelectedSite>
+      </SiteName>
+      <FileUpload align="top">
         <Space css={spaceStyle}>
           <FileAddOutlined />
           <span>Load File</span>
         </Space>
-        <SelectedItem>{uploadFiles.length} Files</SelectedItem>
-        {uploadFiles.map((item: any) => (
-          <Row key={item.uuid}>{item.name as string}</Row>
-        ))}
+        <UploadFiles>
+          <UploadFileCount>{uploadFiles.length} Files</UploadFileCount>
+          {uploadFiles.map((item: any) => (
+            <UploadFileList key={item.uid}>
+              <Space>
+                <span>•</span>
+                {item.name as string}
+              </Space>
+            </UploadFileList>
+          ))}
+        </UploadFiles>
       </FileUpload>
     </>
   );

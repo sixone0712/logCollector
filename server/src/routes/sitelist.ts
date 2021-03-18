@@ -15,7 +15,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 
   console.log(posts);
   console.log('start');
-  await sleep(5000);
+  await sleep(2000);
   console.log('end');
 
   // return loaded posts

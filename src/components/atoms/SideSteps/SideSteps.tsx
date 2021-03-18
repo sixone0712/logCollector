@@ -1,14 +1,14 @@
-import React, { useCallback, useState } from 'react';
 import { css } from '@emotion/react';
 import { Steps } from 'antd';
-import { LOCAL_STEP } from './LocalNewJob';
+import React, { useCallback } from 'react';
 
-export type LocalStepProps = {
+export type SideStepsProps = {
   children?: React.ReactNode;
   current: number;
+  stepList: string[];
 };
 
-export default function LocalStep({ current }: LocalStepProps): JSX.Element {
+export default function SideSteps({ current, stepList }: SideStepsProps): JSX.Element {
   const getDescription = useCallback(
     (step: number) => {
       if (current === step) {
@@ -34,8 +34,7 @@ export default function LocalStep({ current }: LocalStepProps): JSX.Element {
         padding-top: 4.125rem;
       `}
     >
-      <Steps.Step title="Configure" description={getDescription(LOCAL_STEP.CONFIGURE)} />
-      <Steps.Step title="Confirm" description={getDescription(LOCAL_STEP.CONFIRM)} />
+      {stepList && stepList.map((item, idx) => <Steps.Step key={idx} title={item} description={getDescription(idx)} />)}
     </Steps>
   );
 }

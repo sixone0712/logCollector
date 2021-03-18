@@ -21,13 +21,13 @@ const Container = styled(Col)`
 
 export default function StopButton({ current, setCurrent, lastStep, nextAction }: StopButtonProps): JSX.Element {
   const onNext = useCallback(() => {
-    if (nextAction()) {
+    if (current <= lastStep && nextAction()) {
       setCurrent((prevState) => prevState + 1);
     }
   }, [current, setCurrent, nextAction]);
 
   const onPrev = useCallback(() => {
-    setCurrent((prevState) => prevState - 1);
+    if (current > 0) setCurrent((prevState) => prevState - 1);
   }, [current, setCurrent]);
 
   return (

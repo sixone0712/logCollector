@@ -40,7 +40,7 @@ export default function LocalConfigure({
   uploadFiles,
   setUploadFiles,
 }: LocalConfigureProps): JSX.Element {
-  const { isLoading, isError, data, error, status, isFetching } = useQuery<SiteDB[]>('sitelist', requestSiteList, {
+  const { isLoading, isError, data, error, status, isFetching } = useQuery<SiteDB[]>('site/getList', requestSiteList, {
     // refetchOnMount: false,
     refetchOnWindowFocus: false,
     // refetchOnMount: true,
