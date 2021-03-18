@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { Col, Row, Select, Space } from 'antd';
 import { DesktopOutlined, FileAddOutlined, InboxOutlined } from '@ant-design/icons';
@@ -11,7 +11,7 @@ import { SiteDB } from '../../../types/ConfigDB';
 
 export type LocalConfigureProps = {
   children?: React.ReactNode;
-  selectSite: string;
+  selectSite: string | undefined;
   setSelectSite: React.Dispatch<string>;
   uploadFiles: any;
   setUploadFiles: React.Dispatch<any>;
@@ -44,7 +44,7 @@ export default function LocalConfigure({
   uploadFiles,
   setUploadFiles,
 }: LocalConfigureProps): JSX.Element {
-  const { data } = useQuery<SiteDB[]>('sitelist', requestSiteList);
+  const { data } = useQuery<SiteDB[]>('sitelist', requestSiteList, { refetchOnMount: true });
 
   const props = {
     name: 'file',
@@ -55,7 +55,16 @@ export default function LocalConfigure({
       return false;
     },
     uploadFiles,
+    defaultFileList: uploadFiles,
   };
+
+  useEffect(() => {
+    console.log('useEffect');
+    return () => {
+      console.log('useEffect clean');
+    };
+  }, []);
+
   return (
     <>
       <SelectSiteName align="top">
@@ -63,7 +72,13 @@ export default function LocalConfigure({
           <DesktopOutlined />
           <span>Select Site</span>
         </Space>
-        <Select css={selectStyle} value={selectSite} placeholder="Select a site" onChange={setSelectSite}>
+        <Select
+          css={selectStyle(selectSite)}
+          value={selectSite}
+          placeholder="Select a site"
+          onSelect={setSelectSite}
+          onChange={(value) => console.log('onChange', value)}
+        >
           {data?.map((item) => (
             <Select.Option key={item.id} value={item.site_name}>
               {item.site_name}
@@ -95,10 +110,13 @@ const spaceStyle = css`
   /* font-size: 1.25rem; */
 `;
 
-const selectStyle = css`
+const selectStyle = (onSelect: string | undefined) => css`
   min-width: 33.75rem;
   text-align: center;
   font-size: inherit;
+  .ant-select-selection-item {
+    color: ${onSelect === 'Select a site' && '#bfbfbf'};
+  }
 `;
 
 const uploadContextsStyle = css`

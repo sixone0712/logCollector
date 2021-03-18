@@ -6,7 +6,8 @@ import { Upload, message } from 'antd';
 import styled from '@emotion/styled';
 
 export type LocalConfirmProps = {
-  children?: React.ReactNode;
+  selectSite: string;
+  uploadFiles: any;
 };
 
 const SelectSiteName = styled(Row)`
@@ -21,7 +22,7 @@ const FileUpload = styled(Row)`
 
 const SelectedItem = styled(Col)``;
 
-export default function LocalConfirm({ children }: LocalConfirmProps): JSX.Element {
+export default function LocalConfirm({ selectSite, uploadFiles }: LocalConfirmProps): JSX.Element {
   return (
     <>
       <SelectSiteName align="middle">
@@ -29,14 +30,14 @@ export default function LocalConfirm({ children }: LocalConfirmProps): JSX.Eleme
           <DesktopOutlined />
           <span>Select Site</span>
         </Space>
-        <SelectedItem>GKC_BQ</SelectedItem>
+        <SelectedItem>{selectSite}</SelectedItem>
       </SelectSiteName>
       <FileUpload align="middle">
         <Space css={spaceStyle}>
           <FileAddOutlined />
           <span>Load File</span>
         </Space>
-        <SelectedItem>3 Files</SelectedItem>
+        <SelectedItem>{uploadFiles.length} Files</SelectedItem>
       </FileUpload>
     </>
   );

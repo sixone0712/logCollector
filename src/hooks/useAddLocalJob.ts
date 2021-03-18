@@ -1,10 +1,17 @@
 import React, { useCallback, useState } from 'react';
-import { localStatusData } from './useLocalStatus';
+import { LOCAL_STEP } from '../components/organisms/LocalNewJob/LocalNewJob';
 
 export default function useAddLocalJob() {
-  const [getSiteList] = useState(localStatusData);
+  const [current, setCurrent] = useState(0);
+  const [selectSite, setSelectSite] = useState('Select a site');
+  const [uploadFiles, setUploadFiles] = useState<any>([]);
 
   return {
-    getSiteList,
+    current,
+    setCurrent,
+    selectSite,
+    setSelectSite,
+    uploadFiles,
+    setUploadFiles,
   };
 }
