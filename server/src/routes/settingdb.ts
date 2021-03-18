@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import express = require('express');
 import { getConnection, getManager } from 'typeorm';
 import { SettingDB } from '../entity/SettingDB';
+import sleep from '../utils/sleep';
 
 const router = express.Router();
 

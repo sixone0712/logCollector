@@ -30,12 +30,8 @@ const FileUpload = styled(Row)`
 `;
 
 const requestSiteList = async () => {
-  try {
-    const { data } = await axios.get<SiteDB[]>('/api/sitelist');
-    return data;
-  } catch (e) {
-    return e;
-  }
+  const { data } = await axios.get<SiteDB[]>('/api/sitelist');
+  return data;
 };
 
 export default function LocalConfigure({
@@ -44,7 +40,18 @@ export default function LocalConfigure({
   uploadFiles,
   setUploadFiles,
 }: LocalConfigureProps): JSX.Element {
-  const { data } = useQuery<SiteDB[]>('sitelist', requestSiteList, { refetchOnMount: true });
+  const { isLoading, isError, data, error, status, isFetching } = useQuery<SiteDB[]>('sitelist', requestSiteList, {
+    // refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    // refetchOnMount: true,
+    // initialData: [],
+  });
+  console.log('data', data);
+  console.log('isLoading', isLoading);
+  console.log('isError', isError);
+  console.log('error', error);
+  console.log('status', status);
+  console.log('isFetching', isFetching);
 
   const props = {
     name: 'file',
@@ -73,11 +80,14 @@ export default function LocalConfigure({
           <span>Select Site</span>
         </Space>
         <Select
+          showSearch
           css={selectStyle(selectSite)}
           value={selectSite}
           placeholder="Select a site"
           onSelect={setSelectSite}
-          onChange={(value) => console.log('onChange', value)}
+          loading={isFetching}
+          optionFilterProp="children"
+          filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           {data?.map((item) => (
             <Select.Option key={item.id} value={item.site_name}>
@@ -114,9 +124,9 @@ const selectStyle = (onSelect: string | undefined) => css`
   min-width: 33.75rem;
   text-align: center;
   font-size: inherit;
-  .ant-select-selection-item {
+  /* .ant-select-selection-item {
     color: ${onSelect === 'Select a site' && '#bfbfbf'};
-  }
+  } */
 `;
 
 const uploadContextsStyle = css`

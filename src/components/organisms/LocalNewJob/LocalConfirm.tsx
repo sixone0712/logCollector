@@ -6,7 +6,7 @@ import { Upload, message } from 'antd';
 import styled from '@emotion/styled';
 
 export type LocalConfirmProps = {
-  selectSite: string;
+  selectSite: string | undefined;
   uploadFiles: any;
 };
 
@@ -38,6 +38,9 @@ export default function LocalConfirm({ selectSite, uploadFiles }: LocalConfirmPr
           <span>Load File</span>
         </Space>
         <SelectedItem>{uploadFiles.length} Files</SelectedItem>
+        {uploadFiles.map((item: any) => (
+          <Row key={item.uuid}>{item.name as string}</Row>
+        ))}
       </FileUpload>
     </>
   );

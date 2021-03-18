@@ -39,7 +39,7 @@ createConnection()
       res.end('1234');
     });
 
-    app.listen(3002, () => console.log(`BillyZip App Listening on PORT 3001`));
+    app.listen(3001, () => console.log(`BillyZip App Listening on PORT 3001`));
   })
   .catch((error) => console.log(error));
 
