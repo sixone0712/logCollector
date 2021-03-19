@@ -2,6 +2,7 @@ import * as express from 'express';
 import { NextFunction, Request, Response } from 'express';
 import * as multer from 'multer';
 import * as path from 'path';
+import sleep from '../utils/sleep';
 
 const router = express.Router();
 
@@ -16,8 +17,9 @@ const upload = multer({
   }),
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   console.log('addjob');
+  await sleep(5000);
   res.send({ id: '1234' });
 });
 

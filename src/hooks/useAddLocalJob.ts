@@ -1,7 +1,8 @@
 import { notification } from 'antd';
 import axios from 'axios';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
+import { openNotification } from '../lib/util/notification';
 
 interface LocalJobType {
   siteName: string;
@@ -21,29 +22,32 @@ export default function useAddLocalJob() {
   const [current, setCurrent] = useState(0);
   const [selectSite, setSelectSite] = useState<string | undefined>();
   const [uploadFiles, setUploadFiles] = useState<any>([]);
-
-  const makeRequestData = () => ({
-    siteName: selectSite === undefined ? '' : selectSite,
-    files: uploadFiles.map((item: any) => item.file),
-  });
+  const refAddJobFetching = useRef(false);
 
   const mutation = useMutation((data: LocalJobType) => requestAddLocalJob(data), {
-    onSuccess: () =>
-      notification['success']({
-        message: 'Success',
-        description: 'Completed to add local job',
-      }),
-    onError: () =>
-      notification['error']({
-        message: 'Error',
-        description: 'Failed to add local job',
-      }),
+    mutationKey: 'local/addjob',
+    onSuccess: () => openNotification('success', 'Success', 'Completed to add local job'),
+    onError: () => openNotification('error', 'Error', 'Failed to add local job'),
   });
 
-  const reqAddLocalJob = () => {
+  console.log('mutation.isLoading', mutation.isLoading);
+
+  const makeRequestData = useCallback(
+    () => ({
+      siteName: selectSite === undefined ? '' : selectSite,
+      files: uploadFiles.map((item: any) => item.file),
+    }),
+    [selectSite, uploadFiles]
+  );
+
+  const reqAddLocalJob = useCallback(() => {
     const reqData = makeRequestData();
     mutation.mutate(reqData);
-  };
+  }, [mutation]);
+
+  useEffect(() => {
+    refAddJobFetching.current = mutation.isLoading;
+  }, [mutation.isLoading]);
 
   return {
     current,
@@ -53,5 +57,7 @@ export default function useAddLocalJob() {
     uploadFiles,
     setUploadFiles,
     reqAddLocalJob,
+    refAddJobFetching,
+    isLoading: mutation.isLoading,
   };
 }

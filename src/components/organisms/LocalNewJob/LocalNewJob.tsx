@@ -1,14 +1,14 @@
 import { DesktopOutlined, NotificationOutlined } from '@ant-design/icons';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Col, Modal, PageHeader, Row, Space } from 'antd';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router';
 import useAddLocalJob from '../../../hooks/useAddLocalJob';
+import { waitGenerator } from '../../../hooks/useWaitFetching';
+import SideSteps from '../../atoms/SideSteps/SideSteps';
 import StepButton from '../../atoms/StepButton';
 import LocalConfigure from './LocalConfigure';
 import LocalConfirm from './LocalConfirm';
-import SideSteps from '../../atoms/SideSteps/SideSteps';
 
 export type LocalNewJobProps = {
   children?: React.ReactNode;
@@ -67,9 +67,15 @@ export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element
     uploadFiles,
     setUploadFiles,
     reqAddLocalJob,
+    refAddJobFetching,
+    isLoading,
   } = useAddLocalJob();
+  // const { waitGenerator } = useWaitFetching('local/addJob');
   const [modal, contextHolder] = Modal.useModal();
   const history = useHistory();
+
+  console.log('refAddJobFetching.current', refAddJobFetching.current);
+  console.log('isLoading', isLoading);
 
   console.log('uploadFiles', uploadFiles);
   console.log('selectSite', selectSite);
@@ -95,9 +101,26 @@ export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element
     modal.confirm({
       title: 'Add Local Job',
       content: 'Are you sure to add local job?',
-      onOk() {
+      onOk: async () => {
         reqAddLocalJob();
-        onBack();
+
+        const generator2 = waitGenerator();
+        let wait;
+        while ((wait = await generator2.next(isLoading)) && !wait.done) {
+          // do someting
+          console.log('wait', wait);
+        }
+        console.log('wait', wait);
+
+        const generator = waitGenerator();
+        let result;
+        while ((result = await generator.next(isLoading)) && !result.done) {
+          // do someting
+          console.log('result', result);
+        }
+        console.log('result', result);
+
+        // onBack();
       },
       onCancel() {
         console.log('cancel');
@@ -159,6 +182,7 @@ export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element
         </Settings>
       </Contents>
       <div>{contextHolder}</div>
+      <div>{isLoading ? 'Loading' : 'not Loading'}</div>
     </Container>
   );
 }
