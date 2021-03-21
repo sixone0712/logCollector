@@ -74,6 +74,8 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps) {
         listCount={localList.length}
         onClickNewJob={moveToLocalNewJob}
         onClickRefresh={refreshRemoteList}
+        newBtn={false}
+        refreshBtn={true}
       />
     ),
     [localList.length]
@@ -91,7 +93,7 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps) {
       size="middle"
       pagination={{
         position: ['bottomCenter'],
-        total: 500,
+        total: localList.length,
       }}
     >
       <Table.Column<LocalStatus> {...localColumnProps.no} />

@@ -12,11 +12,11 @@ export type StatusProps = {
 export default function Status({ children }: StatusProps) {
   return (
     <Switch>
-      <Route path={'/status/remote'} exact component={Remote} />
       <Route path={'/status/local'} exact component={Local} />
-      <Route path={'/status/remote/new'} exact component={Remote.Job} />
-      <Route path={'/status/remote/edit/:id'} exact component={Remote.Job} />
-      <Route path={'/status/local/new'} exact component={Local.Job} />
+      <Route path={'/status/local/new'} exact component={Local.NewJob} />
+      <Route path={'/status/remote'} exact component={Remote} />
+      <Route path={'/status/remote/new'} exact component={Remote.NewJob} />
+      <Route path={'/status/remote/edit/:id'} exact component={Remote.EditJob} />
       <Route path={['/status/remote/:type/:id', '/status/local/collect/:id']} component={History} />
     </Switch>
   );

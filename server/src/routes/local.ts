@@ -19,7 +19,7 @@ const upload = multer({
 
 router.post('/', async (req, res) => {
   console.log('addjob');
-  await sleep(5000);
+  await sleep(2000);
   res.send({ id: '1234' });
 });
 

@@ -3,33 +3,32 @@ import axios from 'axios';
 import { useCallback, useRef, useState } from 'react';
 import { MutationStatus, useMutation } from 'react-query';
 import { useHistory } from 'react-router-dom';
-
 import { openNotification } from '../lib/util/notification';
 import { waitMutationStatus } from '../lib/util/generator';
 import { LOCAL_ERROR } from '../components/organisms/LocalJob/LocalJob';
 
-interface LocalJobType {
+interface RemoteJobType {
   siteName: string;
   files: any;
 }
 
-interface LocalJobResponse {
+interface RemoteJobResponse {
   id: number;
 }
 
-const requestAddLocalJob = async (postData: LocalJobType) => {
-  const { data } = await axios.post<LocalJobResponse>('/api/local', postData);
+const requestAddRemoteJob = async (postData: RemoteJobType) => {
+  const { data } = await axios.post<RemoteJobResponse>('/api/local', postData);
   return data;
 };
 
-export default function useAddLocalJob() {
+export default function useAddRemoteJob() {
   const [current, setCurrent] = useState(0);
   const [selectSite, setSelectSite] = useState<string | undefined>();
   const [uploadFiles, setUploadFiles] = useState<any>([]);
   const addJobStatusRef = useRef<MutationStatus>('idle');
   const history = useHistory();
 
-  const mutation = useMutation((data: LocalJobType) => requestAddLocalJob(data), {
+  const mutation = useMutation((data: RemoteJobType) => requestAddRemoteJob(data), {
     mutationKey: 'local/addjob',
     onSuccess: () => {
       addJobStatusRef.current = 'success';
@@ -51,7 +50,7 @@ export default function useAddLocalJob() {
     [selectSite, uploadFiles]
   );
 
-  const reqAddLocalJob = useCallback(() => {
+  const reqAddRemoteJob = useCallback(() => {
     const reqData = makeRequestData();
     mutation.mutate(reqData);
     addJobStatusRef.current = 'loading';
@@ -64,7 +63,7 @@ export default function useAddLocalJob() {
       content: 'Are you sure to add local job?',
       onOk: async () => {
         diableCancelBtn();
-        reqAddLocalJob();
+        reqAddRemoteJob();
         const generator = waitMutationStatus();
 
         // wait for response
@@ -109,7 +108,7 @@ export default function useAddLocalJob() {
     setSelectSite,
     uploadFiles,
     setUploadFiles,
-    reqAddLocalJob,
+    reqAddRemoteJob,
     addJobStatusRef,
     openConfirmModal,
     openWarningModal,

@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { css } from '@emotion/react';
-import { Col, Row, Select, Space } from 'antd';
 import { DesktopOutlined, FileAddOutlined, InboxOutlined } from '@ant-design/icons';
-import { Upload, message } from 'antd';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import useAddLocalJob from '../../../hooks/useAddLocalJob';
+import { Row, Select, Space, Upload } from 'antd';
+import React, { useEffect } from 'react';
 import { useQuery } from 'react-query';
-import axios from 'axios';
+import { requestSiteList } from '../../../lib/util/requestAxios';
 import { SiteDB } from '../../../types/ConfigDB';
 
 export type LocalConfigureProps = {
@@ -28,11 +26,6 @@ const FileUpload = styled(Row)`
   flex-wrap: nowrap;
   /* height: 14.0625rem; */
 `;
-
-const requestSiteList = async () => {
-  const { data } = await axios.get<SiteDB[]>('/api/sitelist');
-  return data;
-};
 
 export default function LocalConfigure({
   selectSite,

@@ -156,6 +156,8 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps) 
         listCount={remoteList.length}
         onClickNewJob={moveToRemoteNewJob}
         onClickRefresh={refreshRemoteList}
+        newBtn={true}
+        refreshBtn={true}
       />
     ),
     [remoteList.length]
@@ -169,7 +171,7 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps) 
       size="middle"
       pagination={{
         position: ['bottomCenter'],
-        total: 500,
+        total: remoteList.length,
       }}
     >
       <Table.Column<RemoteStatus> {...remoteColumnProps.no} />

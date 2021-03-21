@@ -4,3 +4,6 @@
 - [idcard](https://iconmonstr.com/id-card-10-svg/)
 - [user](https://iconmonstr.com/user-20-svg/)
 - [login_user](https://iconmonstr.com/user-15-svg/)
+- [plans_setting][https://iconmonstr.com/calendar-4-svg/]
+- [check_setting][https://iconmonstr.com/task-1-svg/]
+- [plans][https://iconmonstr.com/product-9-svg/]

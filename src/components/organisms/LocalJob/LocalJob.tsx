@@ -1,16 +1,16 @@
 import { DesktopOutlined, NotificationOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Col, Modal, PageHeader, Row, Space } from 'antd';
+import { Col, PageHeader, Row, Space } from 'antd';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router';
 import useAddLocalJob from '../../../hooks/useAddLocalJob';
-import { waitGenerator } from '../../../hooks/useWaitFetching';
+import CustomIcon from '../../atoms/CustomIcon';
 import SideSteps from '../../atoms/SideSteps/SideSteps';
 import StepButton from '../../atoms/StepButton';
 import LocalConfigure from './LocalConfigure';
 import LocalConfirm from './LocalConfirm';
 
-export type LocalNewJobProps = {
+export type LocalJobProps = {
   children?: React.ReactNode;
 };
 
@@ -58,7 +58,7 @@ export const LOCAL_ERROR = {
   NOT_UPLOADED_FILES: 1,
 };
 
-export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element {
+export default function LocalJob({ children }: LocalJobProps): JSX.Element {
   const {
     current,
     setCurrent,
@@ -66,85 +66,29 @@ export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element
     setSelectSite,
     uploadFiles,
     setUploadFiles,
-    reqAddLocalJob,
-    refAddJobFetching,
-    isLoading,
+    openConfirmModal,
+    openWarningModal,
   } = useAddLocalJob();
-  // const { waitGenerator } = useWaitFetching('local/addJob');
-  const [modal, contextHolder] = Modal.useModal();
   const history = useHistory();
-
-  console.log('refAddJobFetching.current', refAddJobFetching.current);
-  console.log('isLoading', isLoading);
 
   console.log('uploadFiles', uploadFiles);
   console.log('selectSite', selectSite);
-
-  const modalWarning = useCallback((reason: number) => {
-    let content = '';
-    switch (reason) {
-      case LOCAL_ERROR.NOT_SELECTED_SITE:
-        content = 'Please select a site.';
-        break;
-      case LOCAL_ERROR.NOT_UPLOADED_FILES:
-        content = 'Please load a file.';
-        break;
-    }
-
-    modal.warning({
-      title: 'Error',
-      content,
-    });
-  }, []);
-
-  const modalConfirm = useCallback(() => {
-    modal.confirm({
-      title: 'Add Local Job',
-      content: 'Are you sure to add local job?',
-      onOk: async () => {
-        reqAddLocalJob();
-
-        const generator2 = waitGenerator();
-        let wait;
-        while ((wait = await generator2.next(isLoading)) && !wait.done) {
-          // do someting
-          console.log('wait', wait);
-        }
-        console.log('wait', wait);
-
-        const generator = waitGenerator();
-        let result;
-        while ((result = await generator.next(isLoading)) && !result.done) {
-          // do someting
-          console.log('result', result);
-        }
-        console.log('result', result);
-
-        // onBack();
-      },
-      onCancel() {
-        console.log('cancel');
-      },
-    });
-  }, []);
 
   const nextAction = useCallback(() => {
     switch (current) {
       case LOCAL_STEP.CONFIGURE:
         if (selectSite === undefined) {
-          modalWarning(LOCAL_ERROR.NOT_SELECTED_SITE);
+          openWarningModal(LOCAL_ERROR.NOT_SELECTED_SITE);
           return false;
         }
         if (uploadFiles.length === 0) {
-          modalWarning(LOCAL_ERROR.NOT_UPLOADED_FILES);
+          openWarningModal(LOCAL_ERROR.NOT_UPLOADED_FILES);
           return false;
         }
         break;
       case LOCAL_STEP.CONFIRM:
-        modalConfirm();
+        openConfirmModal();
         break;
-      default:
-        return false;
     }
     return true;
   }, [current, selectSite, uploadFiles]);
@@ -181,8 +125,6 @@ export default function LocalNewJob({ children }: LocalNewJobProps): JSX.Element
           </Main>
         </Settings>
       </Contents>
-      <div>{contextHolder}</div>
-      <div>{isLoading ? 'Loading' : 'not Loading'}</div>
     </Container>
   );
 }
@@ -211,7 +153,7 @@ function getTitle(current: number) {
     case 1:
     default:
       return {
-        icon: <NotificationOutlined />,
+        icon: <CustomIcon name="check_setting" />,
         text: 'Check Settings',
       };
   }

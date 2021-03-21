@@ -10,6 +10,8 @@ export type StatusHeaderProps = {
   listCount: number;
   onClickNewJob: () => void;
   onClickRefresh: () => void;
+  newBtn: boolean;
+  refreshBtn: boolean;
 };
 
 const Container = styled(Row)`
@@ -19,21 +21,29 @@ const Container = styled(Row)`
 `;
 
 const RegisteredCount = styled(Col)`
-  font-size: 1.5rem;
+  font-size: 1rem;
 `;
 
 const ButtonSection = styled(Col)``;
 
-export default function StatusTableHeader({ listCount, onClickNewJob, onClickRefresh }: StatusHeaderProps) {
+export default function StatusTableHeader({
+  listCount,
+  onClickNewJob,
+  onClickRefresh,
+  newBtn,
+  refreshBtn,
+}: StatusHeaderProps) {
   return (
     <Container>
       <RegisteredCount>Registered collection list : {listCount}</RegisteredCount>
       <ButtonSection>
         <Space size={convertRemToPixels(0.5)}>
-          <Button type="primary" icon={<PlusOutlined />} css={btnStyle} onClick={onClickNewJob}>
-            New Job
-          </Button>
-          <Button type="primary" icon={<ReloadOutlined />} css={btnStyle} onClick={onClickRefresh} />
+          {newBtn && (
+            <Button type="primary" icon={<PlusOutlined />} css={btnStyle} onClick={onClickNewJob}>
+              New Job
+            </Button>
+          )}
+          {refreshBtn && <Button type="primary" icon={<ReloadOutlined />} css={btnStyle} onClick={onClickRefresh} />}
         </Space>
       </ButtonSection>
     </Container>

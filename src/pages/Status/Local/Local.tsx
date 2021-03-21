@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import React from 'react';
-import DashBoardBreadcrumb from '../../../components/organisms/DashBoardBreadcrumb';
-import LocalNewJob from '../../../components/organisms/LocalNewJob';
+import LocalJob from '../../../components/organisms/LocalJob';
 import LocalStatusTable from '../../../components/organisms/LocalStatusTable';
 
 export type LocalProps = {
@@ -16,19 +15,19 @@ function Local({ children }: LocalProps) {
   );
 }
 
-export type LocalJobProps = {
+type NewJobProps = {
   children?: React.ReactNode;
 };
 
-function Job({ children }: LocalJobProps) {
+function NewJob({ children }: NewJobProps) {
   return (
     <div css={style}>
-      <LocalNewJob />
+      <LocalJob />
     </div>
   );
 }
 
-Local.Job = Job;
+Local.NewJob = NewJob;
 export default Local;
 
 const style = css``;

@@ -1,6 +1,9 @@
 import { css } from '@emotion/react';
 import React from 'react';
+import RemoteJob from '../../../components/organisms/RemoteJob';
 import RemoteStatusTable from '../../../components/organisms/RemoteStatusTable';
+
+export type RemoteJobType = 'new' | 'edit';
 
 export type RemoteProps = {
   children?: React.ReactNode;
@@ -8,21 +11,35 @@ export type RemoteProps = {
 
 function Remote({ children }: RemoteProps) {
   return (
-    <div css={style}>
+    <div>
       <RemoteStatusTable />
     </div>
   );
 }
 
-export type RemoteJobProps = {
+type NewJobProps = {
   children?: React.ReactNode;
 };
 
-function Job({ children }: RemoteJobProps) {
-  return <div>Remote NewJob</div>;
+function NewJob({ children }: NewJobProps) {
+  return (
+    <div>
+      <RemoteJob type={'new'} />
+    </div>
+  );
 }
 
-const style = css``;
+type EditJobProps = {
+  children?: React.ReactNode;
+};
 
-Remote.Job = Job;
+function EditJob({ children }: EditJobProps) {
+  return (
+    <div>
+      <RemoteJob type={'edit'} />
+    </div>
+  );
+}
+Remote.NewJob = NewJob;
+Remote.EditJob = EditJob;
 export default Remote;
