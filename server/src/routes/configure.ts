@@ -29,7 +29,7 @@ router.get('/sites/names', async (req: Request, res: Response, next: NextFunctio
   // load a post by a given post id
   const sites = await sitesRepository.find();
 
-  const names = sites.map((item, index) => ({
+  const names = sites.map((item) => ({
     id: item.id,
     site_fab_name: `${item.site_name}_${item.fab_name}`,
   }));
