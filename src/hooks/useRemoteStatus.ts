@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { getRemoteJobList } from '../lib/util/requestAxios';
+import { getRemoteJobStatus } from '../lib/util/requestAxios';
 import { RemoteStatus } from '../types/Status';
 
 export default function useRemoteStatus() {
-  const { data: remoteList, isFetching, isError } = useQuery('/status/remote/get', getRemoteJobList, {
+  const { data: remoteList, isFetching, isError } = useQuery('get_status_remote', getRemoteJobStatus, {
     initialData: [],
     refetchOnWindowFocus: false,
   });
@@ -12,7 +12,7 @@ export default function useRemoteStatus() {
   const queryClient = useQueryClient();
 
   const refreshRemoteList = useCallback(() => {
-    queryClient.fetchQuery('/status/remote/get');
+    queryClient.fetchQuery('get_status_remote');
   }, [queryClient]);
 
   return {

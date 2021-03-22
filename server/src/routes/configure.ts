@@ -13,67 +13,34 @@ import express = require('express');
 
 const router = express.Router();
 
-router.get('/site', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/sites', async (req: Request, res: Response, next: NextFunction) => {
   // get a post repository to perform operations with post
-  const postRepository = getManager().getRepository(Site);
+  const sitesRepository = getManager().getRepository(Site);
   // load a post by a given post id
-  const posts = await postRepository.find();
-  console.log(posts);
+  const sites = await sitesRepository.find();
   await sleep(1000);
-
   // return loaded posts
-  res.send(posts);
+  res.send(sites);
 });
 
-router.get('/setting', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/sites/names', async (req: Request, res: Response, next: NextFunction) => {
+  // get a post repository to perform operations with post
+  const sitesRepository = getManager().getRepository(Site);
+  // load a post by a given post id
+  const sites = await sitesRepository.find();
+
+  const names = sites.map((item, index) => ({
+    id: item.id,
+    site_fab_name: `${item.site_name}_${item.fab_name}`,
+  }));
+  // return loaded posts
+  res.send(names);
+});
+
+router.get('/host', async (req: Request, res: Response, next: NextFunction) => {
   const postRepository = getManager().getRepository(SettingDB);
   const posts = await postRepository.find();
   res.send(posts);
-});
-
-router.get('/insert', async (req: Request, res: Response, next: NextFunction) => {
-  // get a post repository to perform operations with post
-
-  const job = new Job();
-  const collectStatus = new JobStatus();
-  const errorStatus = new JobStatus();
-  const crasStatus = new JobStatus();
-  const version = new JobStatus();
-
-  collectStatus.full_string = 'collect_jobStatus';
-  collectStatus.status = 'processing';
-  collectStatus.represent_string = 'collect_jobStatus';
-  await getManager().getRepository(JobStatus).save(collectStatus);
-  errorStatus.full_string = 'cras_jobStatus';
-  errorStatus.status = 'processing';
-  errorStatus.represent_string = 'cras_jobStatus';
-  await getManager().getRepository(JobStatus).save(errorStatus);
-  crasStatus.full_string = 'cras_jobStatus';
-  crasStatus.status = 'processing';
-  crasStatus.represent_string = 'cras_jobStatus';
-  await getManager().getRepository(JobStatus).save(crasStatus);
-  version.full_string = 'version_jobStatus';
-  version.status = 'processing';
-  version.represent_string = 'version_jobStatus';
-  await getManager().getRepository(JobStatus).save(version);
-
-  const ownerUser = await getManager().getRepository(User).findOne(1);
-
-  const site = await getManager().getRepository(Site).findOne(1);
-  job.site_id = site;
-  job.collect_status = collectStatus;
-  job.error_summary_status = errorStatus;
-  job.cras_status = crasStatus;
-  job.version_check_status = version;
-  job.stop = false;
-  job.owner = ownerUser;
-  job.created = new Date();
-  job.last_action = new Date();
-  job.job_type = 'remote';
-  job.file_path = '/test/filepath';
-  await getManager().getRepository(Job).save(job);
-
-  res.json('ok');
 });
 
 export default router;

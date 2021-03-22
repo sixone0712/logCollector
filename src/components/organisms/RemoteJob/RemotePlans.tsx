@@ -4,9 +4,9 @@ import styled from '@emotion/styled';
 import { Row, Select, Space } from 'antd';
 import React from 'react';
 import { useQuery } from 'react-query';
-import { requestSiteList } from '../../../lib/util/requestAxios';
+import { getConfigureSitesFabsNames } from '../../../lib/util/requestAxios';
 import { SiteDB } from '../../../types/ConfigDB';
-import CustomIcon from '../../atoms/CustomIcon';
+import { ResSitesNames } from '../../../types/Configure';
 import RemotePlansTable from './RemotePlansTable';
 
 export type RemotePlansProps = {
@@ -29,12 +29,16 @@ const SelectPlans = styled(Row)`
 `;
 
 export default function RemotePlans({ selectSite, setSelectSite }: RemotePlansProps): JSX.Element {
-  const { isLoading, isError, data, error, status, isFetching } = useQuery<SiteDB[]>('site/getList', requestSiteList, {
-    // refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    // refetchOnMount: true,
-    // initialData: [],
-  });
+  const { isLoading, isError, data, error, status, isFetching } = useQuery<ResSitesNames[]>(
+    'sites_fabs_name',
+    getConfigureSitesFabsNames,
+    {
+      // refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      // refetchOnMount: true,
+      // initialData: [],
+    }
+  );
 
   return (
     <>
@@ -54,8 +58,8 @@ export default function RemotePlans({ selectSite, setSelectSite }: RemotePlansPr
           filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           {data?.map((item) => (
-            <Select.Option key={item.id} value={item.site_name}>
-              {item.site_name}
+            <Select.Option key={item.id} value={item.site_fab_name}>
+              {item.site_fab_name}
             </Select.Option>
           ))}
         </Select>

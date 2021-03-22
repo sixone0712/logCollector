@@ -2,15 +2,16 @@ import { DesktopOutlined, FileAddOutlined, InboxOutlined } from '@ant-design/ico
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Row, Select, Space, Upload } from 'antd';
+import { LabeledValue } from 'antd/lib/select';
 import React, { useEffect } from 'react';
 import { useQuery } from 'react-query';
-import { requestSiteList } from '../../../lib/util/requestAxios';
-import { SiteDB } from '../../../types/ConfigDB';
+import { getConfigureSitesFabsNames } from '../../../lib/util/requestAxios';
+import { ResSitesNames } from '../../../types/Configure';
 
 export type LocalConfigureProps = {
   children?: React.ReactNode;
-  selectSite: string | undefined;
-  setSelectSite: React.Dispatch<string>;
+  selectSite: LabeledValue | undefined;
+  setSelectSite: ({ value, label }: LabeledValue) => void;
   uploadFiles: any;
   setUploadFiles: React.Dispatch<any>;
 };
@@ -33,12 +34,16 @@ export default function LocalConfigure({
   uploadFiles,
   setUploadFiles,
 }: LocalConfigureProps): JSX.Element {
-  const { isLoading, isError, data, error, status, isFetching } = useQuery<SiteDB[]>('site/getList', requestSiteList, {
-    // refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    // refetchOnMount: true,
-    // initialData: [],
-  });
+  const { isLoading, isError, data, error, status, isFetching } = useQuery<ResSitesNames[]>(
+    'get_configure_sites_fabs_name',
+    getConfigureSitesFabsNames,
+    {
+      // refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      // refetchOnMount: true,
+      // initialData: [],
+    }
+  );
   console.log('data', data);
   console.log('isLoading', isLoading);
   console.log('isError', isError);
@@ -58,13 +63,6 @@ export default function LocalConfigure({
     defaultFileList: uploadFiles,
   };
 
-  useEffect(() => {
-    console.log('useEffect');
-    return () => {
-      console.log('useEffect clean');
-    };
-  }, []);
-
   return (
     <>
       <SelectSiteName align="top">
@@ -74,7 +72,8 @@ export default function LocalConfigure({
         </Space>
         <Select
           showSearch
-          css={selectStyle(selectSite)}
+          labelInValue
+          css={selectStyle}
           value={selectSite}
           placeholder="Select a site"
           onSelect={setSelectSite}
@@ -83,8 +82,8 @@ export default function LocalConfigure({
           filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           {data?.map((item) => (
-            <Select.Option key={item.id} value={item.site_name}>
-              {item.site_name}
+            <Select.Option key={item.id} value={item.id} label={item.site_fab_name}>
+              {item.site_fab_name}
             </Select.Option>
           ))}
         </Select>
@@ -113,13 +112,10 @@ const spaceStyle = css`
   /* font-size: 1.25rem; */
 `;
 
-const selectStyle = (onSelect: string | undefined) => css`
+const selectStyle = css`
   min-width: 33.75rem;
   text-align: center;
   font-size: inherit;
-  /* .ant-select-selection-item {
-    color: ${onSelect === 'Select a site' && '#bfbfbf'};
-  } */
 `;
 
 const uploadContextsStyle = css`

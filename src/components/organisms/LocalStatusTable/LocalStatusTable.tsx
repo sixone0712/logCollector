@@ -2,7 +2,7 @@ import { blue } from '@ant-design/colors';
 import { DeleteOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Table } from 'antd';
+import { Col, Row, Table, Tooltip } from 'antd';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import useLocalStatus from '../../../hooks/useLocalStatus';
@@ -20,47 +20,59 @@ const LocalColumnTitle = styled.div`
 `;
 
 const localColumnProps: LocalColumnPropsType = {
-  no: {
-    key: 'no',
+  index: {
+    key: 'index',
     title: <LocalColumnTitle>No</LocalColumnTitle>,
-    dataIndex: 'no',
+    dataIndex: 'index',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'no'),
+      compare: (a, b) => compareTableItem(a, b, 'index'),
     },
   },
   siteName: {
-    key: 'siteName',
+    key: 'site_name',
     title: <LocalColumnTitle>Site Name</LocalColumnTitle>,
-    dataIndex: 'siteName',
+    dataIndex: 'site_name',
     align: 'center',
     sorter: {
       compare: (a, b) => compareTableItem(a, b, 'siteName'),
     },
   },
   status: {
-    key: 'status',
+    key: 'collect_status',
     title: <LocalColumnTitle>Collect/Convert/Insert</LocalColumnTitle>,
-    dataIndex: 'status',
+    dataIndex: 'collect_status',
     align: 'center',
     sorter: {
       compare: (a, b) => compareTableItem(a, b, 'status'),
     },
   },
-
+  fileName: {
+    key: 'file_name',
+    title: <LocalColumnTitle>Files</LocalColumnTitle>,
+    dataIndex: 'file_name',
+    align: 'center',
+    sorter: {
+      compare: (a, b) => compareTableItem(a, b, 'fileName'),
+    },
+  },
   delete: {
-    key: 'no',
+    key: 'index',
     title: <LocalColumnTitle>Delete</LocalColumnTitle>,
     align: 'center',
   },
 };
 
 export default function LocalStatusTable({ children }: LocalStatusTableProps) {
-  const { localList, setLocalList, refreshRemoteList } = useLocalStatus();
+  const { localList, isFetching, isError, refreshRemoteList } = useLocalStatus();
+  const localListLen = localList?.length ? localList.length : 0;
   const history = useHistory();
 
   const buildStatusRender = useCallback((value: BuildStatus, record: LocalStatus, index: number) => {
-    const onClick = useCallback(() => history.push(`/status/local/collect/${record.no}?name=${record.siteName}`), []);
+    const onClick = useCallback(
+      () => history.push(`/status/local/collect/${record.index}?name=${record.siteName}`),
+      []
+    );
     return <StatusBadge type={value} onClick={onClick} />;
   }, []);
 
@@ -71,15 +83,28 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps) {
   const titleRender = useCallback(
     () => (
       <StatusTableHeader
-        listCount={localList.length}
+        listCount={localListLen}
         onClickNewJob={moveToLocalNewJob}
         onClickRefresh={refreshRemoteList}
-        newBtn={false}
+        newBtn={true}
         refreshBtn={true}
+        isLoading={isFetching}
       />
     ),
-    [localList.length]
+    [localListLen]
   );
+
+  const filesRender = useCallback((value: string[], record: LocalStatus, index: number) => {
+    const title = () => {
+      return value.map((item, idx) => <div key={idx}>{item}</div>);
+    };
+
+    return (
+      <Tooltip title={title} placement="right" color="cyan">
+        <span>{`${value.length ? value.length : 0} files`}</span>
+      </Tooltip>
+    );
+  }, []);
 
   const moveToLocalNewJob = useCallback(() => {
     history.push('/status/local/new');
@@ -93,11 +118,13 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps) {
       size="middle"
       pagination={{
         position: ['bottomCenter'],
-        total: localList.length,
+        total: localListLen,
       }}
+      loading={isFetching}
     >
-      <Table.Column<LocalStatus> {...localColumnProps.no} />
+      <Table.Column<LocalStatus> {...localColumnProps.index} />
       <Table.Column<LocalStatus> {...localColumnProps.siteName} />
+      <Table.Column<LocalStatus> {...localColumnProps.fileName} render={filesRender} />
       <Table.Column<LocalStatus> {...localColumnProps.status} render={buildStatusRender} />
       <Table.Column<LocalStatus> {...localColumnProps.delete} render={deleteRender} />
     </Table>

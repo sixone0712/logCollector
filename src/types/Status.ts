@@ -45,12 +45,13 @@ export type RemoteColumnPropsType = {
 };
 
 export interface LocalStatus {
-  no: number;
+  index: number;
   siteName: string;
   status: BuildStatus;
+  fileName: string[];
 }
 
-export type LocalColumnName = 'no' | 'siteName' | 'status' | 'delete';
+export type LocalColumnName = 'index' | 'siteName' | 'status' | 'fileName' | 'delete';
 
 export type LocalColumnPropsType = {
   [name in LocalColumnName]: {
@@ -69,7 +70,7 @@ export type LocalColumnPropsType = {
   };
 };
 
-export interface ResJobInfo {
+export interface ResRemoteStatus {
   idx: number;
   id: number;
   site_name: string;
@@ -78,6 +79,14 @@ export interface ResJobInfo {
   cras_status: string;
   version_check_status: string;
   stop: boolean;
+}
+
+export interface ResLocalStatus {
+  idx: number;
+  id: number;
+  site_name: string;
+  collect_status: string;
+  file_name: string[];
 }
 
 // interface ResRemoteJobInfo {

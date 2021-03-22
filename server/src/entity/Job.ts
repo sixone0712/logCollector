@@ -58,6 +58,9 @@ export class Job extends BaseEntity {
   @JoinColumn()
   notification: JobNotification;
 
-  @Column()
+  @Column({ nullable: true })
   file_path: string;
+
+  @Column('text', { array: true, nullable: true })
+  file_name: string[];
 }

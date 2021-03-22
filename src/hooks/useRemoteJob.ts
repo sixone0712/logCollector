@@ -21,7 +21,7 @@ const requestAddRemoteJob = async (postData: RemoteJobType) => {
   return data;
 };
 
-export default function useAddRemoteJob() {
+export default function useRemoteJob() {
   const [current, setCurrent] = useState(0);
   const [selectSite, setSelectSite] = useState<string | undefined>();
   const [uploadFiles, setUploadFiles] = useState<any>([]);

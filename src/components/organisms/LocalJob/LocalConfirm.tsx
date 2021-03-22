@@ -4,9 +4,10 @@ import { Col, Row, Select, Space } from 'antd';
 import { DesktopOutlined, FileAddOutlined, InboxOutlined } from '@ant-design/icons';
 import { Upload, message } from 'antd';
 import styled from '@emotion/styled';
+import { LabeledValue } from 'antd/lib/select';
 
 export type LocalConfirmProps = {
-  selectSite: string | undefined;
+  selectSite: LabeledValue | undefined;
   uploadFiles: any;
 };
 
@@ -35,7 +36,7 @@ export default function LocalConfirm({ selectSite, uploadFiles }: LocalConfirmPr
           <DesktopOutlined />
           <span>Select Site</span>
         </Space>
-        <SelectedSite>{selectSite}</SelectedSite>
+        <SelectedSite>{selectSite?.label}</SelectedSite>
       </SiteName>
       <FileUpload align="top">
         <Space css={spaceStyle}>

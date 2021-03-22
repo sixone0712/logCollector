@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Col, PageHeader, Row, Space } from 'antd';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import useAddRemoteJob from '../../../hooks/useRemoteLocalJob';
+import useRemoteJob from '../../../hooks/useRemoteJob';
 import { RemoteJobType } from '../../../pages/Status/Remote/Remote';
 import CustomIcon from '../../atoms/CustomIcon';
 import SideSteps from '../../atoms/SideSteps';
@@ -71,7 +71,7 @@ export default function RemoteJob({ type }: RemoteJobProps) {
     setUploadFiles,
     openConfirmModal,
     openWarningModal,
-  } = useAddRemoteJob();
+  } = useRemoteJob();
   const history = useHistory();
 
   const nextAction = useCallback(() => {

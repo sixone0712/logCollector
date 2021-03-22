@@ -1,3 +1,4 @@
+import { ResSitesNames } from './../types/Configure';
 import { Modal } from 'antd';
 import axios from 'axios';
 import { useCallback, useRef, useState } from 'react';
@@ -7,46 +8,56 @@ import { useHistory } from 'react-router-dom';
 import { openNotification } from '../lib/util/notification';
 import { waitMutationStatus } from '../lib/util/generator';
 import { LOCAL_ERROR } from '../components/organisms/LocalJob/LocalJob';
+import { LabeledValue } from 'antd/lib/select';
 
-interface LocalJobType {
-  siteName: string;
-  files: any;
+interface ReqLocalJobType {
+  site_id: number;
+  filename: any;
 }
 
 interface LocalJobResponse {
   id: number;
 }
 
-const requestAddLocalJob = async (postData: LocalJobType) => {
+const requestAddLocalJob = async (postData: ReqLocalJobType) => {
   const { data } = await axios.post<LocalJobResponse>('/api/local', postData);
   return data;
 };
 
-export default function useAddLocalJob() {
+export default function useLocalJob() {
   const [current, setCurrent] = useState(0);
-  const [selectSite, setSelectSite] = useState<string | undefined>();
+  const [selectSite, setSelectSite] = useState<LabeledValue | undefined>();
+  const [selectSiteId, setSelectSiteId] = useState<number | undefined>();
   const [uploadFiles, setUploadFiles] = useState<any>([]);
   const addJobStatusRef = useRef<MutationStatus>('idle');
   const history = useHistory();
 
-  const mutation = useMutation((data: LocalJobType) => requestAddLocalJob(data), {
-    mutationKey: 'local/addjob',
+  const setSelectSiteValue = useCallback(
+    ({ value, label }: LabeledValue) => {
+      setSelectSite({
+        value,
+        label,
+      });
+    },
+    [setSelectSite]
+  );
+
+  const mutation = useMutation((data: ReqLocalJobType) => requestAddLocalJob(data), {
+    mutationKey: 'add_local_job',
     onSuccess: () => {
       addJobStatusRef.current = 'success';
-      console.log('local/addjob: onSuccess');
       openNotification('success', 'Success', 'Completed to add local job');
     },
     onError: () => {
       addJobStatusRef.current = 'error';
-      console.log('local/addjob: onError');
       openNotification('error', 'Error', 'Failed to add local job');
     },
   });
 
   const makeRequestData = useCallback(
     () => ({
-      siteName: selectSite === undefined ? '' : selectSite,
-      files: uploadFiles.map((item: any) => item.file),
+      site_id: selectSite?.value === undefined ? 0 : (selectSite.value as number),
+      filename: uploadFiles.map((item: any) => item.file),
     }),
     [selectSite, uploadFiles]
   );
@@ -106,7 +117,9 @@ export default function useAddLocalJob() {
     current,
     setCurrent,
     selectSite,
-    setSelectSite,
+    setSelectSite: setSelectSiteValue,
+    selectSiteId,
+    setSelectSiteId,
     uploadFiles,
     setUploadFiles,
     reqAddLocalJob,

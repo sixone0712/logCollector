@@ -1,14 +1,21 @@
 import axios from 'axios';
 import { SiteDB } from '../../types/ConfigDB';
-import { ResJobInfo as ResRemoteJobInfo } from '../../types/Status';
+import { ResSitesNames } from '../../types/Configure';
+import { ResLocalStatus, ResRemoteStatus } from '../../types/Status';
 
-export const requestSiteList = async () => {
-  const { data } = await axios.get<SiteDB[]>('/api/sitelist');
+export const getConfigureSitesFabsNames = async () => {
+  const { data } = await axios.get<ResSitesNames[]>('/api/configure/sites/names');
   return data;
 };
 
-export const getRemoteJobList = async () => {
-  const { data } = await axios.get<ResRemoteJobInfo[]>('/api/status/remote/joblist');
+export const getRemoteJobStatus = async () => {
+  const { data } = await axios.get<ResRemoteStatus[]>('/api/status/remote');
+
+  return data;
+};
+
+export const getLocalJobStatus = async () => {
+  const { data } = await axios.get<ResLocalStatus[]>('/api/status/local');
 
   return data;
 };

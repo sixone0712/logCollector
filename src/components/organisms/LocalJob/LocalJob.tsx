@@ -1,9 +1,9 @@
-import { DesktopOutlined, NotificationOutlined } from '@ant-design/icons';
+import { DesktopOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Col, PageHeader, Row, Space } from 'antd';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router';
-import useAddLocalJob from '../../../hooks/useAddLocalJob';
+import useLocalJob from '../../../hooks/useLocalJob';
 import CustomIcon from '../../atoms/CustomIcon';
 import SideSteps from '../../atoms/SideSteps/SideSteps';
 import StepButton from '../../atoms/StepButton';
@@ -68,7 +68,7 @@ export default function LocalJob({ children }: LocalJobProps): JSX.Element {
     setUploadFiles,
     openConfirmModal,
     openWarningModal,
-  } = useAddLocalJob();
+  } = useLocalJob();
   const history = useHistory();
 
   console.log('uploadFiles', uploadFiles);

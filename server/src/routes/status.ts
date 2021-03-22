@@ -5,7 +5,7 @@ import express = require('express');
 import sleep from '../utils/sleep';
 
 const router = express.Router();
-router.get('/remote/joblist', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/remote', async (req: Request, res: Response, next: NextFunction) => {
   const job = await getManager().getRepository(Job);
 
   const foundJob = await job.find({
@@ -25,7 +25,29 @@ router.get('/remote/joblist', async (req: Request, res: Response, next: NextFunc
     version_check_status: item.version_check_status.status,
   }));
 
-  await sleep(3000);
+  await sleep(1000);
+
+  res.json(response);
+});
+
+router.get('/local', async (req: Request, res: Response, next: NextFunction) => {
+  const job = await getManager().getRepository(Job);
+
+  const foundJob = await job.find({
+    // relations: ['site_id', 'collect_status', 'error_summary_status', 'cras_status', 'version_check_status', 'owner'],
+    relations: ['site_id', 'collect_status'],
+    where: { job_type: 'local' },
+  });
+
+  const response = foundJob.map((item, idx) => ({
+    index: idx,
+    id: item.id,
+    site_name: item.site_id.site_name,
+    collect_status: item.collect_status.status,
+    file_name: item.file_name,
+  }));
+
+  await sleep(1000);
 
   res.json(response);
 });

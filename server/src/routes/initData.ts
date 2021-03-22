@@ -141,10 +141,22 @@ router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
     job.last_action = new Date();
     job.job_type = 'local';
     job.file_path = `/test/filepath/local/${i + 1}`;
+
+    const max = Math.random() * (10 - 1) * 1;
+    const file_name = [];
+    for (let j = 0; j < max; j++) {
+      file_name.push(`${generateString(16)}.zip`);
+    }
+    job.file_name = file_name;
     await getManager().getRepository(Job).save(job);
   }
 
   res.json('ok');
 });
+
+function generateString(bit) {
+  const random_str = Math.random().toString(bit).substring(2, 15) + Math.random().toString(bit).substring(2, 15);
+  return random_str;
+}
 
 export default router;
