@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from 'typeorm';
+import { Job } from './Job';
 
-@Entity('site_list')
-export class SiteList extends BaseEntity {
+@Entity('site')
+export class Site extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -33,4 +34,7 @@ export class SiteList extends BaseEntity {
 
   @Column()
   mpa_count: number;
+
+  @OneToMany(() => Job, (job) => job.id)
+  job: Job[];
 }

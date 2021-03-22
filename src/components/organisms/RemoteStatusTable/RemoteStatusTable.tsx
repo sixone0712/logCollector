@@ -16,76 +16,76 @@ const ColumnTitle = styled.div`
 `;
 
 const remoteColumnProps: RemoteColumnPropsType = {
-  no: {
-    key: 'no',
+  index: {
+    key: 'index',
     title: <ColumnTitle>No</ColumnTitle>,
-    dataIndex: 'no',
+    dataIndex: 'index',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'no'),
+      compare: (a, b) => compareTableItem(a, b, 'index'),
     },
   },
   siteName: {
-    key: 'siteName',
+    key: 'site_name',
     title: <ColumnTitle>Site Name</ColumnTitle>,
-    dataIndex: 'siteName',
+    dataIndex: 'site_name',
     align: 'center',
     sorter: {
       compare: (a, b) => compareTableItem(a, b, 'siteName'),
     },
   },
   collectStatus: {
-    key: 'collectStatus',
+    key: 'collect_status',
     title: <ColumnTitle>Collect/Convert/Insert</ColumnTitle>,
-    dataIndex: 'collectStatus',
+    dataIndex: 'collect_status',
     align: 'center',
     sorter: {
       compare: (a, b) => compareTableItem(a, b, 'collectStatus'),
     },
   },
   errorStatus: {
-    key: 'errorStatus',
+    key: 'error_summary_status',
     title: <ColumnTitle>Send Error Summary</ColumnTitle>,
-    dataIndex: 'errorStatus',
+    dataIndex: 'error_summary_status',
     align: 'center',
     sorter: {
       compare: (a, b) => compareTableItem(a, b, 'errorStatus'),
     },
   },
   crasStatus: {
-    key: 'crasStatus',
+    key: 'cras_status',
     title: <ColumnTitle>Create Cras Data</ColumnTitle>,
-    dataIndex: 'crasStatus',
+    dataIndex: 'cras_status',
     align: 'center',
     sorter: {
       compare: (a, b) => compareTableItem(a, b, 'crasStatus'),
     },
   },
   versionStatus: {
-    key: 'versionStatus',
+    key: 'version_check_status',
     title: <ColumnTitle>Version Check</ColumnTitle>,
-    dataIndex: 'versionStatus',
+    dataIndex: 'version_check_status',
     align: 'center',
     sorter: {
       compare: (a, b) => compareTableItem(a, b, 'versionStatus'),
     },
   },
-  isRunning: {
-    key: 'isRunning',
+  isStop: {
+    key: 'stop',
     title: <ColumnTitle>Start/Stop</ColumnTitle>,
-    dataIndex: 'isRunning',
+    dataIndex: 'stop',
     align: 'center',
     sorter: {
       compare: (a, b) => compareTableItem(a, b, 'isRunning'),
     },
   },
   edit: {
-    key: 'no',
+    key: 'index',
     title: <ColumnTitle>Edit</ColumnTitle>,
     align: 'center',
   },
   delete: {
-    key: 'no',
+    key: 'index',
     title: <ColumnTitle>Delete</ColumnTitle>,
     align: 'center',
   },
@@ -96,8 +96,11 @@ export type RemoteStatusTableProps = {
 };
 
 export default function RemoteStatusTable({ children }: RemoteStatusTableProps) {
-  const { remoteList, setRemoteList, refreshRemoteList } = useRemoteStatus();
+  const { remoteList, isFetching, isError, refreshRemoteList } = useRemoteStatus();
+  const remoteListLen = remoteList?.length ? remoteList.length : 0;
   const history = useHistory();
+
+  console.log('isFetching', isFetching);
 
   const collectStatusRender = useCallback(
     (value: BuildStatus, record: RemoteStatus, index: number) => buildStatusRender(value, record, index, 'collect'),
@@ -122,7 +125,7 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps) 
   const buildStatusRender = useCallback(
     (value: BuildStatus, record: RemoteStatus, index: number, type?: RemoteStatusType) => {
       const onClick = useCallback(
-        () => history.push(`/status/remote/${type}/${record.no}?name=${record.siteName}`),
+        () => history.push(`/status/remote/${type}/${record.index}?name=${record.siteName}`),
         []
       );
       return <StatusBadge type={value} onClick={onClick} />;
@@ -153,14 +156,15 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps) 
   const titleRender = useCallback(
     () => (
       <StatusTableHeader
-        listCount={remoteList.length}
+        listCount={remoteListLen}
         onClickNewJob={moveToRemoteNewJob}
         onClickRefresh={refreshRemoteList}
         newBtn={true}
         refreshBtn={true}
+        isLoading={isFetching}
       />
     ),
-    [remoteList.length]
+    [remoteListLen, isFetching]
   );
 
   return (
@@ -171,16 +175,23 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps) 
       size="middle"
       pagination={{
         position: ['bottomCenter'],
-        total: remoteList.length,
+        total: remoteListLen,
       }}
+      loading={isFetching}
     >
-      <Table.Column<RemoteStatus> {...remoteColumnProps.no} />
+      <Table.Column<RemoteStatus>
+        {...remoteColumnProps.index}
+        render={(value) => {
+          console.log('value', value);
+          return `${value + 1}`;
+        }}
+      />
       <Table.Column<RemoteStatus> {...remoteColumnProps.siteName} />
       <Table.Column<RemoteStatus> {...remoteColumnProps.collectStatus} render={collectStatusRender} />
       <Table.Column<RemoteStatus> {...remoteColumnProps.errorStatus} render={errorStatusRender} />
       <Table.Column<RemoteStatus> {...remoteColumnProps.crasStatus} render={crasStatusRender} />
       <Table.Column<RemoteStatus> {...remoteColumnProps.versionStatus} render={versionStatusRender} />
-      <Table.Column<RemoteStatus> {...remoteColumnProps.isRunning} render={startAndStopRender} />
+      <Table.Column<RemoteStatus> {...remoteColumnProps.isStop} render={startAndStopRender} />
       <Table.Column<RemoteStatus> {...remoteColumnProps.edit} render={editRender} />
       <Table.Column<RemoteStatus> {...remoteColumnProps.delete} render={deleteRender} />
     </Table>

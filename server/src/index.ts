@@ -8,7 +8,10 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import local from './routes/local';
 import settingdb from './routes/settingdb';
-import sitelist from './routes/sitelist';
+import configure from './routes/configure';
+import status from './routes/status';
+import user from './routes/user';
+import initData from './routes/initData';
 
 // Connect typeORM mysql
 createConnection()
@@ -37,7 +40,10 @@ createConnection()
     // );
 
     app.use('/api/local', local);
-    app.use('/api/sitelist', sitelist);
+    app.use('/api/status', status);
+    app.use('/api/configure', configure);
+    app.use('/api/user', user);
+    app.use('/api/init', initData);
     app.get('/test', async (req: Request, res: Response, next: NextFunction) => {
       console.log('test');
       res.end('1234');

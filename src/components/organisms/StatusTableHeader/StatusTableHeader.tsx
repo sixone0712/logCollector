@@ -12,6 +12,7 @@ export type StatusHeaderProps = {
   onClickRefresh: () => void;
   newBtn: boolean;
   refreshBtn: boolean;
+  isLoading?: boolean;
 };
 
 const Container = styled(Row)`
@@ -32,18 +33,28 @@ export default function StatusTableHeader({
   onClickRefresh,
   newBtn,
   refreshBtn,
+  isLoading,
 }: StatusHeaderProps) {
+  console.log('StatusTableHeader_isLoading', isLoading);
   return (
     <Container>
       <RegisteredCount>Registered collection list : {listCount}</RegisteredCount>
       <ButtonSection>
         <Space size={convertRemToPixels(0.5)}>
           {newBtn && (
-            <Button type="primary" icon={<PlusOutlined />} css={btnStyle} onClick={onClickNewJob}>
+            <Button type="primary" icon={<PlusOutlined />} css={btnStyle} onClick={onClickNewJob} disabled={isLoading}>
               New Job
             </Button>
           )}
-          {refreshBtn && <Button type="primary" icon={<ReloadOutlined />} css={btnStyle} onClick={onClickRefresh} />}
+          {refreshBtn && (
+            <Button
+              type="primary"
+              icon={<ReloadOutlined />}
+              css={btnStyle}
+              onClick={onClickRefresh}
+              disabled={isLoading}
+            />
+          )}
         </Space>
       </ButtonSection>
     </Container>

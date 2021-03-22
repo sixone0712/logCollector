@@ -5,7 +5,7 @@ import { CompareFn } from 'antd/lib/table/interface';
 export type BuildStatus = 'success' | 'failure' | 'notbuild' | 'processing';
 
 export interface RemoteStatus {
-  no: number;
+  index: number;
   siteName: string;
   collectStatus: BuildStatus;
   errorStatus: BuildStatus;
@@ -17,13 +17,13 @@ export interface RemoteStatus {
 export type RemoteStatusType = 'collect' | 'error' | 'cras' | 'version';
 
 export type RemoteColumnName =
-  | 'no'
+  | 'index'
   | 'siteName'
   | 'collectStatus'
   | 'errorStatus'
   | 'crasStatus'
   | 'versionStatus'
-  | 'isRunning'
+  | 'isStop'
   | 'edit'
   | 'delete';
 
@@ -68,3 +68,92 @@ export type LocalColumnPropsType = {
         };
   };
 };
+
+export interface ResJobInfo {
+  idx: number;
+  id: number;
+  site_name: string;
+  collect_status: string;
+  error_summary_status: string;
+  cras_status: string;
+  version_check_status: string;
+  stop: boolean;
+}
+
+// interface ResRemoteJobInfo {
+//   id: number;
+
+//   site_id: ResSiteInfo;
+
+//   collect_status: ResJobStatusInfo;
+
+//   error_summary_status: ResJobStatusInfo;
+
+//   cras_status: ResJobStatusInfo;
+
+//   version_check_status: ResJobStatusInfo;
+
+//   stop: boolean;
+
+//   owner: User;
+
+//   created: Date;
+
+//   last_action: Date;
+
+//   job_type: JobType;
+
+//   history: ResRemoteJobHistoryInfo[];
+
+//   file_path: string;
+// }
+
+// export interface ResRemoteJobHistoryInfo {
+//   id: number;
+//   file_path: string;
+//   created: string;
+// }
+
+// export interface ResJobStatusInfo {
+//   id: number;
+//   status: string;
+//   full_string: string;
+//   represent_string: string;
+// }
+
+// export interface ResSiteInfo {
+//   id: number;
+
+//   site_name: string;
+
+//   fab_name: string;
+
+//   address: string;
+
+//   port: number;
+
+//   user: string;
+
+//   password: string;
+
+//   db_address: string;
+
+//   db_port: number;
+
+//   db_password: string;
+//   mpa_count: number;
+// }
+
+// export interface User {
+//   id: number;
+
+//   name: string;
+
+//   password: string;
+
+//   created: string;
+
+//   permission: string;
+
+//   last_access: string;
+// }

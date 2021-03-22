@@ -115,7 +115,7 @@ export default function RemotePlansTable({ children }: RemotePlansTableProps) {
   const buildStatusRender = useCallback(
     (value: BuildStatus, record: RemoteStatus, index: number, type?: RemoteStatusType) => {
       const onClick = useCallback(
-        () => history.push(`/status/remote/${type}/${record.no}?name=${record.siteName}`),
+        () => history.push(`/status/remote/${type}/${record.index}?name=${record.siteName}`),
         []
       );
       return <StatusBadge type={value} onClick={onClick} />;
