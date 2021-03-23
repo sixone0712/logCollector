@@ -2,12 +2,12 @@ import { blue } from '@ant-design/colors';
 import { DeleteOutlined, EditOutlined, PauseCircleOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Table } from 'antd';
+import { Badge, Checkbox, Table } from 'antd';
 import { CompareFn, TableRowSelection } from 'antd/lib/table/interface';
-import { AlignType, DataIndex } from 'rc-table/lib/interface';
+import { AlignType, DataIndex, GetComponentProps } from 'rc-table/lib/interface';
 import React, { Key, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import usePlansSetting, { AutoPlanType } from '../../../hooks/usePlansSetting';
+import usePlansSetting from '../../../hooks/usePlansSetting';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
 import { BuildStatus, RemoteStatus, RemoteStatusType, ResRemotePlans } from '../../../types/Status';
 import StatusBadge from '../../atoms/StatusBadge';
@@ -17,7 +17,7 @@ const ColumnTitle = styled.div`
   font-weight: 700;
 `;
 
-export type AutoPlansColumnName = 'plan_name' | 'description' | 'plan_type' | 'machines' | 'targets';
+export type AutoPlansColumnName = 'plan_name' | 'description' | 'plan_type' | 'machines' | 'targets' | 'status';
 
 export type AutoPlansColumnPropsType = {
   [name in AutoPlansColumnName]: {
@@ -74,9 +74,18 @@ const remotePlansColumnProps: AutoPlansColumnPropsType = {
     },
   },
   targets: {
-    key: 'targets',
+    key: 'target',
     title: <ColumnTitle>Targets</ColumnTitle>,
     dataIndex: 'targets',
+    align: 'center',
+    sorter: {
+      compare: (a, b) => compareTableItem(a, b, 'targets'),
+    },
+  },
+  status: {
+    key: 'status',
+    title: <ColumnTitle>Status</ColumnTitle>,
+    dataIndex: 'status',
     align: 'center',
     sorter: {
       compare: (a, b) => compareTableItem(a, b, 'targets'),
@@ -92,55 +101,15 @@ export default function RemotePlansTable({ children }: RemotePlansTableProps) {
   const { plans, selectedPlans, setSelectedPlans, refreshPlans } = usePlansSetting();
   const history = useHistory();
 
-  const collectStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number) => buildStatusRender(value, record, index, 'collect'),
-    []
-  );
-
-  const errorStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number) => buildStatusRender(value, record, index, 'error'),
-    []
-  );
-
-  const crasStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number) => buildStatusRender(value, record, index, 'cras'),
-    []
-  );
-
-  const versionStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number) => buildStatusRender(value, record, index, 'version'),
-    []
-  );
-
-  const buildStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number, type?: RemoteStatusType) => {
-      const onClick = useCallback(
-        () => history.push(`/status/remote/${type}/${record.index}?name=${record.siteName}`),
-        []
-      );
-      return <StatusBadge type={value} onClick={onClick} />;
-    },
-    []
-  );
-
-  const startAndStopRender = useCallback((value: boolean) => {
-    if (value) {
-      return <PlayCircleOutlined css={iconStyle} />;
-    } else {
-      return <PauseCircleOutlined css={iconStyle} />;
-    }
-  }, []);
-
-  const editRender = useCallback(() => {
-    return <EditOutlined css={iconStyle} />;
-  }, []);
-
-  const deleteRender = useCallback(() => {
-    return <DeleteOutlined css={iconStyle} />;
-  }, []);
-
   const moveToRemoteNewJob = useCallback(() => {
     history.push('/status/remote/new');
+  }, []);
+
+  const statusRender = useCallback((value: string, record: ResRemotePlans, index: number) => {
+    console.log('value', value);
+    return (
+      <Badge status={value === 'stop' ? 'error' : 'processing'} text={value === 'stop' ? 'Stopped' : 'Running'}></Badge>
+    );
   }, []);
 
   const titleRender = useCallback(
@@ -156,17 +125,51 @@ export default function RemotePlansTable({ children }: RemotePlansTableProps) {
     [plans?.length]
   );
 
-  const onSelectChange = (selectedRowKeys: React.Key[], selectedRows: ResRemotePlans[]) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    setSelectedPlans(selectedRowKeys);
-  };
+  const onSelectChange = useCallback(
+    (selectedRowKeys: React.Key[], selectedRows: ResRemotePlans[]) => {
+      setSelectedPlans(selectedRowKeys);
+    },
+    [setSelectedPlans]
+  );
+
+  const toggleSelectAll = useCallback(() => {
+    if (plans !== undefined) setSelectedPlans((keys) => (keys.length === plans.length ? [] : plans.map((r) => r.key)));
+  }, [plans, setSelectedPlans]);
+
+  const headerCheckbox = (
+    <Checkbox
+      checked={selectedPlans.length ? true : false}
+      indeterminate={plans && selectedPlans.length > 0 && selectedPlans.length < plans.length}
+      onChange={toggleSelectAll}
+    />
+  );
 
   const rowSelection: TableRowSelection<ResRemotePlans> = {
     type: 'checkbox',
     selectedRowKeys: selectedPlans,
     onChange: onSelectChange,
-    selections: [Table.SELECTION_ALL],
+    columnTitle: headerCheckbox,
   };
+
+  const onRow = useCallback(
+    (data: ResRemotePlans, index: number | undefined): React.HTMLAttributes<HTMLElement> => {
+      return {
+        onClick: (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+          console.log('row Click');
+          if (data.key !== undefined) {
+            let newselectedRowKeys;
+            if (selectedPlans.find((item) => item === data.key) !== undefined) {
+              newselectedRowKeys = selectedPlans.filter((item) => item !== data.key);
+            } else {
+              newselectedRowKeys = selectedPlans.concat(data.key);
+            }
+            setSelectedPlans(newselectedRowKeys);
+          }
+        },
+      };
+    },
+    [selectedPlans, setSelectedPlans]
+  );
 
   return (
     <Table<ResRemotePlans>
@@ -179,12 +182,14 @@ export default function RemotePlansTable({ children }: RemotePlansTableProps) {
         position: ['bottomCenter'],
         total: plans?.length,
       }}
+      onRow={onRow}
     >
       <Table.Column<ResRemotePlans> {...remotePlansColumnProps.plan_name} />
       <Table.Column<ResRemotePlans> {...remotePlansColumnProps.description} />
       <Table.Column<ResRemotePlans> {...remotePlansColumnProps.plan_type} />
       <Table.Column<ResRemotePlans> {...remotePlansColumnProps.machines} />
       <Table.Column<ResRemotePlans> {...remotePlansColumnProps.targets} />
+      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.status} render={statusRender} />
     </Table>
   );
 }
