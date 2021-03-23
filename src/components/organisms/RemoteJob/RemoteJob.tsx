@@ -40,7 +40,7 @@ const Main = styled(Col)`
 
 const Settings = styled(Col)`
   /* margin-left: 11rem; */
-  height: 28.125rem;
+  /* height: 28.125rem; */
   width: 67.1875rem;
 `;
 
@@ -79,7 +79,7 @@ export default function RemoteJob({ type }: RemoteJobProps) {
   }, []);
 
   const onBack = useCallback(() => {
-    history.push('/status/local');
+    history.push('/status/remote');
   }, []);
 
   return (

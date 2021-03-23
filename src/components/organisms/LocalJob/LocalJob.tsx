@@ -42,7 +42,7 @@ const Main = styled(Col)`
 
 const Settings = styled(Col)`
   /* margin-left: 11rem; */
-  height: 28.125rem;
+  /* height: 28.125rem; */
   width: 67.1875rem;
 `;
 
@@ -81,6 +81,7 @@ export default function LocalJob({ children }: LocalJobProps): JSX.Element {
           openWarningModal(LOCAL_ERROR.NOT_SELECTED_SITE);
           return false;
         }
+        console.log('uploadFiles.length', uploadFiles.length);
         if (uploadFiles.length === 0) {
           openWarningModal(LOCAL_ERROR.NOT_UPLOADED_FILES);
           return false;

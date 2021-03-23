@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { openNotification } from '../lib/util/notification';
 import { waitMutationStatus } from '../lib/util/generator';
 import { LOCAL_ERROR } from '../components/organisms/LocalJob/LocalJob';
+import { LabeledValue } from 'antd/lib/select';
 
 interface RemoteJobType {
   siteName: string;
@@ -23,10 +24,20 @@ const requestAddRemoteJob = async (postData: RemoteJobType) => {
 
 export default function useRemoteJob() {
   const [current, setCurrent] = useState(0);
-  const [selectSite, setSelectSite] = useState<string | undefined>();
+  const [selectSite, setSelectSite] = useState<LabeledValue | undefined>();
   const [uploadFiles, setUploadFiles] = useState<any>([]);
   const addJobStatusRef = useRef<MutationStatus>('idle');
   const history = useHistory();
+
+  const setSelectSiteValue = useCallback(
+    ({ value, label }: LabeledValue) => {
+      setSelectSite({
+        value,
+        label,
+      });
+    },
+    [setSelectSite]
+  );
 
   const mutation = useMutation((data: RemoteJobType) => requestAddRemoteJob(data), {
     mutationKey: 'local/addjob',
@@ -44,7 +55,7 @@ export default function useRemoteJob() {
 
   const makeRequestData = useCallback(
     () => ({
-      siteName: selectSite === undefined ? '' : selectSite,
+      siteName: selectSite?.value === undefined ? '' : selectSite.value,
       files: uploadFiles.map((item: any) => item.file),
     }),
     [selectSite, uploadFiles]
@@ -52,7 +63,7 @@ export default function useRemoteJob() {
 
   const reqAddRemoteJob = useCallback(() => {
     const reqData = makeRequestData();
-    mutation.mutate(reqData);
+    // mutation.mutate(reqData);
     addJobStatusRef.current = 'loading';
   }, [mutation]);
 
@@ -105,7 +116,7 @@ export default function useRemoteJob() {
     current,
     setCurrent,
     selectSite,
-    setSelectSite,
+    setSelectSite: setSelectSiteValue,
     uploadFiles,
     setUploadFiles,
     reqAddRemoteJob,

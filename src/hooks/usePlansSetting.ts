@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useQueries, useQuery } from 'react-query';
+import { getRemotePlans } from '../lib/util/requestAxios';
 
 export interface ResAutoPlanType {
   planId: number;
@@ -116,7 +118,10 @@ function convPlansData(resData: ResAutoPlanType[]) {
 
 export default function usePlansSetting() {
   const [selectedPlans, setSelectedPlans] = useState<React.Key[]>([]);
-  const [plans, setPlans] = useState(() => convPlansData(resData));
+
+  const { data: plans, isFetching, isError } = useQuery('get_remote_plans', getRemotePlans, {
+    refetchOnWindowFocus: false,
+  });
 
   const refreshPlans = () => {
     console.log('refreshPlans');

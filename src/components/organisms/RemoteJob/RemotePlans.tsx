@@ -2,17 +2,17 @@ import { DesktopOutlined, ProfileOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Row, Select, Space } from 'antd';
+import { LabeledValue } from 'antd/lib/select';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { getConfigureSitesFabsNames } from '../../../lib/util/requestAxios';
-import { SiteDB } from '../../../types/ConfigDB';
 import { ResSitesNames } from '../../../types/Configure';
 import RemotePlansTable from './RemotePlansTable';
 
 export type RemotePlansProps = {
   children?: React.ReactNode;
-  selectSite: string | undefined;
-  setSelectSite: React.Dispatch<string>;
+  selectSite: LabeledValue | undefined;
+  setSelectSite: ({ value, label }: LabeledValue) => void;
 };
 
 const SelectSiteName = styled(Row)`
@@ -49,7 +49,8 @@ export default function RemotePlans({ selectSite, setSelectSite }: RemotePlansPr
         </Space>
         <Select
           showSearch
-          css={selectStyle(selectSite)}
+          labelInValue
+          css={selectStyle}
           value={selectSite}
           placeholder="Select a site"
           onSelect={setSelectSite}
@@ -58,7 +59,7 @@ export default function RemotePlans({ selectSite, setSelectSite }: RemotePlansPr
           filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           {data?.map((item) => (
-            <Select.Option key={item.id} value={item.site_fab_name}>
+            <Select.Option key={item.id} value={item.id} label={item.site_fab_name}>
               {item.site_fab_name}
             </Select.Option>
           ))}
@@ -81,7 +82,7 @@ const spaceStyle = css`
   margin-bottom: 0.5rem;
 `;
 
-const selectStyle = (onSelect: string | undefined) => css`
+const selectStyle = css`
   min-width: 33.75rem;
   text-align: center;
   font-size: inherit;

@@ -81,6 +81,19 @@ export interface ResRemoteStatus {
   stop: boolean;
 }
 
+export interface ResRemotePlans {
+  key: React.Key;
+  plan_id: number;
+  plan_name: string;
+  plan_type: string;
+  machines: number;
+  machine_names: string[];
+  targets: number;
+  target_names: string[];
+  description: string;
+  status: string;
+}
+
 export interface ResLocalStatus {
   idx: number;
   id: number;

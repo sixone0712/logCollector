@@ -9,7 +9,7 @@ import React, { Key, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import usePlansSetting, { AutoPlanType } from '../../../hooks/usePlansSetting';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
-import { BuildStatus, RemoteStatus, RemoteStatusType } from '../../../types/Status';
+import { BuildStatus, RemoteStatus, RemoteStatusType, ResRemotePlans } from '../../../types/Status';
 import StatusBadge from '../../atoms/StatusBadge';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
 
@@ -17,7 +17,7 @@ const ColumnTitle = styled.div`
   font-weight: 700;
 `;
 
-export type AutoPlansColumnName = 'planName' | 'description' | 'planType' | 'machines' | 'targets';
+export type AutoPlansColumnName = 'plan_name' | 'description' | 'plan_type' | 'machines' | 'targets';
 
 export type AutoPlansColumnPropsType = {
   [name in AutoPlansColumnName]: {
@@ -27,9 +27,9 @@ export type AutoPlansColumnPropsType = {
     align?: AlignType;
     sorter?:
       | boolean
-      | CompareFn<AutoPlanType>
+      | CompareFn<ResRemotePlans>
       | {
-          compare?: CompareFn<AutoPlanType>;
+          compare?: CompareFn<ResRemotePlans>;
           /** Config multiple sorter order priority */
           multiple?: number;
         };
@@ -37,13 +37,13 @@ export type AutoPlansColumnPropsType = {
 };
 
 const remotePlansColumnProps: AutoPlansColumnPropsType = {
-  planName: {
-    key: 'planName',
+  plan_name: {
+    key: 'plan_name',
     title: <ColumnTitle>Plan Name</ColumnTitle>,
-    dataIndex: 'planName',
+    dataIndex: 'plan_name',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'planName'),
+      compare: (a, b) => compareTableItem(a, b, 'plan_name'),
     },
   },
   description: {
@@ -55,13 +55,13 @@ const remotePlansColumnProps: AutoPlansColumnPropsType = {
       compare: (a, b) => compareTableItem(a, b, 'description'),
     },
   },
-  planType: {
-    key: 'planType',
+  plan_type: {
+    key: 'plan_type',
     title: <ColumnTitle>Type</ColumnTitle>,
-    dataIndex: 'planType',
+    dataIndex: 'plan_type',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'planType'),
+      compare: (a, b) => compareTableItem(a, b, 'plan_type'),
     },
   },
   machines: {
@@ -146,42 +146,45 @@ export default function RemotePlansTable({ children }: RemotePlansTableProps) {
   const titleRender = useCallback(
     () => (
       <StatusTableHeader
-        listCount={plans.length}
+        listCount={plans?.length ? plans.length : 0}
         onClickNewJob={moveToRemoteNewJob}
         onClickRefresh={refreshPlans}
         newBtn={false}
         refreshBtn={true}
       />
     ),
-    [plans.length]
+    [plans?.length]
   );
 
-  const rowSelection: TableRowSelection<AutoPlanType> = {
+  const onSelectChange = (selectedRowKeys: React.Key[], selectedRows: ResRemotePlans[]) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    setSelectedPlans(selectedRowKeys);
+  };
+
+  const rowSelection: TableRowSelection<ResRemotePlans> = {
     type: 'checkbox',
     selectedRowKeys: selectedPlans,
-    onChange: (selectedRowKeys: React.Key[], selectedRows: AutoPlanType[]) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-      setSelectedPlans([...selectedRowKeys]);
-    },
+    onChange: onSelectChange,
+    selections: [Table.SELECTION_ALL],
   };
 
   return (
-    <Table<AutoPlanType>
-      rowSelection={{ ...rowSelection }}
+    <Table<ResRemotePlans>
+      rowSelection={rowSelection}
       dataSource={plans}
       bordered
       title={titleRender}
       size="middle"
       pagination={{
         position: ['bottomCenter'],
-        total: plans.length,
+        total: plans?.length,
       }}
     >
-      <Table.Column<AutoPlanType> {...remotePlansColumnProps.planName} />
-      <Table.Column<AutoPlanType> {...remotePlansColumnProps.description} />
-      <Table.Column<AutoPlanType> {...remotePlansColumnProps.planType} />
-      <Table.Column<AutoPlanType> {...remotePlansColumnProps.machines} />
-      <Table.Column<AutoPlanType> {...remotePlansColumnProps.targets} />
+      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.plan_name} />
+      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.description} />
+      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.plan_type} />
+      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.machines} />
+      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.targets} />
     </Table>
   );
 }

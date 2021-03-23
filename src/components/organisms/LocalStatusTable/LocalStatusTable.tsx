@@ -91,7 +91,7 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps) {
         isLoading={isFetching}
       />
     ),
-    [localListLen]
+    [localListLen, isFetching]
   );
 
   const filesRender = useCallback((value: string[], record: LocalStatus, index: number) => {

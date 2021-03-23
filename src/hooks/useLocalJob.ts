@@ -2,27 +2,23 @@ import { ResSitesNames } from './../types/Configure';
 import { Modal } from 'antd';
 import axios from 'axios';
 import { useCallback, useRef, useState } from 'react';
-import { MutationStatus, useMutation } from 'react-query';
+import { MutationStatus, QueryObserver, useIsFetching, useMutation, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router-dom';
 
 import { openNotification } from '../lib/util/notification';
 import { waitMutationStatus } from '../lib/util/generator';
 import { LOCAL_ERROR } from '../components/organisms/LocalJob/LocalJob';
 import { LabeledValue } from 'antd/lib/select';
+import { postLocalJob } from '../lib/util/requestAxios';
 
-interface ReqLocalJobType {
+export interface ReqPostLocalJob {
   site_id: number;
   filename: any;
 }
 
-interface LocalJobResponse {
+export interface ResPostLocalJob {
   id: number;
 }
-
-const requestAddLocalJob = async (postData: ReqLocalJobType) => {
-  const { data } = await axios.post<LocalJobResponse>('/api/local', postData);
-  return data;
-};
 
 export default function useLocalJob() {
   const [current, setCurrent] = useState(0);
@@ -42,7 +38,7 @@ export default function useLocalJob() {
     [setSelectSite]
   );
 
-  const mutation = useMutation((data: ReqLocalJobType) => requestAddLocalJob(data), {
+  const mutation = useMutation((data: ReqPostLocalJob) => postLocalJob(data), {
     mutationKey: 'add_local_job',
     onSuccess: () => {
       addJobStatusRef.current = 'success';
@@ -106,7 +102,6 @@ export default function useLocalJob() {
         content = 'Please load a file.';
         break;
     }
-
     const warning = Modal.warning({
       title: 'Error',
       content,
