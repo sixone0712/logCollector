@@ -1,4 +1,4 @@
-import { DesktopOutlined, NotificationOutlined } from '@ant-design/icons';
+import { NotificationOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Col, PageHeader, Row, Space } from 'antd';
 import React, { useCallback } from 'react';
@@ -62,24 +62,9 @@ export type RemoteJobProps = {
 };
 
 export default function RemoteJob({ type }: RemoteJobProps) {
-  const {
-    current,
-    setCurrent,
-    selectSite,
-    setSelectSite,
-    uploadFiles,
-    setUploadFiles,
-    openConfirmModal,
-    openWarningModal,
-  } = useRemoteJob();
-  const history = useHistory();
-
+  const { current, setCurrent, onBack } = useRemoteJob();
   const nextAction = useCallback(() => {
     return true;
-  }, []);
-
-  const onBack = useCallback(() => {
-    history.push('/status/remote');
   }, []);
 
   return (
@@ -98,7 +83,7 @@ export default function RemoteJob({ type }: RemoteJobProps) {
             />
           </SettingsTitle>
           <Main>
-            {current === REMOTE_STEP.PLANS && <RemotePlans selectSite={selectSite} setSelectSite={setSelectSite} />}
+            {current === REMOTE_STEP.PLANS && <RemotePlans />}
 
             {current === REMOTE_STEP.NOTICE && <RemoteNotice />}
             {current >= REMOTE_STEP.CONFIRM && <RemoteConfirm />}

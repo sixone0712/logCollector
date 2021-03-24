@@ -27,9 +27,11 @@ router.post('/up', upload.array('zip'), (req, res) => {
   console.log(req.files);
 });
 
-router.post('/upload', upload.single('file'), function (req, res) {
-  res.send('Uploaded! : ' + req.file); // object를 리턴함
+router.post('/local', upload.single('file'), function (req, res) {
   console.log(req.file); // 콘솔(터미널)을 통해서 req.file Object 내용 확인 가능.
+  res.json({
+    path: '/uploads/' + req.file.filename,
+  });
 });
 
 export default router;

@@ -15,17 +15,21 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 // import '@fontsource/saira/100.css'; // Weight 100.
 // import '@fontsource/saira/700.css'; // Weight 700.
 // import 'normalize.css';
+import store from './reducers/store';
+import { Provider } from 'react-redux';
 
 const queryClient = new QueryClient();
 
 ReactDOM.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -3,15 +3,14 @@ import compression = require('compression');
 import cors = require('cors');
 import * as express from 'express';
 import { NextFunction, Request, Response } from 'express';
-import morgan = require('morgan');
 import 'reflect-metadata';
 import { createConnection } from 'typeorm';
-import local from './routes/local';
-import settingdb from './routes/settingdb';
 import configure from './routes/configure';
-import status from './routes/status';
-import user from './routes/user';
 import initData from './routes/initData';
+import status from './routes/status';
+import upload from './routes/upload';
+import user from './routes/user';
+import morgan = require('morgan');
 
 // Connect typeORM mysql
 createConnection()
@@ -39,7 +38,7 @@ createConnection()
     //   })
     // );
 
-    app.use('/api/local', local);
+    app.use('/api/upload', upload);
     app.use('/api/status', status);
     app.use('/api/configure', configure);
     app.use('/api/user', user);

@@ -1,34 +1,14 @@
-import React from 'react';
+import { DesktopOutlined, FileAddOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
-import { Col, Row, Select, Space } from 'antd';
-import { DesktopOutlined, FileAddOutlined, InboxOutlined } from '@ant-design/icons';
-import { Upload, message } from 'antd';
 import styled from '@emotion/styled';
-import { LabeledValue } from 'antd/lib/select';
+import { Col, Row, Space } from 'antd';
+import React from 'react';
+import useLocalJob from '../../../hooks/useLocalJob';
 
-export type LocalConfirmProps = {
-  selectSite: LabeledValue | undefined;
-  uploadFiles: any;
-};
+export type LocalConfirmProps = {};
+export default function LocalConfirm(): JSX.Element {
+  const { selectSite, uploadFiles } = useLocalJob();
 
-const SiteName = styled(Row)`
-  font-size: 1rem;
-  flex-wrap: nowrap;
-`;
-const FileUpload = styled(Row)`
-  font-size: 1rem;
-  margin-top: 2rem;
-  flex-wrap: nowrap;
-`;
-
-const SelectedSite = styled(Col)``;
-const UploadFiles = styled(Col)``;
-const UploadFileCount = styled(Row)``;
-const UploadFileList = styled(Row)`
-  margin-left: 0.5rem;
-`;
-
-export default function LocalConfirm({ selectSite, uploadFiles }: LocalConfirmProps): JSX.Element {
   return (
     <>
       <SiteName align="middle">
@@ -58,6 +38,23 @@ export default function LocalConfirm({ selectSite, uploadFiles }: LocalConfirmPr
     </>
   );
 }
+
+const SiteName = styled(Row)`
+  font-size: 1rem;
+  flex-wrap: nowrap;
+`;
+const FileUpload = styled(Row)`
+  font-size: 1rem;
+  margin-top: 2rem;
+  flex-wrap: nowrap;
+`;
+
+const SelectedSite = styled(Col)``;
+const UploadFiles = styled(Col)``;
+const UploadFileCount = styled(Row)``;
+const UploadFileList = styled(Row)`
+  margin-left: 0.5rem;
+`;
 
 const spaceStyle = css`
   min-width: 13.25rem;

@@ -117,8 +117,6 @@ function convPlansData(resData: ResAutoPlanType[]) {
 }
 
 export default function usePlansSetting() {
-  const [selectedPlans, setSelectedPlans] = useState<React.Key[]>([]);
-
   const { data: plans, isFetching, isError } = useQuery('get_remote_plans', getRemotePlans, {
     refetchOnWindowFocus: false,
   });
@@ -129,8 +127,8 @@ export default function usePlansSetting() {
 
   return {
     plans,
-    selectedPlans,
-    setSelectedPlans,
+    isFetching,
     refreshPlans,
+    usePlansSetting,
   };
 }

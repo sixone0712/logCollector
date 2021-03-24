@@ -1,23 +1,21 @@
-import { blue } from '@ant-design/colors';
-import { DeleteOutlined, EditOutlined, PauseCircleOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Table } from 'antd';
+import { Badge, Checkbox, Table, Tooltip, Row, Col } from 'antd';
 import { CompareFn, TableRowSelection } from 'antd/lib/table/interface';
 import { AlignType, DataIndex } from 'rc-table/lib/interface';
 import React, { Key, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
-import usePlansSetting, { AutoPlanType } from '../../../hooks/usePlansSetting';
+import usePlansSetting from '../../../hooks/usePlansSetting';
+import useRemoteJob from '../../../hooks/useRemoteJob';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
-import { BuildStatus, RemoteStatus, RemoteStatusType, ResRemotePlans } from '../../../types/Status';
-import StatusBadge from '../../atoms/StatusBadge';
+import { ResRemotePlans } from '../../../types/Status';
+import PopupTip from '../../atoms/PopupTip';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
 
 const ColumnTitle = styled.div`
   font-weight: 700;
 `;
 
-export type AutoPlansColumnName = 'plan_name' | 'description' | 'plan_type' | 'machines' | 'targets';
+export type AutoPlansColumnName = 'plan_name' | 'description' | 'plan_type' | 'machines' | 'targets' | 'status';
 
 export type AutoPlansColumnPropsType = {
   [name in AutoPlansColumnName]: {
@@ -82,72 +80,49 @@ const remotePlansColumnProps: AutoPlansColumnPropsType = {
       compare: (a, b) => compareTableItem(a, b, 'targets'),
     },
   },
+  status: {
+    key: 'status',
+    title: <ColumnTitle>Status</ColumnTitle>,
+    dataIndex: 'status',
+    align: 'center',
+    sorter: {
+      compare: (a, b) => compareTableItem(a, b, 'status'),
+    },
+  },
 };
 
-export type RemotePlansTableProps = {
-  children?: React.ReactNode;
-};
+export type RemotePlansTableProps = {};
 
-export default function RemotePlansTable({ children }: RemotePlansTableProps) {
-  const { plans, selectedPlans, setSelectedPlans, refreshPlans } = usePlansSetting();
-  const history = useHistory();
+export default function RemotePlansTable() {
+  const { plans, refreshPlans, isFetching } = usePlansSetting();
+  const { selectPlans, setSelectPlans, onBack } = useRemoteJob();
 
-  const collectStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number) => buildStatusRender(value, record, index, 'collect'),
-    []
-  );
-
-  const errorStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number) => buildStatusRender(value, record, index, 'error'),
-    []
-  );
-
-  const crasStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number) => buildStatusRender(value, record, index, 'cras'),
-    []
-  );
-
-  const versionStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number) => buildStatusRender(value, record, index, 'version'),
-    []
-  );
-
-  const buildStatusRender = useCallback(
-    (value: BuildStatus, record: RemoteStatus, index: number, type?: RemoteStatusType) => {
-      const onClick = useCallback(
-        () => history.push(`/status/remote/${type}/${record.index}?name=${record.siteName}`),
-        []
+  const statusRender = useCallback(
+    (value: string, record: ResRemotePlans, index: number, type?: AutoPlansColumnName) => {
+      return (
+        <Badge status={value === 'stop' ? 'processing' : 'error'} text={value === 'stop' ? 'Stopped' : 'Running'} />
       );
-      return <StatusBadge type={value} onClick={onClick} />;
     },
     []
   );
 
-  const startAndStopRender = useCallback((value: boolean) => {
-    if (value) {
-      return <PlayCircleOutlined css={iconStyle} />;
-    } else {
-      return <PauseCircleOutlined css={iconStyle} />;
-    }
-  }, []);
+  const mahcinesRender = useCallback(
+    (value: number, record: ResRemotePlans, index: number, type?: AutoPlansColumnName) =>
+      PopupTip({ value, list: record.machine_names }),
+    []
+  );
 
-  const editRender = useCallback(() => {
-    return <EditOutlined css={iconStyle} />;
-  }, []);
-
-  const deleteRender = useCallback(() => {
-    return <DeleteOutlined css={iconStyle} />;
-  }, []);
-
-  const moveToRemoteNewJob = useCallback(() => {
-    history.push('/status/remote/new');
-  }, []);
+  const targetsRender = useCallback(
+    (value: number, record: ResRemotePlans, index: number, type?: AutoPlansColumnName) =>
+      PopupTip({ value, list: record.target_names }),
+    []
+  );
 
   const titleRender = useCallback(
     () => (
       <StatusTableHeader
         listCount={plans?.length ? plans.length : 0}
-        onClickNewJob={moveToRemoteNewJob}
+        onClickNewJob={onBack}
         onClickRefresh={refreshPlans}
         newBtn={false}
         refreshBtn={true}
@@ -158,18 +133,31 @@ export default function RemotePlansTable({ children }: RemotePlansTableProps) {
 
   const onSelectChange = (selectedRowKeys: React.Key[], selectedRows: ResRemotePlans[]) => {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    setSelectedPlans(selectedRowKeys);
+    setSelectPlans(selectedRowKeys);
   };
+
+  const toggleSelectAll = useCallback(() => {
+    if (plans) setSelectPlans(selectPlans.length === plans.length ? [] : plans.map((r) => r.plan_id));
+  }, [plans, selectPlans]);
+
+  const allCheckbox = (
+    <Checkbox
+      checked={selectPlans.length ? true : false}
+      indeterminate={plans && selectPlans.length > 0 && selectPlans.length < plans.length}
+      onChange={toggleSelectAll}
+    />
+  );
 
   const rowSelection: TableRowSelection<ResRemotePlans> = {
     type: 'checkbox',
-    selectedRowKeys: selectedPlans,
+    selectedRowKeys: selectPlans,
     onChange: onSelectChange,
-    selections: [Table.SELECTION_ALL],
+    columnTitle: allCheckbox,
   };
 
   return (
     <Table<ResRemotePlans>
+      rowKey={'plan_id'}
       rowSelection={rowSelection}
       dataSource={plans}
       bordered
@@ -179,22 +167,14 @@ export default function RemotePlansTable({ children }: RemotePlansTableProps) {
         position: ['bottomCenter'],
         total: plans?.length,
       }}
+      loading={isFetching}
     >
       <Table.Column<ResRemotePlans> {...remotePlansColumnProps.plan_name} />
       <Table.Column<ResRemotePlans> {...remotePlansColumnProps.description} />
       <Table.Column<ResRemotePlans> {...remotePlansColumnProps.plan_type} />
-      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.machines} />
-      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.targets} />
+      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.machines} render={mahcinesRender} />
+      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.targets} render={targetsRender} />
+      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.status} render={statusRender} />
     </Table>
   );
 }
-
-const iconStyle = css`
-  /* font-size: 1.25rem; */
-  &:hover {
-    color: ${blue[4]};
-  }
-  &:active {
-    color: ${blue[6]};
-  }
-`;

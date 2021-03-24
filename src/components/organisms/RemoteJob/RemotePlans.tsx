@@ -5,30 +5,15 @@ import { Row, Select, Space } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
 import React from 'react';
 import { useQuery } from 'react-query';
+import useRemoteJob from '../../../hooks/useRemoteJob';
 import { getConfigureSitesFabsNames } from '../../../lib/util/requestAxios';
 import { ResSitesNames } from '../../../types/Configure';
 import RemotePlansTable from './RemotePlansTable';
 
-export type RemotePlansProps = {
-  children?: React.ReactNode;
-  selectSite: LabeledValue | undefined;
-  setSelectSite: ({ value, label }: LabeledValue) => void;
-};
+export type RemotePlansProps = {};
+export default function RemotePlans(): JSX.Element {
+  const { selectSite, setSelectSite } = useRemoteJob();
 
-const SelectSiteName = styled(Row)`
-  font-size: 1rem;
-  flex-wrap: nowrap;
-  /* height: 14.0625rem; */
-`;
-const SelectPlans = styled(Row)`
-  font-size: 1rem;
-  margin-top: 2rem;
-  flex-wrap: nowrap;
-  /* height: 14.0625rem; */
-  flex-direction: column;
-`;
-
-export default function RemotePlans({ selectSite, setSelectSite }: RemotePlansProps): JSX.Element {
   const { isLoading, isError, data, error, status, isFetching } = useQuery<ResSitesNames[]>(
     'sites_fabs_name',
     getConfigureSitesFabsNames,
@@ -75,6 +60,19 @@ export default function RemotePlans({ selectSite, setSelectSite }: RemotePlansPr
     </>
   );
 }
+
+const SelectSiteName = styled(Row)`
+  font-size: 1rem;
+  flex-wrap: nowrap;
+  /* height: 14.0625rem; */
+`;
+const SelectPlans = styled(Row)`
+  font-size: 1rem;
+  margin-top: 2rem;
+  flex-wrap: nowrap;
+  /* height: 14.0625rem; */
+  flex-direction: column;
+`;
 
 const spaceStyle = css`
   min-width: 13.25rem;

@@ -51,7 +51,7 @@ router.get('/remote/plans', async (req: Request, res: Response, next: NextFuncti
       machines: item.machineNames.length,
       machine_names: item.machineNames,
       targets: item.planType === 'ftp' ? item.categoryNames.length : convCommandName.length,
-      targets_names: item.planType === 'ftp' ? item.categoryNames : convCommandName,
+      target_names: item.planType === 'ftp' ? item.categoryNames : convCommandName,
       description: item.description,
       status: item.status,
     };
@@ -80,6 +80,13 @@ router.get('/local', async (req: Request, res: Response, next: NextFunction) => 
   await sleep(1000);
 
   res.json(response);
+});
+
+router.post('/local', async (req: Request, res: Response, next: NextFunction) => {
+  await sleep(10000);
+  res.json({
+    id: 9999,
+  });
 });
 
 export default router;

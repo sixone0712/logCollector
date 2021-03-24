@@ -1,39 +1,18 @@
 import { DesktopOutlined, FileAddOutlined, InboxOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Row, Select, Space, Upload } from 'antd';
-import { LabeledValue } from 'antd/lib/select';
-import React, { useEffect } from 'react';
+import { message, Row, Select, Space, Upload } from 'antd';
+import React from 'react';
 import { useQuery } from 'react-query';
+import useLocalJob from '../../../hooks/useLocalJob';
 import { getConfigureSitesFabsNames } from '../../../lib/util/requestAxios';
 import { ResSitesNames } from '../../../types/Configure';
 
 export type LocalConfigureProps = {
   children?: React.ReactNode;
-  selectSite: LabeledValue | undefined;
-  setSelectSite: ({ value, label }: LabeledValue) => void;
-  uploadFiles: any;
-  setUploadFiles: React.Dispatch<any>;
 };
 
-const SelectSiteName = styled(Row)`
-  font-size: 1rem;
-  flex-wrap: nowrap;
-  /* height: 14.0625rem; */
-`;
-const FileUpload = styled(Row)`
-  font-size: 1rem;
-  margin-top: 6.25rem;
-  flex-wrap: nowrap;
-  /* height: 14.0625rem; */
-`;
-
-export default function LocalConfigure({
-  selectSite,
-  setSelectSite,
-  uploadFiles,
-  setUploadFiles,
-}: LocalConfigureProps): JSX.Element {
+export default function LocalConfigure({ children }: LocalConfigureProps): JSX.Element {
   const { isLoading, isError, data, error, status, isFetching } = useQuery<ResSitesNames[]>(
     'get_configure_sites_fabs_name',
     getConfigureSitesFabsNames,
@@ -44,23 +23,41 @@ export default function LocalConfigure({
       // initialData: [],
     }
   );
+
+  const { selectSite, setSelectSite, uploadFiles, setUploadFiles } = useLocalJob();
+
   console.log('data', data);
   console.log('isLoading', isLoading);
   console.log('isError', isError);
   console.log('error', error);
   console.log('status', status);
   console.log('isFetching', isFetching);
+  console.log('uploadFiles', uploadFiles);
 
   const props = {
     name: 'file',
     multiple: true,
-    beforeUpload: (file: any) => {
-      console.log('file', file);
-      setUploadFiles((prevState: any) => [...prevState, file]);
-      return false;
+    maxCount: 10,
+    action: 'http://localhost:3001/api/upload/local',
+    // beforeUpload: (file: any) => {
+    //   return false;
+    // },
+    onChange(info: any) {
+      const { fileList, file } = info;
+      const { status } = file;
+      if (status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      } else if (status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully.`);
+        console.log('uploadFiles', uploadFiles);
+      } else if (status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+
+      console.log('[LocalConfigure][onChange]fileList', fileList);
+      setUploadFiles(fileList);
     },
-    uploadFiles,
-    defaultFileList: uploadFiles,
+    fileList: uploadFiles,
   };
 
   return (
@@ -106,6 +103,18 @@ export default function LocalConfigure({
     </>
   );
 }
+
+const SelectSiteName = styled(Row)`
+  font-size: 1rem;
+  flex-wrap: nowrap;
+  /* height: 14.0625rem; */
+`;
+const FileUpload = styled(Row)`
+  font-size: 1rem;
+  margin-top: 6.25rem;
+  flex-wrap: nowrap;
+  /* height: 14.0625rem; */
+`;
 
 const spaceStyle = css`
   min-width: 13.25rem;

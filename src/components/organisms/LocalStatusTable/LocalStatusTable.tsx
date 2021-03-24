@@ -10,6 +10,7 @@ import { compareTableItem } from '../../../lib/util/compareTableItem';
 import StatusBadge from '../../atoms/StatusBadge';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
 import { BuildStatus, LocalColumnPropsType, LocalStatus } from '../../../types/Status';
+import PopupTip from '../../atoms/PopupTip';
 
 export type LocalStatusTableProps = {
   children?: React.ReactNode;
@@ -95,15 +96,7 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps) {
   );
 
   const filesRender = useCallback((value: string[], record: LocalStatus, index: number) => {
-    const title = () => {
-      return value.map((item, idx) => <div key={idx}>{item}</div>);
-    };
-
-    return (
-      <Tooltip title={title} placement="right" color="cyan">
-        <span>{`${value.length ? value.length : 0} files`}</span>
-      </Tooltip>
-    );
+    return PopupTip({ value: `${value.length ? value.length : 0} files`, list: value });
   }, []);
 
   const moveToLocalNewJob = useCallback(() => {

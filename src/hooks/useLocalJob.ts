@@ -1,15 +1,15 @@
-import { ResSitesNames } from './../types/Configure';
 import { Modal } from 'antd';
-import axios from 'axios';
-import { useCallback, useRef, useState } from 'react';
-import { MutationStatus, QueryObserver, useIsFetching, useMutation, useQueryClient } from 'react-query';
-import { useHistory } from 'react-router-dom';
-
-import { openNotification } from '../lib/util/notification';
-import { waitMutationStatus } from '../lib/util/generator';
-import { LOCAL_ERROR } from '../components/organisms/LocalJob/LocalJob';
 import { LabeledValue } from 'antd/lib/select';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useIsMutating, useMutation } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { LOCAL_ERROR, LOCAL_STEP } from '../components/organisms/LocalJob/LocalJob';
+import { waitMutationStatus } from '../lib/util/generator';
+import { openNotification } from '../lib/util/notification';
 import { postLocalJob } from '../lib/util/requestAxios';
+import { selectSiteAction, localJobSiteSelector, initLocalJobAction } from '../reducers/slices/localJob';
+import useUploadFiles from './useUploadFiles';
 
 export interface ReqPostLocalJob {
   site_id: number;
@@ -22,30 +22,35 @@ export interface ResPostLocalJob {
 
 export default function useLocalJob() {
   const [current, setCurrent] = useState(0);
-  const [selectSite, setSelectSite] = useState<LabeledValue | undefined>();
-  const [selectSiteId, setSelectSiteId] = useState<number | undefined>();
-  const [uploadFiles, setUploadFiles] = useState<any>([]);
-  const addJobStatusRef = useRef<MutationStatus>('idle');
+  const selectSite = useSelector(localJobSiteSelector);
+  const isMutating = useIsMutating({ mutationKey: ['add_local_job'] });
+  const isMutatingRef = useRef(false);
+  const dispatch = useDispatch();
   const history = useHistory();
 
-  const setSelectSiteValue = useCallback(
+  // TODO: There is an error that cannot save the filelist of the upload component of antd to the store of redux.
+  // Alternatively, use use-global-hook to share values between hooks.
+  // In the future, you will need to move to redux when this problem is resolved.
+  const { uploadFiles, setUploadFiles } = useUploadFiles();
+
+  const setSelectSite = useCallback(
     ({ value, label }: LabeledValue) => {
-      setSelectSite({
-        value,
-        label,
-      });
+      dispatch(selectSiteAction({ value, label }));
     },
-    [setSelectSite]
+    [dispatch]
   );
+
+  const initLocalJob = useCallback(() => {
+    dispatch(initLocalJobAction());
+    setUploadFiles([]);
+  }, [dispatch]);
 
   const mutation = useMutation((data: ReqPostLocalJob) => postLocalJob(data), {
     mutationKey: 'add_local_job',
     onSuccess: () => {
-      addJobStatusRef.current = 'success';
       openNotification('success', 'Success', 'Completed to add local job');
     },
     onError: () => {
-      addJobStatusRef.current = 'error';
       openNotification('error', 'Error', 'Failed to add local job');
     },
   });
@@ -61,8 +66,11 @@ export default function useLocalJob() {
   const reqAddLocalJob = useCallback(() => {
     const reqData = makeRequestData();
     mutation.mutate(reqData);
-    addJobStatusRef.current = 'loading';
   }, [mutation]);
+
+  const onBack = useCallback(() => {
+    history.push('/status/local');
+  }, []);
 
   const openConfirmModal = useCallback(() => {
     const confirm = Modal.confirm({
@@ -76,10 +84,10 @@ export default function useLocalJob() {
 
         // wait for response
         let result;
-        while ((result = await generator.next(addJobStatusRef)) && !result.done) {
+        while ((result = await generator.next(isMutatingRef)) && !result.done) {
           // noting to do
         }
-        history.push('/status/local');
+        onBack();
       },
     });
 
@@ -108,18 +116,41 @@ export default function useLocalJob() {
     });
   }, []);
 
+  const nextAction = useCallback(() => {
+    switch (current) {
+      case LOCAL_STEP.CONFIGURE:
+        if (selectSite === undefined) {
+          openWarningModal(LOCAL_ERROR.NOT_SELECTED_SITE);
+          return false;
+        }
+        if (uploadFiles.length === 0) {
+          openWarningModal(LOCAL_ERROR.NOT_UPLOADED_FILES);
+          return false;
+        }
+        break;
+      case LOCAL_STEP.CONFIRM:
+        openConfirmModal();
+        break;
+    }
+    return true;
+  }, [current, selectSite, uploadFiles]);
+
+  useEffect(() => {
+    isMutatingRef.current = isMutating ? true : false;
+  }, [isMutating]);
+
   return {
     current,
     setCurrent,
+    initLocalJob,
     selectSite,
-    setSelectSite: setSelectSiteValue,
-    selectSiteId,
-    setSelectSiteId,
+    setSelectSite,
     uploadFiles,
     setUploadFiles,
     reqAddLocalJob,
-    addJobStatusRef,
     openConfirmModal,
     openWarningModal,
+    nextAction,
+    onBack,
   };
 }
