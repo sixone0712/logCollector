@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { useQueries, useQuery } from 'react-query';
+import { useCallback, useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
 import { getRemotePlans } from '../lib/util/requestAxios';
+import { remoteJobSiteSelector } from '../reducers/slices/remoteJob';
 
 export interface ResAutoPlanType {
   planId: number;
@@ -117,13 +119,25 @@ function convPlansData(resData: ResAutoPlanType[]) {
 }
 
 export default function usePlansSetting() {
-  const { data: plans, isFetching, isError } = useQuery('get_remote_plans', getRemotePlans, {
+  const [siteId, setSiteId] = useState<number | undefined>();
+  const { data: plans, isFetching, isError } = useQuery(['get_remote_plans', { siteId }], getRemotePlans, {
     refetchOnWindowFocus: false,
+    enabled: false,
   });
 
-  const refreshPlans = () => {
-    console.log('refreshPlans');
-  };
+  const selectSite = useSelector(remoteJobSiteSelector);
+
+  useEffect(() => {
+    if (selectSite) {
+      setSiteId(selectSite.value as number);
+    }
+  }, [selectSite]);
+
+  const queryClient = useQueryClient();
+
+  const refreshPlans = useCallback(() => {
+    queryClient.fetchQuery('get_remote_plans');
+  }, [queryClient]);
 
   return {
     plans,

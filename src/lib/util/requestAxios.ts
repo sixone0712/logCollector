@@ -21,8 +21,9 @@ export const getRemoteJobStatus = async () => {
   }));
 };
 
-export const getRemotePlans = async () => {
-  const { data } = await axios.get<ResRemotePlans[]>('/api/status/remote/plans');
+export const getRemotePlans = async ({ queryKey }) => {
+  const[(_key, { siteId })] = queryKey;
+  const { data } = await axios.get<ResRemotePlans[]>(`/api/status/remote/plans?siteid=${siteId}`);
 
   return data.map((item, index) => ({
     ...item,

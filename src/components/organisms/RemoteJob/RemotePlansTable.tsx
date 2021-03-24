@@ -126,9 +126,10 @@ export default function RemotePlansTable() {
         onClickRefresh={refreshPlans}
         newBtn={false}
         refreshBtn={true}
+        isLoading={isFetching}
       />
     ),
-    [plans?.length]
+    [plans, isFetching]
   );
 
   const onSelectChange = (selectedRowKeys: React.Key[], selectedRows: ResRemotePlans[]) => {
