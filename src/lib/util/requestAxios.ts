@@ -1,5 +1,5 @@
 import Item from 'antd/lib/list/Item';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { ReqPostLocalJob, ResPostLocalJob } from '../../hooks/useLocalJob';
 import { ResSitesNames } from '../../types/Configure';
 import { ResLocalStatus, ResRemotePlans, ResRemoteStatus } from '../../types/Status';
@@ -21,14 +21,15 @@ export const getRemoteJobStatus = async () => {
   }));
 };
 
-export const getRemotePlans = async ({ queryKey }) => {
-  const[(_key, { siteId })] = queryKey;
+export const getRemotePlans = async (siteId: string | number | undefined) => {
   const { data } = await axios.get<ResRemotePlans[]>(`/api/status/remote/plans?siteid=${siteId}`);
 
-  return data.map((item, index) => ({
-    ...item,
-    key: index,
-  }));
+  // return data.map((item, index) => ({
+  //   ...item,
+  //   key: index,
+  // }));
+
+  return data;
 };
 
 export const getLocalJobStatus = async () => {

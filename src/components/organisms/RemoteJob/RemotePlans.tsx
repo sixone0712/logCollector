@@ -2,7 +2,6 @@ import { DesktopOutlined, ProfileOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Row, Select, Space } from 'antd';
-import { LabeledValue } from 'antd/lib/select';
 import React from 'react';
 import { useQuery } from 'react-query';
 import useRemoteJob from '../../../hooks/useRemoteJob';

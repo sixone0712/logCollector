@@ -13,9 +13,11 @@ export interface RemoteJobState {
   mpaVersion: EmailOptionState;
 }
 
+export type PrevDataPeriodUnitType = 'minute' | 'hour' | 'day';
+
 export interface PrevDataPeriodState {
   time: number;
-  unit: 'minute' | 'hour' | 'day';
+  unit: PrevDataPeriodUnitType;
 }
 
 export interface EmailOptionState {

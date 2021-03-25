@@ -13,6 +13,7 @@ export type StatusHeaderProps = {
   newBtn: boolean;
   refreshBtn: boolean;
   isLoading?: boolean;
+  disabled?: boolean;
 };
 
 const Container = styled(Row)`
@@ -33,8 +34,9 @@ export default function StatusTableHeader({
   onClickRefresh,
   newBtn,
   refreshBtn,
-  isLoading,
-}: StatusHeaderProps) {
+  isLoading = false,
+  disabled = false,
+}: StatusHeaderProps): JSX.Element {
   console.log('StatusTableHeader_isLoading', isLoading);
   return (
     <Container>
@@ -52,7 +54,8 @@ export default function StatusTableHeader({
               icon={<ReloadOutlined />}
               css={btnStyle}
               onClick={onClickRefresh}
-              disabled={isLoading}
+              loading={isLoading}
+              disabled={disabled}
             />
           )}
         </Space>

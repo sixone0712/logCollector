@@ -7,3 +7,4 @@
 - [plans_setting][https://iconmonstr.com/calendar-4-svg/]
 - [check_setting][https://iconmonstr.com/task-1-svg/]
 - [plans][https://iconmonstr.com/product-9-svg/]
+- [prev_time][https://iconmonstr.com/time-5-svg/]

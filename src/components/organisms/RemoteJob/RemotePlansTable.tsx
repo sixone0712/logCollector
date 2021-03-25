@@ -95,7 +95,7 @@ export type RemotePlansTableProps = {};
 
 export default function RemotePlansTable() {
   const { plans, refreshPlans, isFetching } = usePlansSetting();
-  const { selectPlans, setSelectPlans, onBack } = useRemoteJob();
+  const { selectPlans, setSelectPlans, onBack, selectSite } = useRemoteJob();
 
   const statusRender = useCallback(
     (value: string, record: ResRemotePlans, index: number, type?: AutoPlansColumnName) => {
@@ -127,6 +127,7 @@ export default function RemotePlansTable() {
         newBtn={false}
         refreshBtn={true}
         isLoading={isFetching}
+        disabled={!selectSite?.value}
       />
     ),
     [plans, isFetching]
@@ -138,7 +139,8 @@ export default function RemotePlansTable() {
   };
 
   const toggleSelectAll = useCallback(() => {
-    if (plans) setSelectPlans(selectPlans.length === plans.length ? [] : plans.map((r) => r.plan_id));
+    if (plans && plans.length > 0)
+      setSelectPlans(selectPlans.length === plans.length ? [] : plans.map((r: ResRemotePlans) => r.plan_id));
   }, [plans, selectPlans]);
 
   const allCheckbox = (
