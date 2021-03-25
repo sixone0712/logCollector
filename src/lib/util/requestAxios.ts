@@ -1,5 +1,4 @@
-import Item from 'antd/lib/list/Item';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { ReqPostLocalJob, ResPostLocalJob } from '../../hooks/useLocalJob';
 import { ResSitesNames } from '../../types/Configure';
 import { ResLocalStatus, ResRemotePlans, ResRemoteStatus } from '../../types/Status';

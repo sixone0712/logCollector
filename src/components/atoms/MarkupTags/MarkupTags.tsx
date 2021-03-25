@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css, SerializedStyles } from '@emotion/react';
 import { Tag } from 'antd';
 import { TweenOneGroup } from 'rc-tween-one';
 import React from 'react';
@@ -6,8 +6,9 @@ import React from 'react';
 interface MarkUpTagsProps {
   tags: string[];
   setTags: (value: string[]) => void;
+  tagsStyle?: SerializedStyles;
 }
-function MarkUpTags({ tags, setTags }: MarkUpTagsProps) {
+function MarkUpTags({ tags, setTags, tagsStyle }: MarkUpTagsProps) {
   const handleClose = (removedTag: string) => {
     setTags(tags.filter((tag) => tag !== removedTag));
   };
@@ -48,6 +49,7 @@ function MarkUpTags({ tags, setTags }: MarkUpTagsProps) {
       }}
       leave={{ opacity: 0, width: 0, scale: 0, duration: 200 }}
       appear={false}
+      css={tagsStyle}
     >
       {tags.map(forMapTags)}
     </TweenOneGroup>

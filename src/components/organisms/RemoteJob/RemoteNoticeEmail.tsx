@@ -1,51 +1,84 @@
-import React, { useState } from 'react';
-import { css } from '@emotion/react';
-import { Col, Collapse, Input, Row, RowProps, Space } from 'antd';
-import styled from '@emotion/styled';
-import Checkbox from 'antd/lib/checkbox/Checkbox';
 import { grey } from '@ant-design/colors';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
+import { Col, Collapse, Form, Input, Row, Space } from 'antd';
+import Checkbox, { CheckboxChangeEvent } from 'antd/lib/checkbox/Checkbox';
+import React, { ChangeEvent, useState } from 'react';
+import { EmailOptionState } from '../../../reducers/slices/remoteJob';
 import MarkUpTags from '../../atoms/MarkupTags';
 
 export type RemoteNoticeEmailProps = {
-  children?: React.ReactNode;
   title: string;
+  contents: EmailOptionState;
+  setContents: (vlaue: EmailOptionState) => void;
 };
 
-interface RowPropsExtra {
-  last?: boolean;
-}
-export default function RemoteNoticeEmail({ title }: RemoteNoticeEmailProps): JSX.Element {
+const layout = {
+  labelCol: { span: 3 },
+  wrapperCol: { span: 20 },
+};
+const tailLayout = {
+  wrapperCol: { offset: 8, span: 16 },
+};
+
+export default function RemoteNoticeEmail({ title, contents, setContents }: RemoteNoticeEmailProps): JSX.Element {
   const [check, setCheck] = useState(true);
-  console.log('check', check);
+  const { enable, to, subject, conetents } = contents;
+
+  const [toInput, setToInput] = useState('');
+
+  const setEnable = (e: CheckboxChangeEvent) => {
+    setContents({
+      ...contents,
+      enable: e.target.checked,
+    });
+  };
+
+  const setTo = (value: string[]) => {
+    setContents({
+      ...contents,
+      to: value,
+    });
+  };
+
+  const onChangeToInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setToInput(e.target.value);
+  };
+
+  const addEmailTags = () => {
+    setContents({
+      ...contents,
+      to: [...to, toInput],
+    });
+    setToInput('');
+  };
 
   return (
     <EmailSetting>
       <Space align="start">
         <CheckBoxSection>
-          <Checkbox onChange={(e) => setCheck(e.target.checked)} />
+          <Checkbox onChange={setEnable} />
         </CheckBoxSection>
-        <Collapse css={collapseStyle(check)}>
+        <Collapse css={collapseStyle(enable)}>
           <Collapse.Panel header={title} key="1">
-            <EmailToInput>
-              <InputTitle>To :</InputTitle>
-              <Input placeholder="Email Address" />
-            </EmailToInput>
-            <EmailToTags>
-              <MarkUpTags
-                tags={['sixone0712@gmail.com']}
-                setTags={() => {
-                  console.log('');
-                }}
-              />
-            </EmailToTags>
-            <EmailSubject>
-              <InputTitle>Subject :</InputTitle>
-              <Input placeholder="Subject" />
-            </EmailSubject>
-            <EmailContext>
-              <InputTitle>Contents :</InputTitle>
-              <Input.TextArea placeholder="Contents" />
-            </EmailContext>
+            <Form {...layout} name={`email_${title}`}>
+              <Form.Item label="To" name="to" rules={[{ required: true, message: 'Please add email!' }]}>
+                <Input value={toInput} onChange={onChangeToInput} onPressEnter={addEmailTags} />
+                <MarkUpTags
+                  tags={to}
+                  setTags={setTo}
+                  tagsStyle={css`
+                    margin-top: 0.5rem;
+                  `}
+                />
+              </Form.Item>
+              <Form.Item label="Subject" name="subject" rules={[{ required: true, message: 'Please input subject!' }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item label="Context" name="context">
+                <Input.TextArea autoSize={{ minRows: 3, maxRows: 5 }} />
+              </Form.Item>
+            </Form>
           </Collapse.Panel>
         </Collapse>
       </Space>
@@ -78,10 +111,11 @@ const emailItemStyle = css`
 
 const EmailToInput = styled(Row)`
   ${emailItemStyle}
-  margin-bottom: 1rem
+  margin-bottom: 1rem;
 `;
 
 const EmailToTags = styled(Row)`
+  margin-left: 8rem;
   ${emailItemStyle}
 `;
 
@@ -93,10 +127,10 @@ const EmailContext = styled(Row)`
   ${emailItemStyle}
 `;
 
-const collapseStyle = (check: boolean) => css`
+const collapseStyle = (enable: boolean) => css`
   width: 61.5rem;
-  pointer-events: ${!check && 'none'};
+  pointer-events: ${!enable && 'none'};
   .ant-collapse-header {
-    color: ${!check && grey[0]} !important;
+    color: ${!enable && grey[0]} !important;
   }
 `;
