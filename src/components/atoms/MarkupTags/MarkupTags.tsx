@@ -23,7 +23,7 @@ function MarkUpTags({ tags, setTags, tagsStyle }: MarkUpTagsProps) {
           handleClose(tag);
         }}
         css={css`
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.25rem;
         `}
       >
         {tag}

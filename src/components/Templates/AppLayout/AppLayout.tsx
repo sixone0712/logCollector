@@ -63,6 +63,8 @@ function Contents({ children }: AppLayoutProps) {
 const contentsStyle = css`
   /* height: 80.889vh; */
   min-height: 53.25rem;
+  margin-bottom: 0.75rem;
+
   background-color: white;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 1px;

@@ -1,4 +1,6 @@
 import { css } from '@emotion/react';
+import styled from '@emotion/styled';
+import { Row } from 'antd';
 import React from 'react';
 import useRemoteJob from '../../../hooks/useRemoteJob';
 import RemoteNoticeEmail from './RemoteNoticeEmail';
@@ -13,7 +15,11 @@ export default function RemoteNotice() {
     <>
       <RemoteNoticeSendTime />
       <RemoteNoticePeriod />
-      <RemoteNoticeEmail title="Error Summary" contents={errorSummary} setContents={setErrorSummary} />
+      <RemoteEmailSection>
+        <RemoteNoticeEmail title="Error Summary" email={errorSummary} setEmail={setErrorSummary} />
+        <RemoteNoticeEmail title="Cras Data" email={crasData} setEmail={setCrasData} />
+        <RemoteNoticeEmail title="MPA Version" email={mpaVersion} setEmail={setMpaVersion} />
+      </RemoteEmailSection>
     </>
   );
 }
@@ -21,4 +27,8 @@ export default function RemoteNotice() {
 export const remoteNoticetitleStyle = css`
   font-size: 1rem;
   min-width: 13.25rem;
+`;
+
+const RemoteEmailSection = styled(Row)`
+  margin-bottom: 2rem;
 `;

@@ -176,6 +176,7 @@ export default function RemoteStatusTable({ children }: RemoteStatusTableProps) 
       pagination={{
         position: ['bottomCenter'],
         total: remoteListLen,
+        showSizeChanger: true,
       }}
       loading={isFetching}
     >

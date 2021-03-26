@@ -2,13 +2,15 @@ import { NotificationOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Col, PageHeader, Row, Space, Tag } from 'antd';
 import { TweenOneGroup } from 'rc-tween-one';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useRemoteJob from '../../../hooks/useRemoteJob';
 import { RemoteJobType } from '../../../pages/Status/Remote/Remote';
 import CustomIcon from '../../atoms/CustomIcon';
 import SideSteps from '../../atoms/SideSteps';
 import StepButton from '../../atoms/StepButton';
+import RemoteConfirm from './RemoteConfirm';
 import RemoteNotice from './RemoteNotice';
+import RemotePlans from './RemotePlans';
 
 const Container = styled(Row)`
   /* display: flex; */
@@ -50,17 +52,16 @@ export const REMOTE_STEP = {
 
 export const remoteStepList = ['Plans Setting', 'Notice Setting', 'Confirm'];
 
-export const REMOTE_ERROR = {
-  NOT_SELECTED_SITE: 0,
-  NOT_SELECTED_PLANS: 1,
-};
-
 export type RemoteJobProps = {
   type: RemoteJobType;
 };
 
 export default function RemoteJob({ type }: RemoteJobProps) {
-  const { current, setCurrent, onBack, nextAction } = useRemoteJob();
+  const { current, setCurrent, onBack, nextAction, initRemoteJob } = useRemoteJob();
+
+  useEffect(() => {
+    initRemoteJob();
+  }, []);
 
   return (
     <Container>
@@ -78,11 +79,9 @@ export default function RemoteJob({ type }: RemoteJobProps) {
             />
           </SettingsTitle>
           <Main>
-            {/* {current === REMOTE_STEP.PLANS && <RemotePlans />}
-
+            {current === REMOTE_STEP.PLANS && <RemotePlans />}
             {current === REMOTE_STEP.NOTICE && <RemoteNotice />}
-            {current >= REMOTE_STEP.CONFIRM && <RemoteConfirm />} */}
-            <RemoteNotice />
+            {current >= REMOTE_STEP.CONFIRM && <RemoteConfirm />}
           </Main>
         </Settings>
       </Contents>

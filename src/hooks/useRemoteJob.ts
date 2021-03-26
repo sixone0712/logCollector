@@ -21,6 +21,7 @@ import {
   selectPlansReducer,
   selectSiteReducer,
   sendingTimesReducer,
+  initRemoteJobReducer,
 } from '../reducers/slices/remoteJob';
 
 const REMOTE_ERROR = {
@@ -52,6 +53,10 @@ export default function useRemoteJob() {
   const mpaVersion = useSelector(remoteJobMpaVersionSelector);
   const dispatch = useDispatch();
   const history = useHistory();
+
+  const initRemoteJob = useCallback(() => {
+    dispatch(initRemoteJobReducer());
+  }, [dispatch]);
 
   const setSelectSite = useCallback(
     ({ value, label }: LabeledValue) => {
@@ -120,16 +125,72 @@ export default function useRemoteJob() {
           openWarningModal(REMOTE_ERROR.NOT_SELECTED_SITE);
           return false;
         }
-        if (selectPlans.length === 0) {
+        if (selectPlans.length <= 0) {
           openWarningModal(REMOTE_ERROR.NOT_SELECTED_PLANS);
           return false;
         }
         break;
+      case REMOTE_STEP.NOTICE:
+        if (sendingTimes.length <= 0) {
+          openWarningModal(REMOTE_ERROR.NOT_SELECTED_SENDING_TIME);
+          return false;
+        }
+        if (periodTime.time <= 0) {
+          openWarningModal(REMOTE_ERROR.NOT_SELECTED_PERIOD_TIME);
+          return false;
+        }
+        if (errorSummary.enable) {
+          const { to, subject, contents } = errorSummary;
+          if (to.length <= 0) {
+            openWarningModal(REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_TO);
+            return false;
+          }
+          if (subject.length <= 0) {
+            openWarningModal(REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_SUBJECT);
+            return false;
+          }
+          if (contents.length <= 0) {
+            openWarningModal(REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_CONTENTS);
+            return false;
+          }
+        }
+        if (crasData.enable) {
+          const { to, subject, contents } = crasData;
+          if (to.length <= 0) {
+            openWarningModal(REMOTE_ERROR.NOT_ADD_CRAS_DATA_TO);
+            return false;
+          }
+          if (subject.length <= 0) {
+            openWarningModal(REMOTE_ERROR.NOT_ADD_CRAS_DATA_SUBJECT);
+            return false;
+          }
+          if (contents.length <= 0) {
+            openWarningModal(REMOTE_ERROR.NOT_ADD_CRAS_DATA_CONTENTS);
+            return false;
+          }
+        }
+        if (mpaVersion.enable) {
+          const { to, subject, contents } = mpaVersion;
+          if (to.length < 0) {
+            openWarningModal(REMOTE_ERROR.NOT_ADD_MPA_VERSION_TO);
+            return false;
+          }
+          if (subject.length < 0) {
+            openWarningModal(REMOTE_ERROR.NOT_ADD_MPA_VERSION_SUBJECT);
+            return false;
+          }
+          if (contents.length < 0) {
+            openWarningModal(REMOTE_ERROR.NOT_ADD_MPA_VERSION_CONTENTS);
+            return false;
+          }
+        }
+        break;
     }
     return true;
-  }, [current, selectSite, selectPlans]);
+  }, [current, selectSite, selectPlans, sendingTimes, periodTime, errorSummary, crasData, mpaVersion]);
 
   return {
+    initRemoteJob,
     current,
     setCurrent,
     selectSite,
@@ -157,6 +218,28 @@ function getRemoteErrorMsg(reason: REMOTE_ERROR): string {
       return 'Please select a site.';
     case REMOTE_ERROR.NOT_SELECTED_PLANS:
       return 'Please select plans.';
+    case REMOTE_ERROR.NOT_SELECTED_SENDING_TIME:
+      return 'Please add daily sending time.';
+    case REMOTE_ERROR.NOT_SELECTED_PERIOD_TIME:
+      return 'Please select pervious data preiod greater than 0.';
+    case REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_TO:
+      return 'Please add to of error summuary.';
+    case REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_SUBJECT:
+      return 'Please input subject of error summuary.';
+    case REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_CONTENTS:
+      return 'Please input contents of error summuary.';
+    case REMOTE_ERROR.NOT_ADD_CRAS_DATA_TO:
+      return 'Please add to of cras data.';
+    case REMOTE_ERROR.NOT_ADD_CRAS_DATA_SUBJECT:
+      return 'Please input subject of cras data.';
+    case REMOTE_ERROR.NOT_ADD_CRAS_DATA_CONTENTS:
+      return 'Please input contents of cras data.';
+    case REMOTE_ERROR.NOT_ADD_MPA_VERSION_TO:
+      return 'Please add to of mpa version.';
+    case REMOTE_ERROR.NOT_ADD_MPA_VERSION_SUBJECT:
+      return 'Please input subject of mpa version.';
+    case REMOTE_ERROR.NOT_ADD_MPA_VERSION_CONTENTS:
+      return 'Please input contents of mpa version.';
     default:
       return "What's error??";
   }

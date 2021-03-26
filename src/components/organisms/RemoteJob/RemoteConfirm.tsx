@@ -1,12 +1,90 @@
-import React from 'react';
+import { DesktopOutlined, ProfileOutlined, NotificationOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
+import styled from '@emotion/styled';
+import { Col, Row, Space } from 'antd';
+import React from 'react';
+import useRemoteJob from '../../../hooks/useRemoteJob';
+import { toCamelCase } from '../../../lib/util/conver';
 
-export type RemoteConfirmProps = {
-  children?: React.ReactNode;
-};
+export type RemoteConfirmProps = {};
+export default function RemoteConfirm(): JSX.Element {
+  const { selectSite, selectPlans, sendingTimes, periodTime, errorSummary, crasData, mpaVersion } = useRemoteJob();
 
-export default function RemoteConfirm({ children }: RemoteConfirmProps) {
-  return <div css={style}>RemoteConfirm</div>;
+  return (
+    <>
+      <SiteName align="top">
+        <Space css={spaceStyle}>
+          <DesktopOutlined />
+          <span>Select Site</span>
+        </Space>
+        <SelectedSite>{selectSite?.label}</SelectedSite>
+      </SiteName>
+      <Plans align="top">
+        <Space css={spaceStyle}>
+          <ProfileOutlined />
+          <span>Select Plans</span>
+        </Space>
+        <SelectedPlans>{`${selectPlans.length} Plans`}</SelectedPlans>
+      </Plans>
+      <Notice align="top">
+        <Space css={spaceStyle}>
+          <NotificationOutlined />
+          <span>Notice</span>
+        </Space>
+        <NoticeSettings>
+          <Col>{sendingTimes.join(', ')}</Col>
+          <Col>{`${periodTime.time} ${toCamelCase(periodTime.unit)} Before`}</Col>
+          <Col>{convertEmailSetting(errorSummary.enable, crasData.enable, mpaVersion.enable)}</Col>
+        </NoticeSettings>
+      </Notice>
+    </>
+  );
 }
 
-const style = css``;
+function convertEmailSetting(error: boolean, cras: boolean, mpa: boolean) {
+  let email = '';
+  if (error) {
+    if (email.length <= 0) email += 'Error Summary';
+    else email += ', Error Summary';
+  }
+
+  if (cras) {
+    if (email.length <= 0) email += 'Cras Data';
+    else email += ', Cras Data';
+  }
+
+  if (mpa) {
+    if (email.length <= 0) email += 'MPA Version';
+    else email += ', MPA Version';
+  }
+
+  return email;
+}
+
+const SiteName = styled(Row)`
+  font-size: 1rem;
+  flex-wrap: nowrap;
+`;
+
+const Plans = styled(Row)`
+  margin-top: 2rem;
+  font-size: 1rem;
+  flex-wrap: nowrap;
+`;
+
+const Notice = styled(Row)`
+  margin-top: 2rem;
+  font-size: 1rem;
+  flex-wrap: nowrap;
+`;
+
+const SelectedSite = styled(Col)``;
+const SelectedPlans = styled(Col)``;
+const NoticeSettings = styled(Row)`
+  display: flex;
+  flex-direction: row;
+`;
+
+const spaceStyle = css`
+  min-width: 13.25rem;
+`;

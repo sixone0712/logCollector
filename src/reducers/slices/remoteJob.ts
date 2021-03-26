@@ -24,8 +24,10 @@ export interface EmailOptionState {
   enable: boolean;
   to: string[];
   subject: string;
-  conetents: string;
+  contents: string;
 }
+
+export type EmailOptionStateKey = 'enable' | 'to' | 'subject' | 'contents';
 
 const initialState: RemoteJobState = {
   selectSite: undefined,
@@ -38,20 +40,20 @@ const initialState: RemoteJobState = {
   errorSummary: {
     enable: false,
     to: [],
-    subject: '',
-    conetents: '',
+    subject: '1234',
+    contents: '4444',
   },
   crasData: {
     enable: false,
     to: [],
     subject: '',
-    conetents: '',
+    contents: '',
   },
   mpaVersion: {
     enable: false,
     to: [],
     subject: '',
-    conetents: '',
+    contents: '',
   },
 };
 
@@ -76,10 +78,10 @@ const remoteJob = createSlice({
       state.errorSummary = action.payload;
     },
     crasDataReducer(state, action: PayloadAction<EmailOptionState>) {
-      state.errorSummary = action.payload;
+      state.crasData = action.payload;
     },
     mpaVersionReducer(state, action: PayloadAction<EmailOptionState>) {
-      state.errorSummary = action.payload;
+      state.mpaVersion = action.payload;
     },
   },
 });
