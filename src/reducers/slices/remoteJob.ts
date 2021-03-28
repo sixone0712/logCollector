@@ -40,8 +40,8 @@ const initialState: RemoteJobState = {
   errorSummary: {
     enable: false,
     to: [],
-    subject: '1234',
-    contents: '4444',
+    subject: '',
+    contents: '',
   },
   crasData: {
     enable: false,

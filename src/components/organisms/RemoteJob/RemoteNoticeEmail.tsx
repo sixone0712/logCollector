@@ -1,34 +1,31 @@
-import { grey } from '@ant-design/colors';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Col, Collapse, Form, Input, Row, Space } from 'antd';
-import Checkbox, { CheckboxChangeEvent } from 'antd/lib/checkbox/Checkbox';
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { Col, Collapse, Input, Row, Space } from 'antd';
+import Checkbox from 'antd/lib/checkbox/Checkbox';
+import React, { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { EmailOptionState, EmailOptionStateKey } from '../../../reducers/slices/remoteJob';
 import MarkUpTags from '../../atoms/MarkupTags';
+import { PlusCircleOutlined } from '@ant-design/icons';
+
 export type RemoteNoticeEmailProps = {
   title: string;
   email: EmailOptionState;
   setEmail: (vlaue: EmailOptionState) => void;
 };
 
-const layout = {
-  labelCol: { span: 3 },
-  wrapperCol: { span: 20 },
-};
-
 export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoticeEmailProps): JSX.Element {
-  const { enable, to, subject, contents } = email;
+  const { enable, to } = email;
+  const [subject, setSubject] = useState(email.subject);
+  const [contents, setContents] = useState(email.contents);
   const [toInput, setToInput] = useState('');
-
-  console.log(title, enable, to, subject, contents);
+  const [active, setActive] = useState(email.enable);
 
   useEffect(() => {
     console.log('RemoteNoticeEmail_useEffect', title);
   }, []);
 
-  const onChangeEmailDebounced = useDebouncedCallback(
+  const debounce = useDebouncedCallback(
     (key: EmailOptionStateKey, value: boolean | string | string[]) => {
       setEmail({
         ...email,
@@ -46,16 +43,28 @@ export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoti
           ...email,
           [key]: value,
         });
-      } else {
-        onChangeEmailDebounced(key, value);
+      } else if (key === 'subject') {
+        setSubject(value as string);
+        debounce(key, value);
+      } else if (key === 'contents') {
+        setContents(value as string);
+        debounce(key, value);
       }
     },
     [email]
   );
 
-  const onChangeEnable = useCallback((e) => onChangeEmail('enable', e.target.checked), []);
+  const onChangeEnable = useCallback((e) => {
+    setActive(e.target.checked);
+    onChangeEmail('enable', e.target.checked);
+  }, []);
 
-  const onAddTo = useCallback(() => toInput && onChangeEmail('to', [...to, toInput]), [to, toInput]);
+  const onAddTo = useCallback(() => {
+    if (toInput) {
+      if (to.findIndex((item) => item === toInput) === -1) onChangeEmail('to', [...to, toInput]);
+      setToInput('');
+    }
+  }, [to, toInput]);
 
   const onChangeTo = useCallback((value: string[]) => onChangeEmail('to', value), []);
 
@@ -67,24 +76,44 @@ export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoti
     setToInput(e.target.value);
   }, []);
 
+  const header = useMemo(() => <div onClick={() => setActive(!active)}>{title}</div>, [active, setActive]);
+  const addToIcon = useMemo(
+    () => (
+      <PlusCircleOutlined
+        css={css`
+          margin-left: 0.5rem;
+        `}
+        onClick={onAddTo}
+      />
+    ),
+    [onAddTo]
+  );
+
   return (
     <EmailSetting>
       <Space align="start">
         <CheckBoxSection>
           <Checkbox checked={enable} onChange={onChangeEnable} />
         </CheckBoxSection>
-        {/* <Collapse css={collapseStyle(enable)} activeKey={enable ? title : ''}> */}
-        <Collapse css={collapseStyle(enable)} activeKey={title}>
-          <Collapse.Panel header={title} key={title}>
-            <Form {...layout} name={`email_${title}`}>
-              <Form.Item label="To" name="to">
+        <Collapse
+          css={collapseStyle(enable)}
+          collapsible={enable ? 'header' : 'disabled'}
+          activeKey={active ? title : ''}
+        >
+          <Collapse.Panel header={header} key={title}>
+            <ToSection>
+              <Title>To :</Title>
+              <InputValue>
                 <Input
                   value={toInput}
                   onChange={onChangeToInput}
                   onPressEnter={onAddTo}
-                  placeholder="Add email address."
+                  placeholder="Input email address then press a enter."
                   allowClear
+                  suffix={addToIcon}
                 />
+              </InputValue>
+              <InputTags>
                 <MarkUpTags
                   tags={to}
                   setTags={onChangeTo}
@@ -92,19 +121,30 @@ export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoti
                     margin-top: 0.5rem;
                   `}
                 />
-              </Form.Item>
-              <Form.Item label="Subject" name="subject" hasFeedback>
+              </InputTags>
+            </ToSection>
+            <SubjectSection>
+              <Title>Subject :</Title>
+              <InputValue>
                 <Input value={subject} onChange={onChangeSubject} placeholder="Input a subject." allowClear />
-              </Form.Item>
-              <Form.Item label="Contents" name="contents">
+              </InputValue>
+            </SubjectSection>
+            <ContentsSection
+              css={css`
+                align-items: flex-start;
+              `}
+            >
+              <Title>Contents :</Title>
+              <InputValue>
                 <Input.TextArea
                   autoSize={{ minRows: 3, maxRows: 5 }}
                   value={contents}
                   onChange={onChangeContents}
                   placeholder="Input a subject."
+                  allowClear
                 />
-              </Form.Item>
-            </Form>
+              </InputValue>
+            </ContentsSection>
           </Collapse.Panel>
         </Collapse>
       </Space>
@@ -124,10 +164,42 @@ const CheckBoxSection = styled(Col)`
   align-items: center;
 `;
 
+const ToSection = styled(Row)`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const SubjectSection = styled(Row)`
+  flex-direction: row;
+  align-items: center;
+  margin-top: 1rem;
+`;
+
+const ContentsSection = styled(Row)`
+  flex-direction: row;
+  align-items: center;
+  margin-top: 1rem;
+`;
+
+const Title = styled(Col)`
+  width: 5rem;
+  text-align: right;
+  margin-top: 0.5rem;
+`;
+const InputValue = styled(Col)`
+  margin-left: 2rem;
+  width: 52.25rem;
+`;
+
+const InputTags = styled(Col)`
+  margin-left: 7.125rem;
+  width: 52.25rem;
+`;
+
 const collapseStyle = (enable: boolean) => css`
   width: 61.5rem;
-  pointer-events: ${!enable && 'none'};
+  cursor: ${!enable && 'not-allowed'};
   .ant-collapse-header {
-    color: ${!enable && grey[0]} !important;
+    pointer-events: ${!enable && 'none'};
   }
 `;

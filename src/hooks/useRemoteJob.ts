@@ -1,9 +1,12 @@
-import { Modal } from 'antd';
+import { Modal, notification } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { useIsMutating, useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { REMOTE_STEP } from '../components/organisms/RemoteJob/RemoteJob';
+import { waitMutationStatus } from '../lib/util/generator';
+import { openNotification } from '../lib/util/notification';
 import {
   crasDataReducer,
   EmailOptionState,
@@ -42,6 +45,27 @@ const REMOTE_ERROR = {
 
 type REMOTE_ERROR = typeof REMOTE_ERROR[keyof typeof REMOTE_ERROR];
 
+interface REMOTE_NOTIFICATION {
+  recipient: string[];
+  subject: string;
+  content: string;
+}
+interface REQ_REMOTE_JOB {
+  site_id: number;
+  plans_id: number[];
+  job_type: string;
+  notification: {
+    error_summary: boolean;
+    cras: boolean;
+    version: boolean;
+    sending_time: string[];
+    before: number;
+    error_email?: REMOTE_NOTIFICATION | null;
+    cras_email?: REMOTE_NOTIFICATION | null;
+    version_email?: REMOTE_NOTIFICATION | null;
+  };
+}
+
 export default function useRemoteJob() {
   const [current, setCurrent] = useState(0);
   const selectSite = useSelector(remoteJobSiteSelector);
@@ -53,6 +77,17 @@ export default function useRemoteJob() {
   const mpaVersion = useSelector(remoteJobMpaVersionSelector);
   const dispatch = useDispatch();
   const history = useHistory();
+  const mutation = useMutation((data: ReqPostLocalJob) => postLocalJob(data), {
+    mutationKey: 'add_remote_job',
+    onSuccess: () => {
+      openNotification('success', 'Success', 'Completed to add remote job');
+    },
+    onError: () => {
+      openNotification('error', 'Error', 'Failed to add remote job');
+    },
+  });
+  const isMutating = useIsMutating({ mutationKey: ['add_remote_job'] });
+  const isMutatingRef = useRef(false);
 
   const initRemoteJob = useCallback(() => {
     dispatch(initRemoteJobReducer());
@@ -107,8 +142,78 @@ export default function useRemoteJob() {
     [dispatch]
   );
 
+  const makeRequestData = useCallback(
+    (): REQ_REMOTE_JOB => ({
+      site_id: selectSite?.value === undefined ? 0 : (selectSite.value as number),
+      plans_id: selectPlans as number[],
+      job_type: 'remote',
+      notification: {
+        sending_time: sendingTimes,
+        before: periodTime.time,
+        error_summary: errorSummary.enable,
+        error_email: !errorSummary.enable
+          ? undefined
+          : {
+              recipient: errorSummary.to,
+              subject: errorSummary.subject,
+              content: errorSummary.contents,
+            },
+        cras: crasData.enable,
+        cras_email: !crasData.enable
+          ? undefined
+          : {
+              recipient: crasData.to,
+              subject: crasData.subject,
+              content: crasData.contents,
+            },
+        version: mpaVersion.enable,
+        version_email: !mpaVersion.enable
+          ? undefined
+          : {
+              recipient: mpaVersion.to,
+              subject: mpaVersion.subject,
+              content: mpaVersion.contents,
+            },
+      },
+    }),
+    [selectSite, selectPlans, sendingTimes, periodTime, errorSummary, crasData, mpaVersion]
+  );
+
+  const reqAddRemoteJob = useCallback(() => {
+    const reqData = makeRequestData();
+    mutation.mutate(reqData);
+  }, [mutation]);
+
   const onBack = useCallback(() => {
     history.push('/status/remote');
+  }, []);
+
+  const openConfirmModal = useCallback(() => {
+    const confirm = Modal.confirm({
+      className: 'add-local-job',
+      title: 'Add Remote Job',
+      content: 'Are you sure to add local job?',
+      onOk: async () => {
+        diableCancelBtn();
+        reqAddRemoteJob();
+        const generator = waitMutationStatus();
+
+        // wait for response
+        let result;
+        while ((result = await generator.next(isMutatingRef)) && !result.done) {
+          // noting to do
+        }
+        onBack();
+      },
+    });
+
+    const diableCancelBtn = () => {
+      confirm.update({
+        cancelButtonProps: {
+          disabled: true,
+        },
+      });
+    };
   }, []);
 
   const openWarningModal = useCallback((reason: REMOTE_ERROR) => {

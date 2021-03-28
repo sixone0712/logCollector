@@ -82,7 +82,7 @@ const SelectedSite = styled(Col)``;
 const SelectedPlans = styled(Col)``;
 const NoticeSettings = styled(Row)`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 `;
 
 const spaceStyle = css`

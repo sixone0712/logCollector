@@ -12,7 +12,7 @@ export default function RemoteNoticeSendTime(): JSX.Element {
   const [sendingTimeMoment, setSendingTimeMoment] = useState<moment.Moment | null>(null);
 
   const onChangeSendTime = (value: moment.Moment | null, dateString: string) => {
-    setSendingTimes([...sendingTimes, dateString]);
+    if (sendingTimes.findIndex((item) => item === dateString) === -1) setSendingTimes([...sendingTimes, dateString]);
     setSendingTimeMoment(null);
   };
   return (
