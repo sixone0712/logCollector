@@ -4,7 +4,7 @@ import { Row } from 'antd';
 import React from 'react';
 import useRemoteJob from '../../../hooks/useRemoteJob';
 import RemoteNoticeEmail from './RemoteNoticeEmail';
-import RemoteNoticePeriod from './RemoteNoticePeriod';
+import RemoteNoticeBefore from './RemoteNoticeBefore';
 import RemoteNoticeSendTime from './RemoteNoticeSendTime';
 export type RemoteNoticeProps = {};
 
@@ -14,7 +14,7 @@ export default function RemoteNotice() {
   return (
     <>
       <RemoteNoticeSendTime />
-      <RemoteNoticePeriod />
+      <RemoteNoticeBefore />
       <RemoteEmailSection>
         <RemoteNoticeEmail title="Error Summary" email={errorSummary} setEmail={setErrorSummary} />
         <RemoteNoticeEmail title="Cras Data" email={crasData} setEmail={setCrasData} />

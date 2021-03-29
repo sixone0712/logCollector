@@ -43,10 +43,6 @@ createConnection()
     app.use('/api/configure', configure);
     app.use('/api/user', user);
     app.use('/api/init', initData);
-    app.get('/test', async (req: Request, res: Response, next: NextFunction) => {
-      console.log('test');
-      res.end('1234');
-    });
 
     app.listen(3001, () => console.log(`BillyZip App Listening on PORT 3001`));
   })

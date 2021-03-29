@@ -30,31 +30,31 @@ const localColumnProps: LocalColumnPropsType = {
       compare: (a, b) => compareTableItem(a, b, 'index'),
     },
   },
-  siteName: {
-    key: 'site_name',
+  siteFabName: {
+    key: 'siteFabName',
     title: <LocalColumnTitle>Site Name</LocalColumnTitle>,
-    dataIndex: 'site_name',
+    dataIndex: 'siteFabName',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'siteName'),
+      compare: (a, b) => compareTableItem(a, b, 'siteFabName'),
     },
   },
   status: {
-    key: 'collect_status',
+    key: 'collectStatus',
     title: <LocalColumnTitle>Collect/Convert/Insert</LocalColumnTitle>,
     dataIndex: 'collect_status',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'status'),
+      compare: (a, b) => compareTableItem(a, b, 'collectStatus'),
     },
   },
-  fileName: {
-    key: 'file_name',
+  files: {
+    key: 'files',
     title: <LocalColumnTitle>Files</LocalColumnTitle>,
-    dataIndex: 'file_name',
+    dataIndex: 'files',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'fileName'),
+      compare: (a, b) => compareTableItem(a, b, 'files'),
     },
   },
   delete: {
@@ -96,7 +96,7 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps) {
   );
 
   const filesRender = useCallback((value: string[], record: LocalStatus, index: number) => {
-    return PopupTip({ value: `${value.length ? value.length : 0} files`, list: value });
+    return PopupTip({ value: `${value} files`, list: record.fileNames });
   }, []);
 
   const moveToLocalNewJob = useCallback(() => {
@@ -114,10 +114,11 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps) {
         total: localListLen,
       }}
       loading={isFetching}
+      rowKey="id"
     >
       <Table.Column<LocalStatus> {...localColumnProps.index} />
-      <Table.Column<LocalStatus> {...localColumnProps.siteName} />
-      <Table.Column<LocalStatus> {...localColumnProps.fileName} render={filesRender} />
+      <Table.Column<LocalStatus> {...localColumnProps.siteFabName} />
+      <Table.Column<LocalStatus> {...localColumnProps.files} render={filesRender} />
       <Table.Column<LocalStatus> {...localColumnProps.status} render={buildStatusRender} />
       <Table.Column<LocalStatus> {...localColumnProps.delete} render={deleteRender} />
     </Table>

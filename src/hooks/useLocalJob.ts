@@ -5,20 +5,12 @@ import { useIsMutating, useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { LOCAL_ERROR, LOCAL_STEP } from '../components/organisms/LocalJob/LocalJob';
+import { postLocalJob } from '../lib/api/axios/requests';
+import { ReqPostLocalJob } from '../lib/api/axios/types';
 import { waitMutationStatus } from '../lib/util/generator';
 import { openNotification } from '../lib/util/notification';
-import { postLocalJob } from '../lib/util/requestAxios';
-import { selectSiteAction, localJobSiteSelector, initLocalJobAction } from '../reducers/slices/localJob';
+import { initLocalJobAction, localJobSiteSelector, selectSiteAction } from '../reducers/slices/localJob';
 import useUploadFiles from './useUploadFiles';
-
-export interface ReqPostLocalJob {
-  site_id: number;
-  filename: any;
-}
-
-export interface ResPostLocalJob {
-  id: number;
-}
 
 export default function useLocalJob() {
   const [current, setCurrent] = useState(0);
@@ -57,8 +49,8 @@ export default function useLocalJob() {
 
   const makeRequestData = useCallback(
     () => ({
-      site_id: selectSite?.value === undefined ? 0 : (selectSite.value as number),
-      filename: uploadFiles.map((item: any) => item.file),
+      siteId: selectSite?.value === undefined ? 0 : (selectSite.value as number),
+      filenames: uploadFiles.map((item: any) => item.file),
     }),
     [selectSite, uploadFiles]
   );

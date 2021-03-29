@@ -1,83 +1,67 @@
-import { Modal, notification } from 'antd';
+import { Modal } from 'antd';
 import { LabeledValue } from 'antd/lib/select';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIsMutating, useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { REMOTE_STEP } from '../components/organisms/RemoteJob/RemoteJob';
+import { postRemoteJob } from '../lib/api/axios/requests';
+import { ReqPostRemoteJob } from '../lib/api/axios/types';
+import { timeToSecound } from '../lib/util/conver';
 import { waitMutationStatus } from '../lib/util/generator';
 import { openNotification } from '../lib/util/notification';
 import {
   crasDataReducer,
   EmailOptionState,
   errorSummaryReducer,
+  initRemoteJobReducer,
   mpaVersionReducer,
-  periodTimeReducer,
-  PrevDataPeriodState,
+  beforeReducer,
+  BeforeState,
   remoteJobCrasDataSelector,
   remoteJobErrorSummarySelector,
   remoteJobMpaVersionSelector,
-  remoteJobPeriodTimeSelector,
+  remoteJobBeforeSelector,
   remoteJobPlansSelector,
   remoteJobSendingTimesSelector,
   remoteJobSiteSelector,
+  RemoteJobState,
   selectPlansReducer,
   selectSiteReducer,
   sendingTimesReducer,
-  initRemoteJobReducer,
 } from '../reducers/slices/remoteJob';
 
 const REMOTE_ERROR = {
-  NOT_SELECTED_SITE: 0,
-  NOT_SELECTED_PLANS: 1,
-  NOT_SELECTED_SENDING_TIME: 2,
-  NOT_SELECTED_PERIOD_TIME: 3,
-  NOT_ADD_ERROR_SUMMARY_TO: 4,
-  NOT_ADD_ERROR_SUMMARY_SUBJECT: 5,
-  NOT_ADD_ERROR_SUMMARY_CONTENTS: 6,
-  NOT_ADD_CRAS_DATA_TO: 7,
-  NOT_ADD_CRAS_DATA_SUBJECT: 8,
-  NOT_ADD_CRAS_DATA_CONTENTS: 9,
-  NOT_ADD_MPA_VERSION_TO: 10,
-  NOT_ADD_MPA_VERSION_SUBJECT: 11,
-  NOT_ADD_MPA_VERSION_CONTENTS: 12,
+  NO_ERROR: 0,
+  NOT_SELECTED_SITE: 1,
+  NOT_SELECTED_PLANS: 2,
+  NOT_SELECTED_SENDING_TIME: 3,
+  NOT_SELECTED_PERIOD_TIME: 4,
+  NOT_ADD_ERROR_SUMMARY_TO: 5,
+  NOT_ADD_ERROR_SUMMARY_SUBJECT: 6,
+  NOT_ADD_ERROR_SUMMARY_CONTENTS: 7,
+  NOT_ADD_CRAS_DATA_TO: 8,
+  NOT_ADD_CRAS_DATA_SUBJECT: 9,
+  NOT_ADD_CRAS_DATA_CONTENTS: 10,
+  NOT_ADD_MPA_VERSION_TO: 11,
+  NOT_ADD_MPA_VERSION_SUBJECT: 12,
+  NOT_ADD_MPA_VERSION_CONTENTS: 13,
 } as const;
 
 type REMOTE_ERROR = typeof REMOTE_ERROR[keyof typeof REMOTE_ERROR];
-
-interface REMOTE_NOTIFICATION {
-  recipient: string[];
-  subject: string;
-  content: string;
-}
-interface REQ_REMOTE_JOB {
-  site_id: number;
-  plans_id: number[];
-  job_type: string;
-  notification: {
-    error_summary: boolean;
-    cras: boolean;
-    version: boolean;
-    sending_time: string[];
-    before: number;
-    error_email?: REMOTE_NOTIFICATION | null;
-    cras_email?: REMOTE_NOTIFICATION | null;
-    version_email?: REMOTE_NOTIFICATION | null;
-  };
-}
 
 export default function useRemoteJob() {
   const [current, setCurrent] = useState(0);
   const selectSite = useSelector(remoteJobSiteSelector);
   const selectPlans = useSelector(remoteJobPlansSelector);
   const sendingTimes = useSelector(remoteJobSendingTimesSelector);
-  const periodTime = useSelector(remoteJobPeriodTimeSelector);
+  const before = useSelector(remoteJobBeforeSelector);
   const errorSummary = useSelector(remoteJobErrorSummarySelector);
   const crasData = useSelector(remoteJobCrasDataSelector);
   const mpaVersion = useSelector(remoteJobMpaVersionSelector);
   const dispatch = useDispatch();
   const history = useHistory();
-  const mutation = useMutation((data: ReqPostLocalJob) => postLocalJob(data), {
+  const mutation = useMutation((data: ReqPostRemoteJob) => postRemoteJob(data), {
     mutationKey: 'add_remote_job',
     onSuccess: () => {
       openNotification('success', 'Success', 'Completed to add remote job');
@@ -114,9 +98,9 @@ export default function useRemoteJob() {
     [dispatch]
   );
 
-  const setPeriodTime = useCallback(
-    (value: PrevDataPeriodState) => {
-      dispatch(periodTimeReducer(value));
+  const setBefore = useCallback(
+    (value: BeforeState) => {
+      dispatch(beforeReducer(value));
     },
     [dispatch]
   );
@@ -143,40 +127,40 @@ export default function useRemoteJob() {
   );
 
   const makeRequestData = useCallback(
-    (): REQ_REMOTE_JOB => ({
-      site_id: selectSite?.value === undefined ? 0 : (selectSite.value as number),
-      plans_id: selectPlans as number[],
-      job_type: 'remote',
+    (): ReqPostRemoteJob => ({
+      siteId: selectSite?.value === undefined ? 0 : (selectSite.value as number),
+      planIds: selectPlans as number[],
+      jobType: 'remote',
       notification: {
-        sending_time: sendingTimes,
-        before: periodTime.time,
-        error_summary: errorSummary.enable,
-        error_email: !errorSummary.enable
+        sendingTimes: sendingTimes,
+        before: timeToSecound(before),
+        isErrorSummary: errorSummary.enable,
+        errorSummaryEmail: !errorSummary.enable
           ? undefined
           : {
-              recipient: errorSummary.to,
+              recipients: errorSummary.recipients,
               subject: errorSummary.subject,
-              content: errorSummary.contents,
+              content: errorSummary.body,
             },
-        cras: crasData.enable,
-        cras_email: !crasData.enable
+        isCrasData: crasData.enable,
+        crasDataEmail: !crasData.enable
           ? undefined
           : {
-              recipient: crasData.to,
+              recipients: crasData.recipients,
               subject: crasData.subject,
-              content: crasData.contents,
+              content: crasData.body,
             },
-        version: mpaVersion.enable,
-        version_email: !mpaVersion.enable
+        isMpaVersion: mpaVersion.enable,
+        mpaVersionEmail: !mpaVersion.enable
           ? undefined
           : {
-              recipient: mpaVersion.to,
+              recipients: mpaVersion.recipients,
               subject: mpaVersion.subject,
-              content: mpaVersion.contents,
+              content: mpaVersion.body,
             },
       },
     }),
-    [selectSite, selectPlans, sendingTimes, periodTime, errorSummary, crasData, mpaVersion]
+    [selectSite, selectPlans, sendingTimes, before, errorSummary, crasData, mpaVersion]
   );
 
   const reqAddRemoteJob = useCallback(() => {
@@ -190,9 +174,9 @@ export default function useRemoteJob() {
 
   const openConfirmModal = useCallback(() => {
     const confirm = Modal.confirm({
-      className: 'add-local-job',
+      className: 'add_remote_job',
       title: 'Add Remote Job',
-      content: 'Are you sure to add local job?',
+      content: 'Are you sure to add remote job?',
       onOk: async () => {
         diableCancelBtn();
         reqAddRemoteJob();
@@ -224,75 +208,29 @@ export default function useRemoteJob() {
   }, []);
 
   const nextAction = useCallback(() => {
-    switch (current) {
-      case REMOTE_STEP.PLANS:
-        if (selectSite === undefined) {
-          openWarningModal(REMOTE_ERROR.NOT_SELECTED_SITE);
-          return false;
-        }
-        if (selectPlans.length <= 0) {
-          openWarningModal(REMOTE_ERROR.NOT_SELECTED_PLANS);
-          return false;
-        }
-        break;
-      case REMOTE_STEP.NOTICE:
-        if (sendingTimes.length <= 0) {
-          openWarningModal(REMOTE_ERROR.NOT_SELECTED_SENDING_TIME);
-          return false;
-        }
-        if (periodTime.time <= 0) {
-          openWarningModal(REMOTE_ERROR.NOT_SELECTED_PERIOD_TIME);
-          return false;
-        }
-        if (errorSummary.enable) {
-          const { to, subject, contents } = errorSummary;
-          if (to.length <= 0) {
-            openWarningModal(REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_TO);
-            return false;
-          }
-          if (subject.length <= 0) {
-            openWarningModal(REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_SUBJECT);
-            return false;
-          }
-          if (contents.length <= 0) {
-            openWarningModal(REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_CONTENTS);
-            return false;
-          }
-        }
-        if (crasData.enable) {
-          const { to, subject, contents } = crasData;
-          if (to.length <= 0) {
-            openWarningModal(REMOTE_ERROR.NOT_ADD_CRAS_DATA_TO);
-            return false;
-          }
-          if (subject.length <= 0) {
-            openWarningModal(REMOTE_ERROR.NOT_ADD_CRAS_DATA_SUBJECT);
-            return false;
-          }
-          if (contents.length <= 0) {
-            openWarningModal(REMOTE_ERROR.NOT_ADD_CRAS_DATA_CONTENTS);
-            return false;
-          }
-        }
-        if (mpaVersion.enable) {
-          const { to, subject, contents } = mpaVersion;
-          if (to.length < 0) {
-            openWarningModal(REMOTE_ERROR.NOT_ADD_MPA_VERSION_TO);
-            return false;
-          }
-          if (subject.length < 0) {
-            openWarningModal(REMOTE_ERROR.NOT_ADD_MPA_VERSION_SUBJECT);
-            return false;
-          }
-          if (contents.length < 0) {
-            openWarningModal(REMOTE_ERROR.NOT_ADD_MPA_VERSION_CONTENTS);
-            return false;
-          }
-        }
-        break;
+    const reason = getRemoteErrorReason({
+      current,
+      selectSite,
+      selectPlans,
+      sendingTimes,
+      before,
+      errorSummary,
+      crasData,
+      mpaVersion,
+    });
+
+    if (reason === REMOTE_ERROR.NO_ERROR) {
+      if (current === REMOTE_STEP.CONFIRM) openConfirmModal();
+      return true;
+    } else {
+      openWarningModal(reason);
+      return false;
     }
-    return true;
-  }, [current, selectSite, selectPlans, sendingTimes, periodTime, errorSummary, crasData, mpaVersion]);
+  }, [current, selectSite, selectPlans, sendingTimes, before, errorSummary, crasData, mpaVersion]);
+
+  useEffect(() => {
+    isMutatingRef.current = isMutating ? true : false;
+  }, [isMutating]);
 
   return {
     initRemoteJob,
@@ -304,8 +242,8 @@ export default function useRemoteJob() {
     setSelectPlans,
     sendingTimes,
     setSendingTimes,
-    periodTime,
-    setPeriodTime,
+    before,
+    setBefore,
     errorSummary,
     setErrorSummary,
     crasData,
@@ -314,6 +252,7 @@ export default function useRemoteJob() {
     setMpaVersion,
     onBack,
     nextAction,
+    openConfirmModal,
   };
 }
 
@@ -348,4 +287,76 @@ function getRemoteErrorMsg(reason: REMOTE_ERROR): string {
     default:
       return "What's error??";
   }
+}
+
+interface RemoteJobStateCurrent extends RemoteJobState {
+  current: number;
+}
+
+function getRemoteErrorReason({
+  current,
+  selectSite,
+  selectPlans,
+  sendingTimes,
+  before,
+  errorSummary,
+  crasData,
+  mpaVersion,
+}: RemoteJobStateCurrent): REMOTE_ERROR {
+  switch (current) {
+    case REMOTE_STEP.PLANS:
+      if (selectSite === undefined) {
+        return REMOTE_ERROR.NOT_SELECTED_SITE;
+      }
+      if (selectPlans.length <= 0) {
+        return REMOTE_ERROR.NOT_SELECTED_PLANS;
+      }
+      break;
+    case REMOTE_STEP.NOTICE:
+      if (sendingTimes.length <= 0) {
+        return REMOTE_ERROR.NOT_SELECTED_SENDING_TIME;
+      }
+      if (before.time <= 0) {
+        return REMOTE_ERROR.NOT_SELECTED_PERIOD_TIME;
+      }
+      if (errorSummary.enable) {
+        const { recipients: to, subject, body: contents } = errorSummary;
+        if (to.length <= 0) {
+          return REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_TO;
+        }
+        if (subject.length <= 0) {
+          return REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_SUBJECT;
+        }
+        if (contents.length <= 0) {
+          return REMOTE_ERROR.NOT_ADD_ERROR_SUMMARY_CONTENTS;
+        }
+      }
+      if (crasData.enable) {
+        const { recipients: to, subject, body: contents } = crasData;
+        if (to.length <= 0) {
+          return REMOTE_ERROR.NOT_ADD_CRAS_DATA_TO;
+        }
+        if (subject.length <= 0) {
+          return REMOTE_ERROR.NOT_ADD_CRAS_DATA_SUBJECT;
+        }
+        if (contents.length <= 0) {
+          return REMOTE_ERROR.NOT_ADD_CRAS_DATA_CONTENTS;
+        }
+      }
+      if (mpaVersion.enable) {
+        const { recipients: to, subject, body: contents } = mpaVersion;
+        if (to.length < 0) {
+          return REMOTE_ERROR.NOT_ADD_MPA_VERSION_TO;
+        }
+        if (subject.length < 0) {
+          return REMOTE_ERROR.NOT_ADD_MPA_VERSION_SUBJECT;
+        }
+        if (contents.length < 0) {
+          return REMOTE_ERROR.NOT_ADD_MPA_VERSION_CONTENTS;
+        }
+      }
+      break;
+  }
+
+  return REMOTE_ERROR.NO_ERROR;
 }

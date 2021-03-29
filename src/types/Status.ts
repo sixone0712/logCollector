@@ -1,29 +1,23 @@
 import React, { Key } from 'react';
 import { AlignType, DataIndex } from 'rc-table/lib/interface';
 import { CompareFn } from 'antd/lib/table/interface';
-
+import { ResGetLocalJobStatus, ResGetRemoteJobStatus, ResGetRemotePlan } from '../lib/api/axios/types';
 export type BuildStatus = 'success' | 'failure' | 'notbuild' | 'processing';
-
-export interface RemoteStatus {
+export interface RemoteJobStatus extends ResGetRemoteJobStatus {
   index: number;
-  siteName: string;
-  collectStatus: BuildStatus;
-  errorStatus: BuildStatus;
-  crasStatus: BuildStatus;
-  versionStatus: BuildStatus;
-  isRunning: boolean;
+  siteFabName: string;
 }
 
-export type RemoteStatusType = 'collect' | 'error' | 'cras' | 'version';
+export type RemoteStatusType = 'collectStatus' | 'errorSummaryStatus' | 'crasDataStatus' | 'mpaVersionStatus';
 
 export type RemoteColumnName =
   | 'index'
-  | 'siteName'
+  | 'siteFabName'
   | 'collectStatus'
-  | 'errorStatus'
-  | 'crasStatus'
-  | 'versionStatus'
-  | 'isStop'
+  | 'errorSummaryStatus'
+  | 'crasDataStatus'
+  | 'mpaVersionStatus'
+  | 'stop'
   | 'edit'
   | 'delete';
 
@@ -35,23 +29,22 @@ export type RemoteColumnPropsType = {
     align?: AlignType;
     sorter?:
       | boolean
-      | CompareFn<RemoteStatus>
+      | CompareFn<RemoteJobStatus>
       | {
-          compare?: CompareFn<RemoteStatus>;
+          compare?: CompareFn<RemoteJobStatus>;
           /** Config multiple sorter order priority */
           multiple?: number;
         };
   };
 };
 
-export interface LocalStatus {
+export interface LocalStatus extends ResGetLocalJobStatus {
   index: number;
-  siteName: string;
-  status: BuildStatus;
-  fileName: string[];
+  siteFabName: string;
+  files: number;
 }
 
-export type LocalColumnName = 'index' | 'siteName' | 'status' | 'fileName' | 'delete';
+export type LocalColumnName = 'index' | 'siteFabName' | 'status' | 'files' | 'delete';
 
 export type LocalColumnPropsType = {
   [name in LocalColumnName]: {
@@ -70,36 +63,10 @@ export type LocalColumnPropsType = {
   };
 };
 
-export interface ResRemoteStatus {
-  idx: number;
-  id: number;
-  site_name: string;
-  collect_status: string;
-  error_summary_status: string;
-  cras_status: string;
-  version_check_status: string;
-  stop: boolean;
-}
-
-export interface ResRemotePlans {
-  key: React.Key;
-  plan_id: number;
-  plan_name: string;
-  plan_type: string;
-  machines: number;
-  machine_names: string[];
-  targets: number;
-  target_names: string[];
-  description: string;
-  status: string;
-}
-
-export interface ResLocalStatus {
-  idx: number;
-  id: number;
-  site_name: string;
-  collect_status: string;
-  file_name: string[];
+export interface RemotePlan extends ResGetRemotePlan {
+  index: React.Key;
+  machineCount: number;
+  targetCount: number;
 }
 
 // interface ResRemoteJobInfo {

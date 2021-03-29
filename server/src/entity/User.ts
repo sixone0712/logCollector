@@ -18,8 +18,8 @@ export class User extends BaseEntity {
   @Column({ type: 'text', array: true })
   permission: string[];
 
-  @Column({ type: 'timestamp' })
-  last_access: Date;
+  @Column({ type: 'timestamp', name: 'last_access' })
+  lastAccess: Date;
 
   @OneToMany(() => Job, (job) => job.id)
   job: Job[];

@@ -1,14 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { JobHistory } from './JobHistory';
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { JobNotification } from './JobNotification';
 import { JobStatus } from './JobStatus';
 import { Site } from './Site';
@@ -20,47 +10,51 @@ export class Job extends BaseEntity {
   id: number;
 
   @ManyToOne(() => Site, (site) => site.id)
-  site_id: Site;
+  @JoinColumn({ name: 'site_id' })
+  siteId: Site;
+
+  @Column('integer', { name: 'plan_ids', array: true, nullable: true })
+  planids: number[];
 
   @OneToOne(() => JobStatus)
-  @JoinColumn()
-  collect_status: JobStatus;
+  @JoinColumn({ name: 'collect_status' })
+  collectStatus: JobStatus;
 
   @OneToOne(() => JobStatus)
-  @JoinColumn()
-  error_summary_status: JobStatus;
+  @JoinColumn({ name: 'error_summary_status' })
+  errorSummaryStatus: JobStatus;
 
   @OneToOne(() => JobStatus)
-  @JoinColumn()
-  cras_status: JobStatus;
+  @JoinColumn({ name: 'cras_data_status' })
+  crasDataStatus: JobStatus;
 
   @OneToOne(() => JobStatus)
-  @JoinColumn()
-  version_check_status: JobStatus;
+  @JoinColumn({ name: 'mpa_version_status' })
+  mpaVersionStatus: JobStatus;
 
   @Column()
   stop: boolean;
 
   @ManyToOne(() => User, (user) => user.id)
-  @JoinColumn()
+  @JoinColumn({ name: 'owner' })
   owner: User;
 
   @Column({ type: 'timestamp' })
   created: Date;
 
-  @Column({ type: 'timestamp' })
-  last_action: Date;
+  @Column({ type: 'timestamp', name: 'last_action' })
+  lastAction: Date;
 
-  @Column()
-  job_type: string;
+  @Column({ name: 'job_type' })
+  jobType: string;
 
   @OneToOne(() => JobNotification)
   @JoinColumn()
   notification: JobNotification;
 
-  @Column({ nullable: true })
-  file_path: string;
+  @Column('integer', { name: 'file_ids', array: true, nullable: true })
+  fileIds: number[];
 
-  @Column('text', { array: true, nullable: true })
-  file_name: string[];
+  @Column('text', { name: 'file_names', array: true, nullable: true })
+  fileNames: string[];
 }

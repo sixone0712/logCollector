@@ -1,4 +1,5 @@
-export interface ResSitesNames {
-  id: number;
-  site_fab_name: string;
+import { ResGetSiteName } from '../lib/api/axios/types';
+
+export interface SiteFabName extends ResGetSiteName {
+  siteFabName: string;
 }

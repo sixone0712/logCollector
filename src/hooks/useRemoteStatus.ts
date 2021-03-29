@@ -1,15 +1,24 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { getRemoteJobStatus } from '../lib/util/requestAxios';
-import { RemoteStatus } from '../types/Status';
+import { useHistory } from 'react-router';
+import { getRemoteJobStatus } from '../lib/api/axios/requests';
+import { RemoteJobStatus } from '../types/Status';
 
 export default function useRemoteStatus() {
-  const { data: remoteList, isFetching, isError } = useQuery('get_status_remote', getRemoteJobStatus, {
-    initialData: [],
-    refetchOnWindowFocus: false,
-  });
-
+  const { data: remoteList, isFetching, isError } = useQuery<RemoteJobStatus[]>(
+    'get_status_remote',
+    getRemoteJobStatus,
+    {
+      initialData: [],
+      refetchOnWindowFocus: false,
+    }
+  );
+  const history = useHistory();
   const queryClient = useQueryClient();
+
+  const moveToRemoteNewJob = useCallback(() => {
+    history.push('/status/remote/new');
+  }, []);
 
   const refreshRemoteList = useCallback(() => {
     queryClient.fetchQuery('get_status_remote');
@@ -20,5 +29,6 @@ export default function useRemoteStatus() {
     isFetching,
     isError,
     refreshRemoteList,
+    moveToRemoteNewJob,
   };
 }

@@ -60,8 +60,8 @@ export default function RemoteJob({ type }: RemoteJobProps) {
   const { current, setCurrent, onBack, nextAction, initRemoteJob } = useRemoteJob();
 
   useEffect(() => {
-    initRemoteJob();
-  }, []);
+    if (type === 'new') initRemoteJob();
+  }, [type]);
 
   return (
     <Container>

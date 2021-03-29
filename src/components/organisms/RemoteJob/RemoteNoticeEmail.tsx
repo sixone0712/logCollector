@@ -15,9 +15,9 @@ export type RemoteNoticeEmailProps = {
 };
 
 export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoticeEmailProps): JSX.Element {
-  const { enable, to } = email;
+  const { enable, recipients } = email;
   const [subject, setSubject] = useState(email.subject);
-  const [contents, setContents] = useState(email.contents);
+  const [body, setBody] = useState(email.body);
   const [toInput, setToInput] = useState('');
   const [active, setActive] = useState(email.enable);
 
@@ -38,7 +38,7 @@ export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoti
 
   const onChangeEmail = useCallback(
     (key: EmailOptionStateKey, value: boolean | string | string[]) => {
-      if (key === 'enable' || key === 'to') {
+      if (key === 'enable' || key === 'recipients') {
         setEmail({
           ...email,
           [key]: value,
@@ -46,8 +46,8 @@ export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoti
       } else if (key === 'subject') {
         setSubject(value as string);
         debounce(key, value);
-      } else if (key === 'contents') {
-        setContents(value as string);
+      } else if (key === 'body') {
+        setBody(value as string);
         debounce(key, value);
       }
     },
@@ -61,16 +61,17 @@ export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoti
 
   const onAddTo = useCallback(() => {
     if (toInput) {
-      if (to.findIndex((item) => item === toInput) === -1) onChangeEmail('to', [...to, toInput]);
+      if (recipients.findIndex((item) => item === toInput) === -1)
+        onChangeEmail('recipients', [...recipients, toInput]);
       setToInput('');
     }
-  }, [to, toInput]);
+  }, [recipients, toInput]);
 
-  const onChangeTo = useCallback((value: string[]) => onChangeEmail('to', value), []);
+  const onChangeTo = useCallback((value: string[]) => onChangeEmail('recipients', value), []);
 
   const onChangeSubject = useCallback((e) => onChangeEmail('subject', e.target.value), []);
 
-  const onChangeContents = useCallback((e) => onChangeEmail('contents', e.target.value), []);
+  const onChangeContents = useCallback((e) => onChangeEmail('body', e.target.value), []);
 
   const onChangeToInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setToInput(e.target.value);
@@ -101,7 +102,7 @@ export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoti
           activeKey={active ? title : ''}
         >
           <Collapse.Panel header={header} key={title}>
-            <ToSection>
+            <RecipientSection>
               <Title>To :</Title>
               <InputValue>
                 <Input
@@ -115,21 +116,21 @@ export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoti
               </InputValue>
               <InputTags>
                 <MarkUpTags
-                  tags={to}
+                  tags={recipients}
                   setTags={onChangeTo}
                   tagsStyle={css`
                     margin-top: 0.5rem;
                   `}
                 />
               </InputTags>
-            </ToSection>
+            </RecipientSection>
             <SubjectSection>
               <Title>Subject :</Title>
               <InputValue>
                 <Input value={subject} onChange={onChangeSubject} placeholder="Input a subject." allowClear />
               </InputValue>
             </SubjectSection>
-            <ContentsSection
+            <BodySection
               css={css`
                 align-items: flex-start;
               `}
@@ -138,13 +139,13 @@ export default function RemoteNoticeEmail({ title, email, setEmail }: RemoteNoti
               <InputValue>
                 <Input.TextArea
                   autoSize={{ minRows: 3, maxRows: 5 }}
-                  value={contents}
+                  value={body}
                   onChange={onChangeContents}
-                  placeholder="Input a subject."
+                  placeholder="Input a body."
                   allowClear
                 />
               </InputValue>
-            </ContentsSection>
+            </BodySection>
           </Collapse.Panel>
         </Collapse>
       </Space>
@@ -164,7 +165,7 @@ const CheckBoxSection = styled(Col)`
   align-items: center;
 `;
 
-const ToSection = styled(Row)`
+const RecipientSection = styled(Row)`
   flex-direction: row;
   align-items: center;
 `;
@@ -175,7 +176,7 @@ const SubjectSection = styled(Row)`
   margin-top: 1rem;
 `;
 
-const ContentsSection = styled(Row)`
+const BodySection = styled(Row)`
   flex-direction: row;
   align-items: center;
   margin-top: 1rem;

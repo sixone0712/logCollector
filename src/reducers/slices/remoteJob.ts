@@ -7,53 +7,53 @@ export interface RemoteJobState {
   selectSite: LabeledValue | undefined;
   selectPlans: React.Key[];
   sendingTimes: string[];
-  periodTime: PrevDataPeriodState;
+  before: BeforeState;
   errorSummary: EmailOptionState;
   crasData: EmailOptionState;
   mpaVersion: EmailOptionState;
 }
 
-export type PrevDataPeriodUnitType = 'minute' | 'hour' | 'day';
+export type BeforeUnitType = 'minute' | 'hour' | 'day';
 
-export interface PrevDataPeriodState {
+export interface BeforeState {
   time: number;
-  unit: PrevDataPeriodUnitType;
+  unit: BeforeUnitType;
 }
 
 export interface EmailOptionState {
   enable: boolean;
-  to: string[];
+  recipients: string[];
   subject: string;
-  contents: string;
+  body: string;
 }
 
-export type EmailOptionStateKey = 'enable' | 'to' | 'subject' | 'contents';
+export type EmailOptionStateKey = 'enable' | 'recipients' | 'subject' | 'body';
 
 const initialState: RemoteJobState = {
   selectSite: undefined,
   selectPlans: [],
   sendingTimes: [],
-  periodTime: {
+  before: {
     time: 1,
     unit: 'day',
   },
   errorSummary: {
     enable: false,
-    to: [],
+    recipients: [],
     subject: '',
-    contents: '',
+    body: '',
   },
   crasData: {
     enable: false,
-    to: [],
+    recipients: [],
     subject: '',
-    contents: '',
+    body: '',
   },
   mpaVersion: {
     enable: false,
-    to: [],
+    recipients: [],
     subject: '',
-    contents: '',
+    body: '',
   },
 };
 
@@ -71,8 +71,8 @@ const remoteJob = createSlice({
     sendingTimesReducer(state, action: PayloadAction<string[]>) {
       state.sendingTimes = action.payload;
     },
-    periodTimeReducer(state, action: PayloadAction<PrevDataPeriodState>) {
-      state.periodTime = action.payload;
+    beforeReducer(state, action: PayloadAction<BeforeState>) {
+      state.before = action.payload;
     },
     errorSummaryReducer(state, action: PayloadAction<EmailOptionState>) {
       state.errorSummary = action.payload;
@@ -91,7 +91,7 @@ export const {
   selectSiteReducer,
   selectPlansReducer,
   sendingTimesReducer,
-  periodTimeReducer,
+  beforeReducer,
   errorSummaryReducer,
   crasDataReducer,
   mpaVersionReducer,
@@ -100,7 +100,7 @@ export const {
 export const remoteJobSiteSelector = (state: RootState) => state.remoteJob.selectSite;
 export const remoteJobPlansSelector = (state: RootState) => state.remoteJob.selectPlans;
 export const remoteJobSendingTimesSelector = (state: RootState) => state.remoteJob.sendingTimes;
-export const remoteJobPeriodTimeSelector = (state: RootState) => state.remoteJob.periodTime;
+export const remoteJobBeforeSelector = (state: RootState) => state.remoteJob.before;
 export const remoteJobErrorSummarySelector = (state: RootState) => state.remoteJob.errorSummary;
 export const remoteJobCrasDataSelector = (state: RootState) => state.remoteJob.crasData;
 export const remoteJobMpaVersionSelector = (state: RootState) => state.remoteJob.mpaVersion;

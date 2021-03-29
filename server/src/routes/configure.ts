@@ -31,7 +31,8 @@ router.get('/sites/names', async (req: Request, res: Response, next: NextFunctio
 
   const names = sites.map((item) => ({
     id: item.id,
-    site_fab_name: `${item.site_name}_${item.fab_name}`,
+    siteName: item.siteName,
+    fabName: item.fabName,
   }));
   // return loaded posts
   res.send(names);

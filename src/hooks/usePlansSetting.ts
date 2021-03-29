@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { openNotification } from '../lib/util/notification';
-import { getRemotePlans } from '../lib/util/requestAxios';
+import { getRemotePlans } from '../lib/api/axios/requests';
 import { remoteJobSiteSelector } from '../reducers/slices/remoteJob';
-import { ResRemotePlans } from '../types/Status';
+import { RemotePlan } from '../types/Status';
 
 export interface ResAutoPlanType {
   planId: number;
@@ -128,7 +128,7 @@ export default function usePlansSetting() {
     {
       refetchOnWindowFocus: false,
       enabled: !!selectSite?.value,
-      initialData: [] as ResRemotePlans[],
+      initialData: [] as RemotePlan[],
       onError: () => {
         openNotification('error', 'Error', `Failed to get auto plan list of "${selectSite?.label}".`);
       },

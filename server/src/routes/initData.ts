@@ -5,6 +5,9 @@ import { User } from '../entity/User';
 import { Site } from '../entity/Site';
 import { Job } from '../entity/Job';
 import { JobStatus } from '../entity/JobStatus';
+import { JobNotification } from '../entity/JobNotification';
+import { MailContext } from '../entity/MailContext';
+import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
 
@@ -15,7 +18,7 @@ router.get('/db', async (req: Request, res: Response, next: NextFunction) => {
     testUser.name = `chpark_${i}`;
     testUser.password = 'password';
     testUser.created = new Date();
-    testUser.last_access = new Date();
+    testUser.lastAccess = new Date();
     testUser.permission = ['status', 'configure', 'rules', 'account'];
     await userManager.save(testUser);
   }
@@ -23,17 +26,17 @@ router.get('/db', async (req: Request, res: Response, next: NextFunction) => {
   const siteManager = await getManager().getRepository(Site);
   for (let i = 0; i < 30; i++) {
     const newSite = new Site();
-    newSite.site_name = `siteName${i}`;
-    newSite.fab_name = `fabName_${i}`;
+    newSite.siteName = `siteName${i}`;
+    newSite.fabName = `fabName_${i}`;
     newSite.address = `10.1.31.${i}`;
     newSite.user = `chpark_${i}`;
     newSite.password = 'password';
     newSite.port = 80;
     newSite.password = 'password';
-    newSite.db_address = `192.168.0.${i}`;
-    newSite.db_port = 5432;
-    newSite.db_password = 'password';
-    newSite.mpa_count = i;
+    newSite.dbAddress = `192.168.0.${i}`;
+    newSite.dbPort = 5432;
+    newSite.dbPassword = 'password';
+    newSite.excuteMpas = [2, 4, 6, 8];
     await siteManager.save(newSite);
   }
 
@@ -47,7 +50,7 @@ router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
   //   testUser.name = `chpark_${i}`;
   //   testUser.password = 'password';
   //   testUser.created = new Date();
-  //   testUser.last_access = new Date();
+  //   testUser.lastAccess = new Date();
   //   testUser.permission = ['status', 'configure', 'rules', 'account'];
   //   await userManager.save(testUser);
   // }
@@ -55,8 +58,8 @@ router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
   // const siteManager = await getManager().getRepository(Site);
   // for (let i = 0; i < 30; i++) {
   //   const newSite = new Site();
-  //   newSite.site_name = `siteName${i}`;
-  //   newSite.fab_name = `fabName_${i}`;
+  //   newSite.siteName = `siteName${i}`;
+  //   newSite.fabName = `fabName_${i}`;
   //   newSite.address = `10.1.31.${i}`;
   //   newSite.user = `chpark_${i}`;
   //   newSite.password = 'password';
@@ -75,22 +78,23 @@ router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
     const errorStatus = new JobStatus();
     const crasStatus = new JobStatus();
     const version = new JobStatus();
+    const notification = new JobNotification();
 
-    collectStatus.full_string = 'collect_jobStatus';
+    collectStatus.fullString = 'collect_jobStatus';
     collectStatus.status = 'processing';
-    collectStatus.represent_string = 'collect_jobStatus';
+    collectStatus.representString = 'collect_jobStatus';
     await getManager().getRepository(JobStatus).save(collectStatus);
-    errorStatus.full_string = 'cras_jobStatus';
+    errorStatus.fullString = 'cras_jobStatus';
     errorStatus.status = 'processing';
-    errorStatus.represent_string = 'cras_jobStatus';
+    errorStatus.representString = 'cras_jobStatus';
     await getManager().getRepository(JobStatus).save(errorStatus);
-    crasStatus.full_string = 'cras_jobStatus';
+    crasStatus.fullString = 'cras_jobStatus';
     crasStatus.status = 'processing';
-    crasStatus.represent_string = 'cras_jobStatus';
+    crasStatus.representString = 'cras_jobStatus';
     await getManager().getRepository(JobStatus).save(crasStatus);
-    version.full_string = 'version_jobStatus';
+    version.fullString = 'version_jobStatus';
     version.status = 'processing';
-    version.represent_string = 'version_jobStatus';
+    version.representString = 'version_jobStatus';
     await getManager().getRepository(JobStatus).save(version);
 
     const ownerUser = await getManager()
@@ -100,30 +104,57 @@ router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
       .getRepository(Site)
       .findOne(i + 1);
 
-    job.site_id = site;
-    job.collect_status = collectStatus;
-    job.error_summary_status = errorStatus;
-    job.cras_status = crasStatus;
-    job.version_check_status = version;
+    job.siteId = site;
+    job.collectStatus = collectStatus;
+    job.errorSummaryStatus = errorStatus;
+    job.crasDataStatus = crasStatus;
+    job.mpaVersionStatus = version;
     job.stop = false;
     job.owner = ownerUser;
     job.created = new Date();
-    job.last_action = new Date();
-    job.job_type = 'remote';
-    job.file_path = `/test/filepath/remote/${i + 1}`;
+    job.lastAction = new Date();
+    job.jobType = 'remote';
+
+    notification.isErrorSummary = true;
+    const errorSummaryEmail = new MailContext();
+    errorSummaryEmail.recipients = ['chpark@canon.bs.co.kr', 'chpark2@canon.bs.co.kr'];
+    errorSummaryEmail.subject = 'hello? errorSummaryEmail';
+    errorSummaryEmail.body = 'this is body?';
+    await getManager().getRepository(MailContext).save(errorSummaryEmail);
+    notification.errorSummaryEmail = errorSummaryEmail;
+
+    notification.isCrasData = true;
+    const crasDataEmail = new MailContext();
+    crasDataEmail.recipients = ['chpark@canon.bs.co.kr', 'chpark2@canon.bs.co.kr'];
+    crasDataEmail.subject = 'hello? crasDataEmail';
+    crasDataEmail.body = 'this is body?';
+    await getManager().getRepository(MailContext).save(crasDataEmail);
+    notification.crasDataEmail = crasDataEmail;
+
+    notification.isMpaVersion = true;
+    const mpaVersionEmail = new MailContext();
+    mpaVersionEmail.recipients = ['chpark@canon.bs.co.kr', 'chpark2@canon.bs.co.kr'];
+    mpaVersionEmail.subject = 'hello? version_email';
+    mpaVersionEmail.body = 'this is body?';
+    await getManager().getRepository(MailContext).save(mpaVersionEmail);
+    notification.mpaVersionEmail = mpaVersionEmail;
+
+    notification.sending_times = ['11:00', '23:00'];
+    notification.before = 60 * 60 * 24;
+
+    await getManager().getRepository(JobNotification).save(notification);
+    job.notification = notification;
+    job.planids = [2, 4, 6, 8];
     await getManager().getRepository(Job).save(job);
   }
 
   for (let i = 0; i < 30; i++) {
     const job = new Job();
     const collectStatus = new JobStatus();
-    const errorStatus = new JobStatus();
-    const crasStatus = new JobStatus();
-    const version = new JobStatus();
 
-    collectStatus.full_string = 'collect_jobStatus';
+    collectStatus.fullString = 'collect_jobStatus';
     collectStatus.status = 'processing';
-    collectStatus.represent_string = 'collect_jobStatus';
+    collectStatus.representString = 'collect_jobStatus';
     await getManager().getRepository(JobStatus).save(collectStatus);
 
     const ownerUser = await getManager()
@@ -133,21 +164,24 @@ router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
       .getRepository(Site)
       .findOne(i + 1);
 
-    job.site_id = site;
-    job.collect_status = collectStatus;
+    job.siteId = site;
+    job.collectStatus = collectStatus;
     job.stop = false;
     job.owner = ownerUser;
     job.created = new Date();
-    job.last_action = new Date();
-    job.job_type = 'local';
-    job.file_path = `/test/filepath/local/${i + 1}`;
+    job.lastAction = new Date();
+    job.jobType = 'local';
 
     const max = Math.random() * (10 - 1) * 1;
-    const file_name = [];
+    const fileNames = [];
+    const fileIds = [];
     for (let j = 0; j < max; j++) {
-      file_name.push(`${generateString(16)}.zip`);
+      fileNames.push(`${generateString(16)}.zip`);
+      fileIds.push(Math.floor(Math.random() * (999999 - 1) * 1));
     }
-    job.file_name = file_name;
+    job.fileNames = fileNames;
+    job.fileIds = fileIds;
+
     await getManager().getRepository(Job).save(job);
   }
 

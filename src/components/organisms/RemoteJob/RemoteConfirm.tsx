@@ -7,8 +7,9 @@ import useRemoteJob from '../../../hooks/useRemoteJob';
 import { toCamelCase } from '../../../lib/util/conver';
 
 export type RemoteConfirmProps = {};
-export default function RemoteConfirm(): JSX.Element {
-  const { selectSite, selectPlans, sendingTimes, periodTime, errorSummary, crasData, mpaVersion } = useRemoteJob();
+// eslint-disable-next-line no-empty-pattern
+export default function RemoteConfirm({}: RemoteConfirmProps): JSX.Element {
+  const { selectSite, selectPlans, sendingTimes, before, errorSummary, crasData, mpaVersion } = useRemoteJob();
 
   return (
     <>
@@ -33,7 +34,7 @@ export default function RemoteConfirm(): JSX.Element {
         </Space>
         <NoticeSettings>
           <Col>{sendingTimes.join(', ')}</Col>
-          <Col>{`${periodTime.time} ${toCamelCase(periodTime.unit)} Before`}</Col>
+          <Col>{`${before.time} ${toCamelCase(before.unit)} Before`}</Col>
           <Col>{convertEmailSetting(errorSummary.enable, crasData.enable, mpaVersion.enable)}</Col>
         </NoticeSettings>
       </Notice>

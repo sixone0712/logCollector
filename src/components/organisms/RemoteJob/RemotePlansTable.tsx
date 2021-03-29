@@ -1,21 +1,19 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Badge, Checkbox, Table, Tooltip, Row, Col } from 'antd';
+import { Badge, Checkbox, Table } from 'antd';
 import { CompareFn, TableRowSelection } from 'antd/lib/table/interface';
 import { AlignType, DataIndex } from 'rc-table/lib/interface';
 import React, { Key, useCallback } from 'react';
 import usePlansSetting from '../../../hooks/usePlansSetting';
 import useRemoteJob from '../../../hooks/useRemoteJob';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
-import { ResRemotePlans } from '../../../types/Status';
+import { RemotePlan } from '../../../types/Status';
 import PopupTip from '../../atoms/PopupTip';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
 
 const ColumnTitle = styled.div`
   font-weight: 700;
 `;
-
-export type AutoPlansColumnName = 'plan_name' | 'description' | 'plan_type' | 'machines' | 'targets' | 'status';
+export type AutoPlansColumnName = 'planName' | 'description' | 'planType' | 'machineCount' | 'targetCount' | 'status';
 
 export type AutoPlansColumnPropsType = {
   [name in AutoPlansColumnName]: {
@@ -25,9 +23,9 @@ export type AutoPlansColumnPropsType = {
     align?: AlignType;
     sorter?:
       | boolean
-      | CompareFn<ResRemotePlans>
+      | CompareFn<RemotePlan>
       | {
-          compare?: CompareFn<ResRemotePlans>;
+          compare?: CompareFn<RemotePlan>;
           /** Config multiple sorter order priority */
           multiple?: number;
         };
@@ -35,13 +33,13 @@ export type AutoPlansColumnPropsType = {
 };
 
 const remotePlansColumnProps: AutoPlansColumnPropsType = {
-  plan_name: {
-    key: 'plan_name',
+  planName: {
+    key: 'planName',
     title: <ColumnTitle>Plan Name</ColumnTitle>,
-    dataIndex: 'plan_name',
+    dataIndex: 'planName',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'plan_name'),
+      compare: (a, b) => compareTableItem(a, b, 'planName'),
     },
   },
   description: {
@@ -53,31 +51,31 @@ const remotePlansColumnProps: AutoPlansColumnPropsType = {
       compare: (a, b) => compareTableItem(a, b, 'description'),
     },
   },
-  plan_type: {
+  planType: {
     key: 'plan_type',
     title: <ColumnTitle>Type</ColumnTitle>,
-    dataIndex: 'plan_type',
+    dataIndex: 'planType',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'plan_type'),
+      compare: (a, b) => compareTableItem(a, b, 'planType'),
     },
   },
-  machines: {
+  machineCount: {
     key: 'machines',
     title: <ColumnTitle>Machines</ColumnTitle>,
-    dataIndex: 'machines',
+    dataIndex: 'machineCount',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'machines'),
+      compare: (a, b) => compareTableItem(a, b, 'machineCount'),
     },
   },
-  targets: {
+  targetCount: {
     key: 'targets',
     title: <ColumnTitle>Targets</ColumnTitle>,
-    dataIndex: 'targets',
+    dataIndex: 'targetCount',
     align: 'center',
     sorter: {
-      compare: (a, b) => compareTableItem(a, b, 'targets'),
+      compare: (a, b) => compareTableItem(a, b, 'targetCount'),
     },
   },
   status: {
@@ -97,24 +95,19 @@ export default function RemotePlansTable() {
   const { plans, refreshPlans, isFetching } = usePlansSetting();
   const { selectPlans, setSelectPlans, onBack, selectSite } = useRemoteJob();
 
-  const statusRender = useCallback(
-    (value: string, record: ResRemotePlans, index: number, type?: AutoPlansColumnName) => {
-      return (
-        <Badge status={value === 'stop' ? 'processing' : 'error'} text={value === 'stop' ? 'Stopped' : 'Running'} />
-      );
-    },
-    []
-  );
+  const statusRender = useCallback((value: string, record: RemotePlan, index: number, type?: AutoPlansColumnName) => {
+    return <Badge status={value === 'stop' ? 'processing' : 'error'} text={value === 'stop' ? 'Stopped' : 'Running'} />;
+  }, []);
 
   const mahcinesRender = useCallback(
-    (value: number, record: ResRemotePlans, index: number, type?: AutoPlansColumnName) =>
-      PopupTip({ value, list: record.machine_names }),
+    (value: number, record: RemotePlan, index: number, type?: AutoPlansColumnName) =>
+      PopupTip({ value, list: record.machineNames }),
     []
   );
 
   const targetsRender = useCallback(
-    (value: number, record: ResRemotePlans, index: number, type?: AutoPlansColumnName) =>
-      PopupTip({ value, list: record.target_names }),
+    (value: number, record: RemotePlan, index: number, type?: AutoPlansColumnName) =>
+      PopupTip({ value, list: record.targetNames }),
     []
   );
 
@@ -133,14 +126,14 @@ export default function RemotePlansTable() {
     [plans, isFetching]
   );
 
-  const onSelectChange = (selectedRowKeys: React.Key[], selectedRows: ResRemotePlans[]) => {
+  const onSelectChange = (selectedRowKeys: React.Key[], selectedRows: RemotePlan[]) => {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     setSelectPlans(selectedRowKeys);
   };
 
   const toggleSelectAll = useCallback(() => {
     if (plans && plans.length > 0)
-      setSelectPlans(selectPlans.length === plans.length ? [] : plans.map((r: ResRemotePlans) => r.plan_id));
+      setSelectPlans(selectPlans.length === plans.length ? [] : plans.map((r: RemotePlan) => r.planId));
   }, [plans, selectPlans]);
 
   const allCheckbox = (
@@ -151,7 +144,7 @@ export default function RemotePlansTable() {
     />
   );
 
-  const rowSelection: TableRowSelection<ResRemotePlans> = {
+  const rowSelection: TableRowSelection<RemotePlan> = {
     type: 'checkbox',
     selectedRowKeys: selectPlans,
     onChange: onSelectChange,
@@ -159,8 +152,8 @@ export default function RemotePlansTable() {
   };
 
   return (
-    <Table<ResRemotePlans>
-      rowKey={'plan_id'}
+    <Table<RemotePlan>
+      rowKey={'planId'}
       rowSelection={rowSelection}
       dataSource={plans}
       bordered
@@ -172,12 +165,12 @@ export default function RemotePlansTable() {
       }}
       loading={isFetching}
     >
-      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.plan_name} />
-      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.description} />
-      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.plan_type} />
-      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.machines} render={mahcinesRender} />
-      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.targets} render={targetsRender} />
-      <Table.Column<ResRemotePlans> {...remotePlansColumnProps.status} render={statusRender} />
+      <Table.Column<RemotePlan> {...remotePlansColumnProps.planName} />
+      <Table.Column<RemotePlan> {...remotePlansColumnProps.description} />
+      <Table.Column<RemotePlan> {...remotePlansColumnProps.planType} />
+      <Table.Column<RemotePlan> {...remotePlansColumnProps.machineCount} render={mahcinesRender} />
+      <Table.Column<RemotePlan> {...remotePlansColumnProps.targetCount} render={targetsRender} />
+      <Table.Column<RemotePlan> {...remotePlansColumnProps.status} render={statusRender} />
     </Table>
   );
 }

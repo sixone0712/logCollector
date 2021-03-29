@@ -6,14 +6,15 @@ export class JobHistory extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Job, (job) => job.id)
-  job: Job;
+  // @ManyToOne(() => Job, (job) => job.id)
+  // @Column()
+  // job: Job;
 
   @Column()
   type: string;
 
-  @Column({ type: 'text' })
-  file_path: string;
+  @Column({ type: 'text', name: 'file_id' })
+  fileId: string;
 
   @Column({ type: 'timestamp' })
   created: Date;

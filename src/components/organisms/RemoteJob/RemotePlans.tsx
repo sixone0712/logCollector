@@ -5,20 +5,20 @@ import { Row, Select, Space } from 'antd';
 import React from 'react';
 import { useQuery } from 'react-query';
 import useRemoteJob from '../../../hooks/useRemoteJob';
-import { getConfigureSitesFabsNames } from '../../../lib/util/requestAxios';
-import { ResSitesNames } from '../../../types/Configure';
+import { getConfigureSitesFabsNames } from '../../../lib/api/axios/requests';
+import { SiteFabName } from '../../../types/Configure';
 import RemotePlansTable from './RemotePlansTable';
 
 export type RemotePlansProps = {};
 export default function RemotePlans(): JSX.Element {
   const { selectSite, setSelectSite } = useRemoteJob();
 
-  const { isLoading, isError, data, error, status, isFetching } = useQuery<ResSitesNames[]>(
-    'sites_fabs_name',
+  const { isLoading, isError, data, error, status, isFetching } = useQuery<SiteFabName[]>(
+    'get_site_fab_names',
     getConfigureSitesFabsNames,
     {
-      // refetchOnMount: false,
       refetchOnWindowFocus: false,
+      // refetchOnMount: false,
       // refetchOnMount: true,
       // initialData: [],
     }
@@ -43,8 +43,8 @@ export default function RemotePlans(): JSX.Element {
           filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           {data?.map((item) => (
-            <Select.Option key={item.id} value={item.id} label={item.site_fab_name}>
-              {item.site_fab_name}
+            <Select.Option key={item.id} value={item.id} label={item.siteFabName}>
+              {item.siteFabName}
             </Select.Option>
           ))}
         </Select>

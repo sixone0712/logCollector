@@ -15,6 +15,8 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+    'no-empty-function': 0,
+    // '@typescript-eslint/no-empty-function': ['allow'],
     '@typescript-eslint/ban-types': [
       'error',
       {
@@ -22,6 +24,29 @@ module.exports = {
         types: {
           '{}': false,
         },
+      },
+    ],
+    '@typescript-eslint/no-empty-interface': [
+      'error',
+      {
+        allowSingleExtends: true,
+      },
+    ],
+    '@typescript-eslint/no-empty-function': [
+      'error',
+      {
+        allow: [
+          'functions',
+          'arrowFunctions',
+          'generatorFunctions',
+          'methods',
+          'generatorMethods',
+          'getters',
+          'setters',
+          'constructors',
+          'asyncFunctions',
+          'asyncMethods',
+        ],
       },
     ],
   },

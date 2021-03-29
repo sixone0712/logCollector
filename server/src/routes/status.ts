@@ -3,6 +3,7 @@ import { getManager } from 'typeorm';
 import { Job } from '../entity/Job';
 import express = require('express');
 import sleep from '../utils/sleep';
+import { JobNotification } from '../entity/JobNotification';
 
 const router = express.Router();
 router.get('/remote', async (req: Request, res: Response, next: NextFunction) => {
@@ -10,19 +11,19 @@ router.get('/remote', async (req: Request, res: Response, next: NextFunction) =>
 
   const foundJob = await job.find({
     // relations: ['site_id', 'collect_status', 'error_summary_status', 'cras_status', 'version_check_status', 'owner'],
-    relations: ['site_id', 'collect_status', 'error_summary_status', 'cras_status', 'version_check_status'],
-    where: { job_type: 'remote' },
+    relations: ['siteId', 'collectStatus', 'errorSummaryStatus', 'crasDataStatus', 'mpaVersionStatus'],
+    where: { jobType: 'remote' },
   });
 
   const response = foundJob.map((item, idx) => ({
-    index: idx,
     id: item.id,
     stop: item.stop,
-    site_name: item.site_id.site_name,
-    collect_status: item.collect_status.status,
-    error_summary_status: item.error_summary_status.status,
-    cras_status: item.cras_status.status,
-    version_check_status: item.version_check_status.status,
+    siteName: item.siteId.siteName,
+    fabName: item.siteId.fabName,
+    collectStatus: item.collectStatus.status,
+    errorSummaryStatus: item.errorSummaryStatus.status,
+    crasDataStatus: item.crasDataStatus.status,
+    mpaVersionStatus: item.mpaVersionStatus.status,
   }));
 
   await sleep(1000);
@@ -30,8 +31,68 @@ router.get('/remote', async (req: Request, res: Response, next: NextFunction) =>
   res.json(response);
 });
 
+router.get('/remote/:id(\\d+)/', async (req: Request, res: Response, next: NextFunction) => {
+  const job = await getManager().getRepository(Job);
+
+  const { id } = req.params;
+  console.log('id', id);
+
+  const foundJob = await job.findOne({
+    relations: [
+      'siteId',
+      'collectStatus',
+      'errorSummaryStatus',
+      'crasDataStatus',
+      'mpaVersionStatus',
+      'owner',
+      'notification',
+    ],
+    where: { id: id, jobType: 'remote' },
+  });
+
+  console.log('foundJob', foundJob);
+
+  const notification = await getManager().getRepository(JobNotification);
+  const foundNotify = await notification.findOne({
+    relations: ['errorSummaryEmail', 'crasDataEmail', 'mpaVersionEmail'],
+    where: { id: foundJob.notification.id },
+  });
+
+  console.log('foundNotify', foundNotify);
+
+  const response = {
+    id: foundJob.id,
+    siteName: foundJob.siteId.siteName,
+    fabName: foundJob.siteId.fabName,
+    errorSummary: {
+      enable: foundNotify.isErrorSummary,
+      recipient: foundNotify.errorSummaryEmail.recipients,
+      subject: foundNotify.errorSummaryEmail.subject,
+      body: foundNotify.errorSummaryEmail.body,
+    },
+    crasData: {
+      enable: foundNotify.isCrasData,
+      recipient: foundNotify.crasDataEmail.recipients,
+      subject: foundNotify.crasDataEmail.subject,
+      body: foundNotify.crasDataEmail.body,
+    },
+    mpaVersion: {
+      enable: foundNotify.isMpaVersion,
+      recipient: foundNotify.mpaVersionEmail.recipients,
+      subject: foundNotify.mpaVersionEmail.subject,
+      body: foundNotify.mpaVersionEmail.body,
+    },
+    planIds: foundJob.planids,
+    sendingTimes: foundNotify.sending_times,
+    before: foundNotify.before,
+  };
+
+  await sleep(3000);
+
+  res.json(response);
+});
+
 router.get('/remote/plans', async (req: Request, res: Response, next: NextFunction) => {
-  console.log('ddd');
   const { lists } = planData;
 
   const resPlanData = lists.map((item) => {
@@ -45,13 +106,11 @@ router.get('/remote/plans', async (req: Request, res: Response, next: NextFuncti
 
     // BMP-%s-%s-PR_1,
     return {
-      plan_id: item.planId,
-      plan_name: item.planName,
-      plan_type: item.planType,
-      machines: item.machineNames.length,
-      machine_names: item.machineNames,
-      targets: item.planType === 'ftp' ? item.categoryNames.length : convCommandName.length,
-      target_names: item.planType === 'ftp' ? item.categoryNames : convCommandName,
+      planId: item.planId,
+      planName: item.planName,
+      planType: item.planType,
+      machineNames: item.machineNames,
+      targetNames: item.planType === 'ftp' ? item.categoryNames : convCommandName,
       description: item.description,
       status: item.status,
     };
@@ -60,21 +119,30 @@ router.get('/remote/plans', async (req: Request, res: Response, next: NextFuncti
   res.json(resPlanData);
 });
 
+router.post('/remote', async (req: Request, res: Response, next: NextFunction) => {
+  console.log('req.body', req.body);
+  await sleep(3000);
+  res.json({
+    id: 9999,
+  });
+});
+
 router.get('/local', async (req: Request, res: Response, next: NextFunction) => {
   const job = await getManager().getRepository(Job);
 
   const foundJob = await job.find({
     // relations: ['site_id', 'collect_status', 'error_summary_status', 'cras_status', 'version_check_status', 'owner'],
-    relations: ['site_id', 'collect_status'],
-    where: { job_type: 'local' },
+    relations: ['siteId', 'collectStatus'],
+    where: { jobType: 'local' },
   });
 
   const response = foundJob.map((item, idx) => ({
-    index: idx,
     id: item.id,
-    site_name: item.site_id.site_name,
-    collect_status: item.collect_status.status,
-    file_name: item.file_name,
+    siteName: item.siteId.siteName,
+    fabName: item.siteId.fabName,
+    collectStatus: item.collectStatus.status,
+    fileIds: item.fileIds,
+    fileNames: item.fileNames,
   }));
 
   await sleep(1000);
@@ -83,7 +151,7 @@ router.get('/local', async (req: Request, res: Response, next: NextFunction) => 
 });
 
 router.post('/local', async (req: Request, res: Response, next: NextFunction) => {
-  await sleep(10000);
+  await sleep(3000);
   res.json({
     id: 9999,
   });

@@ -6,29 +6,29 @@ export class JobNotification extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  error_summary: boolean;
+  @Column({ name: 'is_error_summary' })
+  isErrorSummary: boolean;
 
-  @Column()
-  cras: boolean;
+  @Column({ name: 'is_cras_data' })
+  isCrasData: boolean;
 
-  @Column()
-  version: boolean;
-
-  @OneToOne(() => MailContext)
-  @JoinColumn()
-  error_email: MailContext;
+  @Column({ name: 'is_mpa_version' })
+  isMpaVersion: boolean;
 
   @OneToOne(() => MailContext)
-  @JoinColumn()
-  cras_email: MailContext;
+  @JoinColumn({ name: 'error_summary_email' })
+  errorSummaryEmail: MailContext;
 
   @OneToOne(() => MailContext)
-  @JoinColumn()
-  version_email: MailContext;
+  @JoinColumn({ name: 'cras_data_email' })
+  crasDataEmail: MailContext;
 
-  @Column({ type: 'text', array: true })
-  sending_time: string[];
+  @OneToOne(() => MailContext)
+  @JoinColumn({ name: 'mpa_version_email' })
+  mpaVersionEmail: MailContext;
+
+  @Column({ type: 'text', name: 'sending_times', array: true })
+  sending_times: string[];
 
   @Column()
   before: number;

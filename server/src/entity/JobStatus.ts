@@ -8,9 +8,9 @@ export class JobStatus extends BaseEntity {
   @Column({ default: 'notbuild' })
   status: string;
 
-  @Column()
-  full_string: string;
+  @Column({ name: 'full_string' })
+  fullString: string;
 
-  @Column()
-  represent_string: string;
+  @Column({ name: 'represent_string' })
+  representString: string;
 }

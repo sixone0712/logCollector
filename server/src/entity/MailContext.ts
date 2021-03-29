@@ -6,11 +6,11 @@ export class MailContext extends BaseEntity {
   id: number;
 
   @Column({ type: 'text', array: true })
-  recipient: string[];
+  recipients: string[];
 
   @Column({ type: 'text' })
   subject: string;
 
   @Column({ type: 'text' })
-  content: string;
+  body: string;
 }

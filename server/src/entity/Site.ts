@@ -6,10 +6,11 @@ export class Site extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  site_name: string;
-  @Column()
-  fab_name: string;
+  @Column({ name: 'site_name' })
+  siteName: string;
+
+  @Column({ name: 'fab_name' })
+  fabName: string;
 
   @Column()
   address: string;
@@ -23,17 +24,17 @@ export class Site extends BaseEntity {
   @Column()
   password: string;
 
-  @Column()
-  db_address: string;
+  @Column({ name: 'db_address' })
+  dbAddress: string;
 
-  @Column()
-  db_port: number;
+  @Column({ name: 'db_port' })
+  dbPort: number;
 
-  @Column()
-  db_password: string;
+  @Column({ name: 'db_password' })
+  dbPassword: string;
 
-  @Column()
-  mpa_count: number;
+  @Column('integer', { name: 'excute_mpas', array: true, nullable: true })
+  excuteMpas: number[];
 
   @OneToMany(() => Job, (job) => job.id)
   job: Job[];
