@@ -6,7 +6,7 @@ import React from 'react';
 import { useQuery } from 'react-query';
 import useLocalJob from '../../../hooks/useLocalJob';
 import { getConfigureSitesFabsNames } from '../../../lib/api/axios/requests';
-import { SiteFabName } from '../../../types/Configure';
+import { SiteFabName } from '../../../types/configure';
 
 export type LocalConfigureProps = {};
 

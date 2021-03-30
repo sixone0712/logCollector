@@ -11,7 +11,7 @@ import useEditRemoteJob from '../../../hooks/useEditRemoteJob';
 import useRemoteStatus from '../../../hooks/useRemoteStatus';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
 import { selectSiteReducer } from '../../../reducers/slices/remoteJob';
-import { BuildStatus, RemoteColumnPropsType, RemoteJobStatus, RemoteStatusType } from '../../../types/Status';
+import { BuildStatus, RemoteColumnPropsType, RemoteJobStatus, RemoteStatusType } from '../../../types/status';
 import StatusBadge from '../../atoms/StatusBadge';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
 

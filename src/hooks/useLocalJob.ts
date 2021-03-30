@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIsMutating, useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { LOCAL_ERROR, LOCAL_STEP } from '../components/organisms/LocalJob/LocalJob';
+import { LOCAL_ERROR, LOCAL_STEP } from '../components/modules/LocalJob/LocalJob';
 import { postLocalJob } from '../lib/api/axios/requests';
 import { ReqPostLocalJob } from '../lib/api/axios/types';
 import { waitMutationStatus } from '../lib/util/generator';

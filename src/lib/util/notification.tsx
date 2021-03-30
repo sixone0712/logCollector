@@ -15,9 +15,9 @@ export interface OpenNotification {
 }
 
 export const openNotification: OpenNotification = (type, message, description) => {
-  if (type === 'error') {
-    notification.destroy();
-  }
+  // if (type === 'error') {
+  //   notification.destroy();
+  // }
 
   const now = new Date(Date.now());
   console.log(typeof now.getFullYear());

@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import React from 'react';
-import UserLogin from '../../components/organisms/UserLogin';
+import UserLogin from '../../components/modules/UserLogin';
 import AppLayout from '../../components/Templates/AppLayout';
 
 export type LoginProps = {

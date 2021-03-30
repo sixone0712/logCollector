@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { useHistory } from 'react-router';
 import { getRemoteJobStatus } from '../lib/api/axios/requests';
-import { RemoteJobStatus, RemoteStatusType } from '../types/Status';
+import { RemoteJobStatus, RemoteStatusType } from '../types/status';
 
 export default function useRemoteStatus() {
   const { data: remoteList, isFetching, isError } = useQuery<RemoteJobStatus[]>(

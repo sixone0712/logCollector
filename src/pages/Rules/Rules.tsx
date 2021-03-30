@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import CustomIcon from '../../components/atoms/CustomIcon';
-import DashBoardBreadcrumb from '../../components/organisms/DashBoardBreadcrumb';
+import DashBoardBreadcrumb from '../../components/modules/DashBoardBreadcrumb';
 import LogConverter from './LogConverter';
 import LogDefinition from './LogDefinition';
 

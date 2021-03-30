@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import qs from 'qs';
 import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import BuildHistory from '../../../components/organisms/BuildHistory';
+import BuildHistory from '../../../components/modules/BuildHistory';
 export type HistoryProps = {
   children?: React.ReactNode;
 };

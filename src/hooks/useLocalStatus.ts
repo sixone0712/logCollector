@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { openNotification } from '../lib/util/notification';
 import { getLocalJobStatus } from '../lib/api/axios/requests';
-import { LocalStatus } from '../types/Status';
+import { LocalStatus } from '../types/status';
 
 export default function useLocalStatus() {
   const { data: localList, isFetching, isError } = useQuery<LocalStatus[]>('get_status_local', getLocalJobStatus, {

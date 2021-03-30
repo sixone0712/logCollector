@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import React from 'react';
-import LocalJob from '../../../components/organisms/LocalJob';
-import LocalStatusTable from '../../../components/organisms/LocalStatusTable';
+import LocalJob from '../../../components/modules/LocalJob';
+import LocalStatusTable from '../../../components/modules/LocalStatusTable';
 
 export type LocalProps = {
   children?: React.ReactNode;

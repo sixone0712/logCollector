@@ -1,28 +1,19 @@
-import { DesktopOutlined, ProfileOutlined } from '@ant-design/icons';
+import { DesktopOutlined, ProfileOutlined, ReloadOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Row, Select, Space } from 'antd';
+import { Button, Row, Select, Space } from 'antd';
 import React from 'react';
-import { useQuery } from 'react-query';
 import useRemoteJob from '../../../hooks/useRemoteJob';
-import { getConfigureSitesFabsNames } from '../../../lib/api/axios/requests';
-import { SiteFabName } from '../../../types/Configure';
+import { useSiteFabName } from '../../../hooks/useSiteFabName';
+import { RemoteJobType } from '../../../pages/Status/Remote/Remote';
 import RemotePlansTable from './RemotePlansTable';
 
-export type RemotePlansProps = {};
-export default function RemotePlans(): JSX.Element {
+export type RemotePlansProps = {
+  type: RemoteJobType;
+};
+export default function RemotePlans({ type }: RemotePlansProps): JSX.Element {
   const { selectSite, setSelectSite } = useRemoteJob();
-
-  const { isLoading, isError, data, error, status, isFetching } = useQuery<SiteFabName[]>(
-    'get_site_fab_names',
-    getConfigureSitesFabsNames,
-    {
-      refetchOnWindowFocus: false,
-      // refetchOnMount: false,
-      // refetchOnMount: true,
-      // initialData: [],
-    }
-  );
+  const { data, disabledSelectSite, refreshSiteFabName, isFetching } = useSiteFabName(type);
 
   return (
     <>
@@ -41,7 +32,7 @@ export default function RemotePlans(): JSX.Element {
           loading={isFetching}
           optionFilterProp="children"
           filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-          disabled={isFetching}
+          disabled={disabledSelectSite}
         >
           {data?.map((item) => (
             <Select.Option key={item.id} value={item.id} label={item.siteFabName}>
@@ -49,6 +40,16 @@ export default function RemotePlans(): JSX.Element {
             </Select.Option>
           ))}
         </Select>
+        {type === 'new' && (
+          <Button
+            type="primary"
+            icon={<ReloadOutlined />}
+            css={btnStyle}
+            onClick={refreshSiteFabName}
+            loading={isFetching}
+            disabled={isFetching}
+          />
+        )}
       </SelectSiteName>
       <SelectPlans>
         <Space css={spaceStyle}>
@@ -84,4 +85,9 @@ const selectStyle = css`
   min-width: 33.75rem;
   text-align: center;
   font-size: inherit;
+`;
+
+const btnStyle = css`
+  border-radius: 0.625rem;
+  margin-left: 0.5rem;
 `;

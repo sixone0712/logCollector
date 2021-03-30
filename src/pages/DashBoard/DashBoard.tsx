@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import DashBoardBreadcrumb from '../../components/organisms/DashBoardBreadcrumb';
-import DashBoardFooter from '../../components/organisms/DashBoardFooter';
-import DashBoardNavBar from '../../components/organisms/DashBoardHeader';
+import DashBoardBreadcrumb from '../../components/modules/DashBoardBreadcrumb';
+import DashBoardFooter from '../../components/modules/DashBoardFooter';
+import DashBoardNavBar from '../../components/modules/DashBoardHeader';
 import AppLayout from '../../components/Templates/AppLayout';
 import Account from '../Account';
 import Configure from '../Configure';

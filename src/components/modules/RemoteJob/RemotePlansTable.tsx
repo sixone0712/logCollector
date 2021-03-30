@@ -6,7 +6,7 @@ import React, { Key, useCallback } from 'react';
 import usePlansSetting from '../../../hooks/usePlansSetting';
 import useRemoteJob from '../../../hooks/useRemoteJob';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
-import { RemotePlan } from '../../../types/Status';
+import { RemotePlan } from '../../../types/status';
 import PopupTip from '../../atoms/PopupTip';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
 
@@ -94,6 +94,7 @@ export type RemotePlansTableProps = {};
 export default function RemotePlansTable() {
   const { plans, refreshPlans, isFetching } = usePlansSetting();
   const { selectPlans, setSelectPlans, onBack, selectSite } = useRemoteJob();
+  console.log('plans', plans);
 
   const statusRender = useCallback((value: string, record: RemotePlan, index: number, type?: AutoPlansColumnName) => {
     return <Badge status={value === 'stop' ? 'processing' : 'error'} text={value === 'stop' ? 'Stopped' : 'Running'} />;

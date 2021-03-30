@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIsMutating, useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { REMOTE_STEP } from '../components/organisms/RemoteJob/RemoteJob';
+import { REMOTE_STEP } from '../components/modules/RemoteJob/RemoteJob';
 import { postRemoteJob } from '../lib/api/axios/requests';
 import { ReqPostRemoteJob } from '../lib/api/axios/types';
 import { timeToSecound } from '../lib/util/conver';

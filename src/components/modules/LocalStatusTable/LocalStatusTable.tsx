@@ -9,7 +9,7 @@ import useLocalStatus from '../../../hooks/useLocalStatus';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
 import StatusBadge from '../../atoms/StatusBadge';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
-import { BuildStatus, LocalColumnPropsType, LocalStatus } from '../../../types/Status';
+import { BuildStatus, LocalColumnPropsType, LocalStatus } from '../../../types/status';
 import PopupTip from '../../atoms/PopupTip';
 
 export type LocalStatusTableProps = {

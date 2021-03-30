@@ -1,4 +1,4 @@
-import { BuildStatus } from '../../../types/Status';
+import { BuildStatus } from '../../../types/status';
 
 export interface ResGetRemoteJobStatus {
   id: number;

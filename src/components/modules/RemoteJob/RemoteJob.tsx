@@ -64,14 +64,13 @@ export type RemoteEditParams = {
 
 export default function RemoteJob({ type }: RemoteJobProps) {
   const { current, setCurrent, onBack, nextAction, initRemoteJob, setSelectSite } = useRemoteJob();
-  const { isFetchingEditJob } = useEditRemoteJob(type);
   const { id } = useParams<RemoteEditParams>();
   const { search } = useLocation();
   const { name } = queryString.parse(search);
 
-  console.log('id', id);
-  console.log('search', search);
-  console.log('name', name);
+  if (type === 'edit') {
+    useEditRemoteJob(type);
+  }
 
   useEffect(() => {
     if (type === 'new') initRemoteJob();
@@ -94,7 +93,7 @@ export default function RemoteJob({ type }: RemoteJobProps) {
             />
           </SettingsTitle>
           <Main>
-            {current === REMOTE_STEP.PLANS && <RemotePlans />}
+            {current === REMOTE_STEP.PLANS && <RemotePlans type={type} />}
             {current === REMOTE_STEP.NOTICE && <RemoteNotice />}
             {current >= REMOTE_STEP.CONFIRM && <RemoteConfirm />}
           </Main>

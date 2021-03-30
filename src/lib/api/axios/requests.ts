@@ -1,5 +1,4 @@
-import { SiteFabName } from '../../../types/Configure';
-import { LocalStatus, RemoteJobStatus, RemotePlan } from '../../../types/Status';
+import { LocalStatus, RemoteJobStatus, RemotePlan } from '../../../types/status';
 import client from './client';
 import {
   ReqPostLocalJob,
@@ -12,6 +11,7 @@ import {
   ResPostRemoteJob,
   ResGetRemoteJob,
 } from './types';
+import { SiteFabName } from '../../../types/configure';
 
 export const getConfigureSitesFabsNames = async (): Promise<SiteFabName[]> => {
   const { data } = await client.get<ResGetSiteName[]>('/api/configure/sites/names');

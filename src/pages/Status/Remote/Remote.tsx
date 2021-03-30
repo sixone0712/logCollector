@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import React from 'react';
-import RemoteJob from '../../../components/organisms/RemoteJob';
-import RemoteStatusTable from '../../../components/organisms/RemoteStatusTable';
+import RemoteJob from '../../../components/modules/RemoteJob';
+import RemoteStatusTable from '../../../components/modules/RemoteStatusTable';
 
 export type RemoteJobType = 'new' | 'edit';
 

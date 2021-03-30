@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import { PresetStatusColorType } from 'antd/lib/_util/colors';
 import { blue } from '@ant-design/colors';
 import { Badge } from 'antd';
-import { BuildStatus } from '../../../types/Status';
+import { BuildStatus } from '../../../types/status';
 
 export type StatusBadgeProps = {
   children?: React.ReactNode;
