@@ -1,7 +1,7 @@
 import { LabeledValue } from 'antd/lib/select';
-import React, { useCallback, useMemo, useState } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useState } from 'react';
+import { useQuery } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { getRemoteJob } from '../lib/api/axios/requests';
 import { ResGetRemoteJob } from '../lib/api/axios/types';
@@ -14,39 +14,31 @@ import {
   EmailOptionState,
   errorSummaryReducer,
   mpaVersionReducer,
+  remoteJobSiteSelector,
   selectPlansReducer,
   selectSiteReducer,
   sendingTimesReducer,
 } from '../reducers/slices/remoteJob';
-export default function useEditRemoteJob() {
-  const [site, setSite] = useState<LabeledValue | undefined>();
-  const queryClient = useQueryClient();
+export default function useEditRemoteJob(type: string) {
+  const selectSite = useSelector(remoteJobSiteSelector);
   const { data, isFetching, isError } = useQuery<ResGetRemoteJob>(
-    ['get_remote_job', site?.value],
-    () => getRemoteJob(site?.value as number),
+    ['get_remote_job', selectSite?.value],
+    () => getRemoteJob(selectSite?.value as number),
     {
-      enabled: !!site?.value,
+      enabled: !!selectSite?.value && type === 'edit',
+      // retryOnMount: false,
+      // refetchOnMount: false,
       refetchOnWindowFocus: false,
       initialData: undefined,
       onError: () => {
-        openNotification('error', 'Error', `Failed to get auto plan information "${site?.label}".`);
+        openNotification('error', 'Error', `Failed to get auto plan information "${selectSite?.label}".`);
       },
       onSuccess: (data) => {
         setRemoteJob(data);
-        moveToRemoteEditJob(site?.value as number);
       },
     }
   );
   const dispatch = useDispatch();
-  const history = useHistory();
-
-  const moveToRemoteEditJob = useCallback((id: number) => {
-    history.push(`/status/remote/edit/${id}`);
-  }, []);
-
-  const setEditRemoteJob = useCallback(() => {
-    if (site?.value !== undefined) queryClient.fetchQuery(['get_remote_job', site?.value]);
-  }, [queryClient, site]);
 
   const setRemoteJob = useCallback(
     (data: ResGetRemoteJob) => {
@@ -125,18 +117,7 @@ export default function useEditRemoteJob() {
     [dispatch]
   );
 
-  const isEditJobFetching = useCallback(
-    (siteId: number) => {
-      if ((site?.value as number) === siteId) return isFetching;
-      else return false;
-    },
-    [isFetching, site]
-  );
-
   return {
-    site,
-    setSite,
-    setEditRemoteJob,
-    isEditJobFetching,
+    isFetchingEditJob: isFetching,
   };
 }

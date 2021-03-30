@@ -7,7 +7,7 @@ import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import DashBoard from './pages/DashBoard';
 import { hot } from 'react-hot-loader/root';
-import Test from './Test';
+import Test from './components/test/Test';
 
 function App() {
   return (

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { getManager } from 'typeorm';
+import { createQueryBuilder, getManager } from 'typeorm';
 import { Job } from '../entity/Job';
 import express = require('express');
 import sleep from '../utils/sleep';
@@ -7,17 +7,20 @@ import { JobNotification } from '../entity/JobNotification';
 
 const router = express.Router();
 router.get('/remote', async (req: Request, res: Response, next: NextFunction) => {
-  const job = await getManager().getRepository(Job);
-
-  const foundJob = await job.find({
-    // relations: ['site_id', 'collect_status', 'error_summary_status', 'cras_status', 'version_check_status', 'owner'],
-    relations: ['siteId', 'collectStatus', 'errorSummaryStatus', 'crasDataStatus', 'mpaVersionStatus'],
-    where: { jobType: 'remote' },
-  });
+  const foundJob = await createQueryBuilder<Job>('Job')
+    .leftJoinAndSelect('Job.siteId', 'siteId')
+    .leftJoinAndSelect('Job.collectStatus', 'sicollectStatuste')
+    .leftJoinAndSelect('Job.errorSummaryStatus', 'errorSummaryStatus')
+    .leftJoinAndSelect('Job.crasDataStatus', 'crasDataStatus')
+    .leftJoinAndSelect('Job.mpaVersionStatus', 'mpaVersionStatus')
+    .leftJoinAndSelect('Job.jobType', 'jobType')
+    .where('jobType.fullString = :fullString', { fullString: 'remote' })
+    .getMany();
 
   const response = foundJob.map((item, idx) => ({
     id: item.id,
     stop: item.stop,
+    siteId: item.siteId.id,
     siteName: item.siteId.siteName,
     fabName: item.siteId.fabName,
     collectStatus: item.collectStatus.status,
@@ -26,68 +29,56 @@ router.get('/remote', async (req: Request, res: Response, next: NextFunction) =>
     mpaVersionStatus: item.mpaVersionStatus.status,
   }));
 
-  await sleep(1000);
+  // await sleep(1000);
 
   res.json(response);
 });
 
 router.get('/remote/:id(\\d+)/', async (req: Request, res: Response, next: NextFunction) => {
-  const job = await getManager().getRepository(Job);
-
   const { id } = req.params;
-  console.log('id', id);
-
-  const foundJob = await job.findOne({
-    relations: [
-      'siteId',
-      'collectStatus',
-      'errorSummaryStatus',
-      'crasDataStatus',
-      'mpaVersionStatus',
-      'owner',
-      'notification',
-    ],
-    where: { id: id, jobType: 'remote' },
-  });
-
-  console.log('foundJob', foundJob);
-
-  const notification = await getManager().getRepository(JobNotification);
-  const foundNotify = await notification.findOne({
-    relations: ['errorSummaryEmail', 'crasDataEmail', 'mpaVersionEmail'],
-    where: { id: foundJob.notification.id },
-  });
-
-  console.log('foundNotify', foundNotify);
+  const foundJob = await createQueryBuilder<Job>('Job')
+    .leftJoinAndSelect('Job.siteId', 'siteId')
+    .leftJoinAndSelect('Job.collectStatus', 'sicollectStatuste')
+    .leftJoinAndSelect('Job.errorSummaryStatus', 'errorSummaryStatus')
+    .leftJoinAndSelect('Job.crasDataStatus', 'crasDataStatus')
+    .leftJoinAndSelect('Job.mpaVersionStatus', 'mpaVersionStatus')
+    .leftJoinAndSelect('Job.jobType', 'jobType')
+    .leftJoinAndSelect('Job.owner', 'owner')
+    .leftJoinAndSelect('Job.notification', 'notification')
+    .leftJoinAndSelect('notification.errorSummaryEmail', 'errorSummaryEmail')
+    .leftJoinAndSelect('notification.crasDataEmail', 'crasDataEmail')
+    .leftJoinAndSelect('notification.mpaVersionEmail', 'mpaVersionEmail')
+    .where('Job.id = :id', { id: id })
+    .getOne();
 
   const response = {
     id: foundJob.id,
     siteName: foundJob.siteId.siteName,
     fabName: foundJob.siteId.fabName,
     errorSummary: {
-      enable: foundNotify.isErrorSummary,
-      recipient: foundNotify.errorSummaryEmail.recipients,
-      subject: foundNotify.errorSummaryEmail.subject,
-      body: foundNotify.errorSummaryEmail.body,
+      enable: foundJob.notification.isErrorSummary,
+      recipients: foundJob.notification.errorSummaryEmail.recipients,
+      subject: foundJob.notification.errorSummaryEmail.subject,
+      body: foundJob.notification.errorSummaryEmail.body,
     },
     crasData: {
-      enable: foundNotify.isCrasData,
-      recipient: foundNotify.crasDataEmail.recipients,
-      subject: foundNotify.crasDataEmail.subject,
-      body: foundNotify.crasDataEmail.body,
+      enable: foundJob.notification.isCrasData,
+      recipients: foundJob.notification.crasDataEmail.recipients,
+      subject: foundJob.notification.crasDataEmail.subject,
+      body: foundJob.notification.crasDataEmail.body,
     },
     mpaVersion: {
-      enable: foundNotify.isMpaVersion,
-      recipient: foundNotify.mpaVersionEmail.recipients,
-      subject: foundNotify.mpaVersionEmail.subject,
-      body: foundNotify.mpaVersionEmail.body,
+      enable: foundJob.notification.isMpaVersion,
+      recipients: foundJob.notification.mpaVersionEmail.recipients,
+      subject: foundJob.notification.mpaVersionEmail.subject,
+      body: foundJob.notification.mpaVersionEmail.body,
     },
     planIds: foundJob.planids,
-    sendingTimes: foundNotify.sending_times,
-    before: foundNotify.before,
+    sendingTimes: foundJob.notification.sending_times,
+    before: foundJob.notification.before,
   };
 
-  await sleep(3000);
+  // await sleep(1000);
 
   res.json(response);
 });
@@ -128,13 +119,12 @@ router.post('/remote', async (req: Request, res: Response, next: NextFunction) =
 });
 
 router.get('/local', async (req: Request, res: Response, next: NextFunction) => {
-  const job = await getManager().getRepository(Job);
-
-  const foundJob = await job.find({
-    // relations: ['site_id', 'collect_status', 'error_summary_status', 'cras_status', 'version_check_status', 'owner'],
-    relations: ['siteId', 'collectStatus'],
-    where: { jobType: 'local' },
-  });
+  const foundJob = await createQueryBuilder<Job>('Job')
+    .leftJoinAndSelect('Job.siteId', 'siteId')
+    .leftJoinAndSelect('Job.collectStatus', 'sicollectStatuste')
+    .leftJoinAndSelect('Job.jobType', 'jobType')
+    .where('jobType.fullString = :fullString', { fullString: 'local' })
+    .getMany();
 
   const response = foundJob.map((item, idx) => ({
     id: item.id,
@@ -145,7 +135,7 @@ router.get('/local', async (req: Request, res: Response, next: NextFunction) => 
     fileNames: item.fileNames,
   }));
 
-  await sleep(1000);
+  // await sleep(1000);
 
   res.json(response);
 });

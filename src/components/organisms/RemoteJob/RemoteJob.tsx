@@ -1,8 +1,10 @@
 import { NotificationOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Col, PageHeader, Row, Space, Tag } from 'antd';
-import { TweenOneGroup } from 'rc-tween-one';
-import React, { useEffect, useState } from 'react';
+import { Col, PageHeader, Row, Space } from 'antd';
+import queryString from 'query-string';
+import React, { useEffect } from 'react';
+import { useLocation, useParams } from 'react-router';
+import useEditRemoteJob from '../../../hooks/useEditRemoteJob';
 import useRemoteJob from '../../../hooks/useRemoteJob';
 import { RemoteJobType } from '../../../pages/Status/Remote/Remote';
 import CustomIcon from '../../atoms/CustomIcon';
@@ -56,11 +58,24 @@ export type RemoteJobProps = {
   type: RemoteJobType;
 };
 
+export type RemoteEditParams = {
+  id: string;
+};
+
 export default function RemoteJob({ type }: RemoteJobProps) {
-  const { current, setCurrent, onBack, nextAction, initRemoteJob } = useRemoteJob();
+  const { current, setCurrent, onBack, nextAction, initRemoteJob, setSelectSite } = useRemoteJob();
+  const { isFetchingEditJob } = useEditRemoteJob(type);
+  const { id } = useParams<RemoteEditParams>();
+  const { search } = useLocation();
+  const { name } = queryString.parse(search);
+
+  console.log('id', id);
+  console.log('search', search);
+  console.log('name', name);
 
   useEffect(() => {
     if (type === 'new') initRemoteJob();
+    else setSelectSite({ value: +id, label: name });
   }, [type]);
 
   return (

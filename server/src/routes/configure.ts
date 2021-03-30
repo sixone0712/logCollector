@@ -34,7 +34,8 @@ router.get('/sites/names', async (req: Request, res: Response, next: NextFunctio
     siteName: item.siteName,
     fabName: item.fabName,
   }));
-  // return loaded posts
+  // return loaded posts...
+  await sleep(5000);
   res.send(names);
 });
 

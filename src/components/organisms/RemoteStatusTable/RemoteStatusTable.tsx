@@ -3,11 +3,14 @@ import { DeleteOutlined, EditOutlined, PauseCircleOutlined, PlayCircleOutlined }
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Table } from 'antd';
+import { LabeledValue } from 'antd/lib/select';
 import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import useEditRemoteJob from '../../../hooks/useEditRemoteJob';
 import useRemoteStatus from '../../../hooks/useRemoteStatus';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
+import { selectSiteReducer } from '../../../reducers/slices/remoteJob';
 import { BuildStatus, RemoteColumnPropsType, RemoteJobStatus, RemoteStatusType } from '../../../types/Status';
 import StatusBadge from '../../atoms/StatusBadge';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
@@ -15,14 +18,16 @@ import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
 export type RemoteStatusTableProps = {};
 
 export default function RemoteStatusTable() {
-  const { remoteList, isFetching, isError, refreshRemoteList, moveToRemoteNewJob } = useRemoteStatus();
+  const {
+    remoteList,
+    isFetching,
+    isError,
+    refreshRemoteList,
+    moveToRemoteNewJob,
+    moveToRemoteEditJob,
+    moveToRemoteHistory,
+  } = useRemoteStatus();
   const remoteListLen = remoteList?.length ? remoteList.length : 0;
-  const history = useHistory();
-
-  const { setSite, setEditRemoteJob, isEditJobFetching } = useEditRemoteJob();
-
-  console.log('isFetching', isFetching);
-
   const numberRender = useCallback((value: BuildStatus, record: RemoteJobStatus, index: number) => value + 1, []);
 
   const collectStatusRender = useCallback(
@@ -51,11 +56,12 @@ export default function RemoteStatusTable() {
 
   const buildStatusRender = useCallback(
     (value: BuildStatus, record: RemoteJobStatus, index: number, type?: RemoteStatusType) => {
-      const onClick = useCallback(
-        () => history.push(`/status/remote/${type}/${record.index}?name=${record.siteName}`),
-        []
+      return (
+        <StatusBadge
+          type={value}
+          onClick={() => moveToRemoteHistory(record.id, record.siteFabName, type as RemoteStatusType)}
+        />
       );
-      return <StatusBadge type={value} onClick={onClick} />;
     },
     []
   );
@@ -68,20 +74,12 @@ export default function RemoteStatusTable() {
     }
   }, []);
 
-  const editRender = useCallback((value: number, record: RemoteJobStatus, index: number) => {
-    console.log('editRender_value', value);
-    return (
-      <Button
-        icon={<EditOutlined />}
-        css={iconStyle}
-        onClick={() => {
-          setSite({ value: value, label: `${record.siteFabName}` });
-          setEditRemoteJob();
-        }}
-        loading={isEditJobFetching(value)}
-      />
-    );
-  }, []);
+  const editRender = useCallback(
+    (value: number, record: RemoteJobStatus, index: number) => (
+      <EditOutlined css={iconStyle} onClick={() => moveToRemoteEditJob(record.id, record.siteFabName)} />
+    ),
+    []
+  );
 
   const deleteRender = useCallback(() => {
     return <DeleteOutlined css={iconStyle} />;

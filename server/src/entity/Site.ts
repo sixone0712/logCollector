@@ -33,8 +33,8 @@ export class Site extends BaseEntity {
   @Column({ name: 'db_password' })
   dbPassword: string;
 
-  @Column('integer', { name: 'excute_mpas', array: true, nullable: true })
-  excuteMpas: number[];
+  @Column('text', { name: 'excute_mpas', array: true, nullable: true })
+  excuteMpas: string[];
 
   @OneToMany(() => Job, (job) => job.id)
   job: Job[];

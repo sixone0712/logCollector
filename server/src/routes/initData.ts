@@ -8,6 +8,7 @@ import { JobStatus } from '../entity/JobStatus';
 import { JobNotification } from '../entity/JobNotification';
 import { MailContext } from '../entity/MailContext';
 import { v4 as uuidv4 } from 'uuid';
+import { JobType } from '../entity/JobType';
 
 const router = express.Router();
 
@@ -36,67 +37,33 @@ router.get('/db', async (req: Request, res: Response, next: NextFunction) => {
     newSite.dbAddress = `192.168.0.${i}`;
     newSite.dbPort = 5432;
     newSite.dbPassword = 'password';
-    newSite.excuteMpas = [2, 4, 6, 8];
+    newSite.excuteMpas = ['MPA_1', 'MPA_2', 'MPA_3', 'MPA_4'];
     await siteManager.save(newSite);
   }
 
   res.json('ok');
 });
 
-router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
-  // const userManager = await getManager().getRepository(User);
-  // for (let i = 0; i < 30; i++) {
-  //   const testUser = new User();
-  //   testUser.name = `chpark_${i}`;
-  //   testUser.password = 'password';
-  //   testUser.created = new Date();
-  //   testUser.lastAccess = new Date();
-  //   testUser.permission = ['status', 'configure', 'rules', 'account'];
-  //   await userManager.save(testUser);
-  // }
+router.get('/test', async (req: Request, res: Response, next: NextFunction) => {
+  await makeJobType();
+  res.json('ok');
+});
 
-  // const siteManager = await getManager().getRepository(Site);
-  // for (let i = 0; i < 30; i++) {
-  //   const newSite = new Site();
-  //   newSite.siteName = `siteName${i}`;
-  //   newSite.fabName = `fabName_${i}`;
-  //   newSite.address = `10.1.31.${i}`;
-  //   newSite.user = `chpark_${i}`;
-  //   newSite.password = 'password';
-  //   newSite.port = 80;
-  //   newSite.password = 'password';
-  //   newSite.db_address = `192.168.0.${i}`;
-  //   newSite.db_port = 5432;
-  //   newSite.db_password = 'password';
-  //   newSite.mpa_count = i;
-  //   await siteManager.save(newSite);
-  // }
+router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
+  await makeJobStatus();
+  await makeJobType();
+
+  const success = await getManager().getRepository(JobStatus).findOne({ status: 'success' });
+  const failure = await getManager().getRepository(JobStatus).findOne({ status: 'failure' });
+  const notbuild = await getManager().getRepository(JobStatus).findOne({ status: 'notbuild' });
+  const processing = await getManager().getRepository(JobStatus).findOne({ status: 'processing' });
+  const remoteJobType = await getManager().getRepository(JobType).findOne({ fullString: 'remote' });
+  const localJobType = await getManager().getRepository(JobType).findOne({ fullString: 'local' });
+
+  const statusArray = [success, failure, notbuild, processing];
 
   for (let i = 0; i < 30; i++) {
     const job = new Job();
-    const collectStatus = new JobStatus();
-    const errorStatus = new JobStatus();
-    const crasStatus = new JobStatus();
-    const version = new JobStatus();
-    const notification = new JobNotification();
-
-    collectStatus.fullString = 'collect_jobStatus';
-    collectStatus.status = 'processing';
-    collectStatus.representString = 'collect_jobStatus';
-    await getManager().getRepository(JobStatus).save(collectStatus);
-    errorStatus.fullString = 'cras_jobStatus';
-    errorStatus.status = 'processing';
-    errorStatus.representString = 'cras_jobStatus';
-    await getManager().getRepository(JobStatus).save(errorStatus);
-    crasStatus.fullString = 'cras_jobStatus';
-    crasStatus.status = 'processing';
-    crasStatus.representString = 'cras_jobStatus';
-    await getManager().getRepository(JobStatus).save(crasStatus);
-    version.fullString = 'version_jobStatus';
-    version.status = 'processing';
-    version.representString = 'version_jobStatus';
-    await getManager().getRepository(JobStatus).save(version);
-
     const ownerUser = await getManager()
       .getRepository(User)
       .findOne(i + 1);
@@ -105,16 +72,17 @@ router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
       .findOne(i + 1);
 
     job.siteId = site;
-    job.collectStatus = collectStatus;
-    job.errorSummaryStatus = errorStatus;
-    job.crasDataStatus = crasStatus;
-    job.mpaVersionStatus = version;
-    job.stop = false;
+    job.collectStatus = statusArray[Math.floor(Math.random() * (3 - 0) + 0)];
+    job.errorSummaryStatus = statusArray[Math.floor(Math.random() * (3 - 0) + 0)];
+    job.crasDataStatus = statusArray[Math.floor(Math.random() * (3 - 0) + 0)];
+    job.mpaVersionStatus = statusArray[Math.floor(Math.random() * (3 - 0) + 0)];
+    job.stop = Math.floor(Math.random() * (1 - 0) + 0) ? true : false;
     job.owner = ownerUser;
     job.created = new Date();
     job.lastAction = new Date();
-    job.jobType = 'remote';
+    job.jobType = remoteJobType;
 
+    const notification = new JobNotification();
     notification.isErrorSummary = true;
     const errorSummaryEmail = new MailContext();
     errorSummaryEmail.recipients = ['chpark@canon.bs.co.kr', 'chpark2@canon.bs.co.kr'];
@@ -150,13 +118,6 @@ router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
 
   for (let i = 0; i < 30; i++) {
     const job = new Job();
-    const collectStatus = new JobStatus();
-
-    collectStatus.fullString = 'collect_jobStatus';
-    collectStatus.status = 'processing';
-    collectStatus.representString = 'collect_jobStatus';
-    await getManager().getRepository(JobStatus).save(collectStatus);
-
     const ownerUser = await getManager()
       .getRepository(User)
       .findOne(i + 1);
@@ -165,12 +126,12 @@ router.get('/job', async (req: Request, res: Response, next: NextFunction) => {
       .findOne(i + 1);
 
     job.siteId = site;
-    job.collectStatus = collectStatus;
+    job.collectStatus = statusArray[Math.floor(Math.random() * (3 - 0) + 0)];
     job.stop = false;
     job.owner = ownerUser;
     job.created = new Date();
     job.lastAction = new Date();
-    job.jobType = 'local';
+    job.jobType = localJobType;
 
     const max = Math.random() * (10 - 1) * 1;
     const fileNames = [];
@@ -193,4 +154,41 @@ function generateString(bit) {
   return random_str;
 }
 
+async function makeJobStatus() {
+  const processing = new JobStatus();
+  processing.fullString = 'processing';
+  processing.status = 'processing';
+  processing.representString = 'processing';
+  await getManager().getRepository(JobStatus).save(processing);
+
+  const success = new JobStatus();
+  success.fullString = 'success';
+  success.status = 'success';
+  success.representString = 'success';
+  await getManager().getRepository(JobStatus).save(success);
+
+  const failure = new JobStatus();
+  failure.fullString = 'failure';
+  failure.status = 'failure';
+  failure.representString = 'failure';
+  await getManager().getRepository(JobStatus).save(failure);
+
+  const notbuild = new JobStatus();
+  notbuild.fullString = 'notbuild';
+  notbuild.status = 'notbuild';
+  notbuild.representString = 'notbuild';
+  await getManager().getRepository(JobStatus).save(notbuild);
+}
+
+async function makeJobType() {
+  const remote = new JobType();
+  remote.fullString = 'remote';
+  remote.representString = 'remote';
+  await getManager().getRepository(JobType).save(remote);
+
+  const local = new JobType();
+  local.fullString = 'local';
+  local.representString = 'local';
+  await getManager().getRepository(JobType).save(local);
+}
 export default router;

@@ -1,6 +1,7 @@
 import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { JobNotification } from './JobNotification';
 import { JobStatus } from './JobStatus';
+import { JobType } from './JobType';
 import { Site } from './Site';
 import { User } from './User';
 
@@ -16,19 +17,19 @@ export class Job extends BaseEntity {
   @Column('integer', { name: 'plan_ids', array: true, nullable: true })
   planids: number[];
 
-  @OneToOne(() => JobStatus)
+  @ManyToOne(() => JobStatus, (josStatus) => josStatus.id)
   @JoinColumn({ name: 'collect_status' })
   collectStatus: JobStatus;
 
-  @OneToOne(() => JobStatus)
+  @ManyToOne(() => JobStatus, (josStatus) => josStatus.id)
   @JoinColumn({ name: 'error_summary_status' })
   errorSummaryStatus: JobStatus;
 
-  @OneToOne(() => JobStatus)
+  @ManyToOne(() => JobStatus, (josStatus) => josStatus.id)
   @JoinColumn({ name: 'cras_data_status' })
   crasDataStatus: JobStatus;
 
-  @OneToOne(() => JobStatus)
+  @ManyToOne(() => JobStatus, (josStatus) => josStatus.id)
   @JoinColumn({ name: 'mpa_version_status' })
   mpaVersionStatus: JobStatus;
 
@@ -45,8 +46,9 @@ export class Job extends BaseEntity {
   @Column({ type: 'timestamp', name: 'last_action' })
   lastAction: Date;
 
-  @Column({ name: 'job_type' })
-  jobType: string;
+  @ManyToOne(() => JobType, (jobType) => jobType.id)
+  @JoinColumn({ name: 'job_type' })
+  jobType: JobType;
 
   @OneToOne(() => JobNotification)
   @JoinColumn()

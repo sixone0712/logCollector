@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Timestamp, ManyToOne } from 'typeorm';
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Job } from './Job';
 
 @Entity('job_history')
@@ -6,9 +6,9 @@ export class JobHistory extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @ManyToOne(() => Job, (job) => job.id)
-  // @Column()
-  // job: Job;
+  @ManyToOne(() => Job, (job) => job.id)
+  @JoinColumn()
+  job: Job;
 
   @Column()
   type: string;

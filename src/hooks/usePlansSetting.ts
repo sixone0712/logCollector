@@ -127,6 +127,7 @@ export default function usePlansSetting() {
     () => getRemotePlans(selectSite?.value),
     {
       refetchOnWindowFocus: false,
+      // refetchOnMount: false,
       enabled: !!selectSite?.value,
       initialData: [] as RemotePlan[],
       onError: () => {

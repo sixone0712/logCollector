@@ -1,12 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
 
-@Entity('job_status')
-export class JobStatus extends BaseEntity {
+@Entity('job_type')
+export class JobType extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  status: string;
 
   @Column({ name: 'full_string' })
   fullString: string;

@@ -41,6 +41,7 @@ export default function RemotePlans(): JSX.Element {
           loading={isFetching}
           optionFilterProp="children"
           filterOption={(input, option) => option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+          disabled={isFetching}
         >
           {data?.map((item) => (
             <Select.Option key={item.id} value={item.id} label={item.siteFabName}>
