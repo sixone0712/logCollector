@@ -1,31 +1,44 @@
-import { DatabaseOutlined, EditOutlined } from '@ant-design/icons';
+import { DatabaseOutlined, EditOutlined, ReloadOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Col, Row, Space } from 'antd';
 import React from 'react';
 export type ConfigTitleProps = {
-  children?: React.ReactNode;
   title: string;
-  onClick: () => void;
+  onEdit: () => void;
+  onRefresh: () => void;
+  disabledEdit: boolean;
+  disabledRefresh: boolean;
+  loadingRefresh: boolean;
 };
 
-export default function ConfigTitle({ children }: ConfigTitleProps): JSX.Element {
+export default function ConfigTitle({
+  title,
+  onEdit,
+  onRefresh,
+  disabledEdit,
+  disabledRefresh,
+  loadingRefresh,
+}: ConfigTitleProps): JSX.Element {
   return (
     <TitleSection>
       <Space css={titleStyle}>
         <DatabaseOutlined />
-        <Title>Settings Database Information</Title>
+        <Title>{title}</Title>
       </Space>
-      <Button
-        type="primary"
-        icon={<EditOutlined />}
-        css={editButtonStyle}
-        onClick={() => {
-          console.log('click');
-        }}
-      >
-        Edit
-      </Button>
+      <Space>
+        <Button
+          type="primary"
+          icon={<ReloadOutlined />}
+          css={btnStyle}
+          onClick={onRefresh}
+          loading={loadingRefresh}
+          disabled={disabledRefresh}
+        />
+        <Button type="primary" icon={<EditOutlined />} css={btnStyle} onClick={onEdit} disabled={disabledEdit}>
+          Edit
+        </Button>
+      </Space>
     </TitleSection>
   );
 }
@@ -36,13 +49,12 @@ const TitleSection = styled(Row)`
   justify-content: space-between;
 `;
 const Title = styled(Col)``;
-const DBInfoSection = styled(Row)``;
 
 const titleStyle = css`
   font-size: 1.125rem;
   margin-left: 0.5rem;
 `;
 
-const editButtonStyle = css`
+const btnStyle = css`
   border-radius: 0.625rem;
 `;

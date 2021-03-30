@@ -1,20 +1,38 @@
 import { NextFunction, Request, Response } from 'express';
-import express = require('express');
-import { getConnection, getManager } from 'typeorm';
+import { createQueryBuilder, getManager } from 'typeorm';
 import { SettingDB } from '../entity/SettingDB';
+import { Site } from '../entity/Site';
+import express = require('express');
 import sleep from '../utils/sleep';
 
 const router = express.Router();
 
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
-  // get a post repository to perform operations with post
-  const postRepository = getManager().getRepository(SettingDB);
+router.get('/host', async (req: Request, res: Response, next: NextFunction) => {
+  const db = await createQueryBuilder<SettingDB>('setting_db').getOne();
 
-  // load a post by a given post id
-  const posts = await postRepository.find();
+  await sleep(3000);
 
-  // return loaded posts
-  res.send(posts);
+  res.json({
+    address: db.address,
+    port: db.port,
+    user: db.user,
+    password: db.password,
+  });
+});
+
+router.post('/host', async (req: Request, res: Response, next: NextFunction) => {
+  const db = await createQueryBuilder<SettingDB>('setting_db')
+    .update(SettingDB)
+    .set({ ...req.body })
+    .execute();
+
+  res.send('ok');
+});
+
+router.get('/sites', async (req: Request, res: Response, next: NextFunction) => {
+  const site = getManager().getRepository(Site);
+  const result = await site.find();
+  res.send(result);
 });
 
 export default router;

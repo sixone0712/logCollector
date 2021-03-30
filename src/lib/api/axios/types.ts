@@ -88,3 +88,10 @@ export interface ResGetRemotePlan {
   description: string;
   status: string;
 }
+
+export interface ResGetHostDBInfo {
+  address: string;
+  port: number;
+  user: string;
+  password: string;
+}

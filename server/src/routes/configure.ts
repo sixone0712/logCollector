@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { getManager } from 'typeorm';
+import { createQueryBuilder, getManager } from 'typeorm';
 import { Job } from '../entity/Job';
 import { JobHistory } from '../entity/JobHistory';
 import { JobNotification } from '../entity/JobNotification';
@@ -40,9 +40,38 @@ router.get('/sites/names', async (req: Request, res: Response, next: NextFunctio
 });
 
 router.get('/host', async (req: Request, res: Response, next: NextFunction) => {
-  const postRepository = getManager().getRepository(SettingDB);
-  const posts = await postRepository.find();
-  res.send(posts);
+  const db = await createQueryBuilder<SettingDB>('setting_db').getOne();
+
+  console.log('db', db);
+
+  await sleep(1000);
+
+  if (db) {
+    res.send({
+      address: db.address,
+      port: db.port,
+      user: db.user,
+      password: db.password,
+    });
+  } else {
+    res.send({
+      address: '',
+      port: 0,
+      user: '',
+      password: '',
+    });
+  }
+});
+
+router.post('/host', async (req: Request, res: Response, next: NextFunction) => {
+  console.log('req.body', req.body);
+
+  const db = await createQueryBuilder<SettingDB>('setting_db')
+    .update(SettingDB)
+    .set({ ...req.body })
+    .execute();
+
+  res.send('ok');
 });
 
 export default router;

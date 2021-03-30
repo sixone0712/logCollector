@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from '@emotion/react';
-import DBSetting from './DBSetting';
+import HostDBSetting from './HostDBSetting';
 
 export type ConfigureProps = {
   children?: React.ReactNode;
@@ -9,7 +9,7 @@ export type ConfigureProps = {
 export default function ConfigSetting({ children }: ConfigureProps): JSX.Element {
   return (
     <div css={style}>
-      <DBSetting />
+      <HostDBSetting />
     </div>
   );
 }
