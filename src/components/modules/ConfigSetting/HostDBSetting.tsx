@@ -1,8 +1,8 @@
-import React from 'react';
+import { DatabaseOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
-import { Button, Col, Descriptions, Row, Space } from 'antd';
 import styled from '@emotion/styled';
-import { DatabaseOutlined, EditOutlined } from '@ant-design/icons';
+import { Descriptions, Row } from 'antd';
+import React from 'react';
 import { useHostDBinfo } from '../../../hooks/useHostDBinfo';
 import ConfigTitle from './ConfigTitle';
 import EditHostDBSetting from './EditHostDBSetting';
@@ -17,14 +17,16 @@ export default function HostDBSetting({ children }: HostDBSettingProps): JSX.Ele
     isError,
     refreshHostDBinfo,
     visibleEdit,
-    setVisibleEdit,
     openEdit,
     closeEdit,
+    modifyHostDBinfo,
+    isMutating,
   } = useHostDBinfo();
 
   return (
     <DbInfo>
       <ConfigTitle
+        icon={<DatabaseOutlined />}
         title="Settings Database Information"
         onEdit={openEdit}
         onRefresh={refreshHostDBinfo}
@@ -34,17 +36,19 @@ export default function HostDBSetting({ children }: HostDBSettingProps): JSX.Ele
       />
       <DBInfoSection css={descriptionsStyle}>
         <Descriptions bordered column={4}>
-          <Descriptions.Item label="IP Address">
-            {data?.address || (data?.address === undefined && '-')}
-          </Descriptions.Item>
-          <Descriptions.Item label="Port">{data?.port || (data?.address === undefined && '-')}</Descriptions.Item>
-          <Descriptions.Item label="User">{data?.user || (data?.address === undefined && '-')}</Descriptions.Item>
-          <Descriptions.Item label="Password">
-            {data?.password || (data?.address === undefined && '-')}
-          </Descriptions.Item>
+          <Descriptions.Item label="IP Address">{data?.address || data?.address || '-'}</Descriptions.Item>
+          <Descriptions.Item label="Port">{data?.port || '-'}</Descriptions.Item>
+          <Descriptions.Item label="User">{data?.user || '-'}</Descriptions.Item>
+          <Descriptions.Item label="Password">{data?.password || data?.address || '-'}</Descriptions.Item>
         </Descriptions>
       </DBInfoSection>
-      <EditHostDBSetting visible={visibleEdit} close={closeEdit} data={data} />
+      <EditHostDBSetting
+        visible={visibleEdit}
+        close={closeEdit}
+        data={data}
+        apply={modifyHostDBinfo}
+        applying={isMutating ? true : false}
+      />
     </DbInfo>
   );
 }
@@ -54,6 +58,7 @@ const DbInfo = styled(Row)`
   margin-right: 1.875rem;
   margin-top: 0.5rem;
   flex-direction: column;
+  width: 100%;
 `;
 
 const DBInfoSection = styled(Row)``;

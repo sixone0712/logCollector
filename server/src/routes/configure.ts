@@ -66,6 +66,19 @@ router.get('/host', async (req: Request, res: Response, next: NextFunction) => {
 router.post('/host', async (req: Request, res: Response, next: NextFunction) => {
   console.log('req.body', req.body);
 
+  // const db = await createQueryBuilder<SettingDB>('setting_db')
+  //   // .update(SettingDB)
+  //   // .set({ ...req.body })
+  //   .insert()
+  //   .into(SettingDB)
+  //   .values({
+  //     address: '10.1.31.11',
+  //     port: 80,
+  //     user: 'chpark',
+  //     password: '1234',
+  //   })
+  //   .execute();
+
   const db = await createQueryBuilder<SettingDB>('setting_db')
     .update(SettingDB)
     .set({ ...req.body })

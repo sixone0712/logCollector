@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
-import { useQuery, QueryClient, useQueryClient } from 'react-query';
-import { getHostDBInfo } from '../lib/api/axios/requests';
-import { ResGetHostDBInfo } from '../lib/api/axios/types';
+import { useQuery, QueryClient, useQueryClient, useMutation, useIsMutating } from 'react-query';
+import { getHostDBInfo, postHostDBInfo } from '../lib/api/axios/requests';
+import { ReqPostGetHostDBInfo, ResGetHostDBInfo } from '../lib/api/axios/types';
 import { openNotification } from '../lib/util/notification';
 
 export function useHostDBinfo() {
@@ -11,6 +11,19 @@ export function useHostDBinfo() {
       openNotification('error', 'Error', 'Failed to response setting database information.');
     },
   });
+  const mutation = useMutation((postData: ReqPostGetHostDBInfo) => postHostDBInfo(postData), {
+    mutationKey: 'modify_hostDB_info',
+    onError: () => {
+      openNotification('error', 'Error', 'Failed to modify settings database info.');
+    },
+    onSuccess: () => {
+      refreshHostDBinfo();
+    },
+    onSettled: () => {
+      closeEdit();
+    },
+  });
+  const isMutating = useIsMutating({ mutationKey: ['modify_hostDB_info'] });
   const queryClient = useQueryClient();
   const [visibleEdit, setVisibleEdit] = useState(false);
 
@@ -26,14 +39,22 @@ export function useHostDBinfo() {
     queryClient.fetchQuery('get_config_host_db');
   }, [queryClient]);
 
+  const modifyHostDBinfo = useCallback(
+    (data: ReqPostGetHostDBInfo) => {
+      mutation.mutate(data);
+    },
+    [mutation]
+  );
+
   return {
     data,
     isFetching,
     refreshHostDBinfo,
     isError,
     visibleEdit,
-    setVisibleEdit,
     openEdit,
     closeEdit,
+    modifyHostDBinfo,
+    isMutating,
   };
 }

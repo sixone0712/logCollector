@@ -95,3 +95,10 @@ export interface ResGetHostDBInfo {
   user: string;
   password: string;
 }
+
+export interface ReqPostGetHostDBInfo {
+  address: string;
+  port: number;
+  user: string;
+  password: string;
+}

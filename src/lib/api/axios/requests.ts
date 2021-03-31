@@ -11,6 +11,7 @@ import {
   ResPostRemoteJob,
   ResGetRemoteJob,
   ResGetHostDBInfo,
+  ReqPostGetHostDBInfo,
 } from './types';
 import { SiteFabName } from '../../../types/configure';
 
@@ -73,5 +74,10 @@ export const postRemoteJob = async (reqData: ReqPostRemoteJob) => {
 
 export const getHostDBInfo = async (): Promise<ResGetHostDBInfo> => {
   const { data } = await client.get<ResGetHostDBInfo>('/api/configure/host');
+  return data;
+};
+
+export const postHostDBInfo = async (reqData: ReqPostGetHostDBInfo) => {
+  const { data } = await client.post('/api/configure/host', reqData);
   return data;
 };

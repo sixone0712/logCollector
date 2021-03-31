@@ -10,6 +10,7 @@ export type ConfigTitleProps = {
   disabledEdit: boolean;
   disabledRefresh: boolean;
   loadingRefresh: boolean;
+  icon: React.ReactNode;
 };
 
 export default function ConfigTitle({
@@ -19,11 +20,12 @@ export default function ConfigTitle({
   disabledEdit,
   disabledRefresh,
   loadingRefresh,
+  icon,
 }: ConfigTitleProps): JSX.Element {
   return (
     <TitleSection>
       <Space css={titleStyle}>
-        <DatabaseOutlined />
+        {icon}
         <Title>{title}</Title>
       </Space>
       <Space>

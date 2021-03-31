@@ -2,15 +2,17 @@ import React from 'react';
 import { css } from '@emotion/react';
 import { Button, Drawer, Form, Input } from 'antd';
 import { convertRemToPixels } from '../../../lib/util/remToPixcels';
-import { ResGetHostDBInfo } from '../../../lib/api/axios/types';
+import { ReqPostGetHostDBInfo, ResGetHostDBInfo } from '../../../lib/api/axios/types';
 
 export type EditHostDBSettingProps = {
   visible: boolean;
   close: () => void;
   data: ResGetHostDBInfo | undefined;
+  apply: (data: ReqPostGetHostDBInfo) => void;
+  applying: boolean;
 };
 
-export default function EditHostDBSetting({ visible, close, data }: EditHostDBSettingProps) {
+export default function EditHostDBSetting({ visible, close, data, apply, applying }: EditHostDBSettingProps) {
   return (
     <Drawer
       title="Edit Settings DataBase Info."
@@ -21,25 +23,46 @@ export default function EditHostDBSetting({ visible, close, data }: EditHostDBSe
       visible={visible}
     >
       <Form
-        name="basic"
-        initialValues={{ remember: true }}
-        onFinish={() => {}}
+        name="hostDBinfo"
+        onFinish={(values) => {
+          apply(values);
+        }}
         onFinishFailed={() => {}}
         layout="vertical"
+        initialValues={{
+          address: data?.address,
+          port: data?.port,
+          user: data?.user,
+          password: data?.password,
+        }}
       >
         <Form.Item
           label="IP Address"
-          name="ipAddress"
-          initialValue={data?.address}
-          rules={[{ required: true, message: 'Please input ip address!' }]}
+          name="address"
+          rules={[
+            {
+              required: true,
+              message: 'Please input ip address!',
+              pattern: new RegExp(
+                '^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+              ),
+            },
+          ]}
         >
           <Input />
         </Form.Item>
-
         <Form.Item
           label="Port"
           name="port"
-          rules={[{ required: true, message: 'Please input a port!', type: 'number' }]}
+          rules={[
+            {
+              required: true,
+              message: 'Please input a port!',
+              type: 'number',
+              validator: (rule, value) =>
+                new Promise((resolve, reject) => (value >= 0 && value <= 65535 ? resolve(true) : reject(false))),
+            },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -52,7 +75,7 @@ export default function EditHostDBSetting({ visible, close, data }: EditHostDBSe
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" css={applyBtnstyle}>
+          <Button type="primary" htmlType="submit" css={applyBtnstyle} loading={applying}>
             Apply
           </Button>
         </Form.Item>
