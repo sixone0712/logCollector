@@ -30,6 +30,9 @@ export class Site extends BaseEntity {
   @Column({ name: 'db_port' })
   dbPort: number;
 
+  @Column({ name: 'db_user' })
+  dbUser: string;
+
   @Column({ name: 'db_password' })
   dbPassword: string;
 

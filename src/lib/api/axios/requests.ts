@@ -11,7 +11,10 @@ import {
   ResPostRemoteJob,
   ResGetRemoteJob,
   ResGetHostDBInfo,
-  ReqPostGetHostDBInfo,
+  ReqPostHostDBInfo,
+  ResGetSiteDBInfo,
+  ReqPostSiteDBInfo,
+  ReqPutSiteDBInfoParams,
 } from './types';
 import { SiteFabName } from '../../../types/configure';
 
@@ -77,7 +80,26 @@ export const getHostDBInfo = async (): Promise<ResGetHostDBInfo> => {
   return data;
 };
 
-export const postHostDBInfo = async (reqData: ReqPostGetHostDBInfo) => {
+export const postHostDBInfo = async (reqData: ReqPostHostDBInfo) => {
   const { data } = await client.post('/api/configure/host', reqData);
+  return data;
+};
+
+export const getSiteDBInfo = async (): Promise<ResGetSiteDBInfo[]> => {
+  const { data } = await client.get<ResGetSiteDBInfo[]>('/api/configure/sites');
+
+  return data.map((item, index) => ({
+    index: index,
+    ...item,
+  }));
+};
+
+export const postSiteDBInfo = async (reqData: ReqPostSiteDBInfo) => {
+  const { data } = await client.post('/api/configure/sites', reqData);
+  return data;
+};
+
+export const putSiteDBInfo = async ({ reqId, reqData }: ReqPutSiteDBInfoParams) => {
+  const { data } = await client.put(`/api/configure/sites/${reqId}`, reqData);
   return data;
 };

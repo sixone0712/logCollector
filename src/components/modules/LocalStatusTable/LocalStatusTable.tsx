@@ -3,7 +3,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Col, Row, Table, Tooltip } from 'antd';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import useLocalStatus from '../../../hooks/useLocalStatus';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
@@ -66,7 +66,8 @@ const localColumnProps: LocalColumnPropsType = {
 
 export default function LocalStatusTable({ children }: LocalStatusTableProps) {
   const { localList, isFetching, isError, refreshRemoteList } = useLocalStatus();
-  const localListLen = localList?.length ? localList.length : 0;
+  const localListLen = useMemo(() => (localList?.length ? localList.length : 0), [localList?.length]);
+  //const localListLen = localList?.length ? localList.length : 0;
   const history = useHistory();
 
   const buildStatusRender = useCallback((value: BuildStatus, record: LocalStatus, index: number) => {
@@ -112,6 +113,7 @@ export default function LocalStatusTable({ children }: LocalStatusTableProps) {
       pagination={{
         position: ['bottomCenter'],
         total: localListLen,
+        showSizeChanger: true,
       }}
       loading={isFetching}
       rowKey="id"

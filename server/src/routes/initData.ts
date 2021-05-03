@@ -35,6 +35,7 @@ router.get('/db', async (req: Request, res: Response, next: NextFunction) => {
     newSite.port = 80;
     newSite.password = 'password';
     newSite.dbAddress = `192.168.0.${i}`;
+    newSite.dbUser = `dbUser_${i}`;
     newSite.dbPort = 5432;
     newSite.dbPassword = 'password';
     newSite.excuteMpas = ['MPA_1', 'MPA_2', 'MPA_3', 'MPA_4'];

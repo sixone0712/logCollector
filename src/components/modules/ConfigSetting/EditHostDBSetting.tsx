@@ -2,13 +2,13 @@ import React from 'react';
 import { css } from '@emotion/react';
 import { Button, Drawer, Form, Input } from 'antd';
 import { convertRemToPixels } from '../../../lib/util/remToPixcels';
-import { ReqPostGetHostDBInfo, ResGetHostDBInfo } from '../../../lib/api/axios/types';
+import { ReqPostHostDBInfo, ResGetHostDBInfo } from '../../../lib/api/axios/types';
 
 export type EditHostDBSettingProps = {
   visible: boolean;
   close: () => void;
   data: ResGetHostDBInfo | undefined;
-  apply: (data: ReqPostGetHostDBInfo) => void;
+  apply: (data: ReqPostHostDBInfo) => void;
   applying: boolean;
 };
 

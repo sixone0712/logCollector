@@ -96,9 +96,42 @@ export interface ResGetHostDBInfo {
   password: string;
 }
 
-export interface ReqPostGetHostDBInfo {
+export interface ReqPostHostDBInfo {
   address: string;
   port: number;
   user: string;
   password: string;
+}
+
+export interface ResGetSiteDBInfo {
+  index?: number; // Create an index after receiving the response.
+  id: number;
+  siteName: string;
+  fabName: string;
+  address: string;
+  port: number;
+  user: string;
+  password: string;
+  dbAddress: string;
+  dbPort: number;
+  dbUser: string;
+  dbPassword: string;
+}
+
+export interface ReqPostSiteDBInfo {
+  siteName: string;
+  fabName: string;
+  address: string;
+  port: number;
+  user: string;
+  password: string;
+  dbAddress: string;
+  dbPort: number;
+  dbUser: string;
+  dbPassword: string;
+}
+
+export interface ReqPutSiteDBInfoParams {
+  reqId: string;
+  reqData: ReqPostSiteDBInfo;
 }

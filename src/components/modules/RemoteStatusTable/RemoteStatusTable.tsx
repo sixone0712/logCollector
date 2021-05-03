@@ -2,15 +2,10 @@ import { blue } from '@ant-design/colors';
 import { DeleteOutlined, EditOutlined, PauseCircleOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, Table } from 'antd';
-import { LabeledValue } from 'antd/lib/select';
-import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import useEditRemoteJob from '../../../hooks/useEditRemoteJob';
+import { Table } from 'antd';
+import React, { useCallback, useMemo } from 'react';
 import useRemoteStatus from '../../../hooks/useRemoteStatus';
 import { compareTableItem } from '../../../lib/util/compareTableItem';
-import { selectSiteReducer } from '../../../reducers/slices/remoteJob';
 import { BuildStatus, RemoteColumnPropsType, RemoteJobStatus, RemoteStatusType } from '../../../types/status';
 import StatusBadge from '../../atoms/StatusBadge';
 import StatusTableHeader from '../StatusTableHeader/StatusTableHeader';
@@ -27,7 +22,9 @@ export default function RemoteStatusTable() {
     moveToRemoteEditJob,
     moveToRemoteHistory,
   } = useRemoteStatus();
-  const remoteListLen = remoteList?.length ? remoteList.length : 0;
+
+  const remoteListLen = useMemo(() => (remoteList?.length ? remoteList.length : 0), [remoteList?.length]);
+  // const remoteListLen = remoteList?.length ? remoteList.length : 0;
   const numberRender = useCallback((value: BuildStatus, record: RemoteJobStatus, index: number) => value + 1, []);
 
   const collectStatusRender = useCallback(

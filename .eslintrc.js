@@ -15,6 +15,7 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+    'no-empty-pattern': 'off',
     'no-empty-function': 0,
     // '@typescript-eslint/no-empty-function': ['allow'],
     '@typescript-eslint/ban-types': [
